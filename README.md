@@ -1,6 +1,6 @@
 # Astro Metadata
 
-![banner](./assets/default/banner.png)
+![banner](./assets/light/banner.jpg)
 
 ![npm version](https://img.shields.io/npm/v/@mannisto/astro-metadata)
 ![license](https://img.shields.io/badge/license-MIT-green)
@@ -8,15 +8,14 @@
 
 Astro components for managing your page head — metadata, social sharing, favicons, and SEO.
 
----
 
 ## Table of contents
 
 - [Installation](#installation)
-- [Patterns](#patterns)
-  - [1. Head component](#1-head-component)
-  - [2. Individual components](#2-individual-components)
-  - [3. Metadata utility](#3-metadata-utility)
+- [Usage](#usage)
+  1. [Head component](#1-head-component)
+  2. [Individual components](#2-individual-components)
+  3. [Metadata utility](#3-metadata-utility)
 - [Components](#components)
   - [Canonical](#canonical)
   - [Description](#description)
@@ -31,16 +30,20 @@ Astro components for managing your page head — metadata, social sharing, favic
   - [Twitter](#twitter)
 - [License](#license)
 
----
 
 ## Installation
 ```bash
+# pnpm
 pnpm add @mannisto/astro-metadata
+
+# npm
+npm install @mannisto/astro-metadata
+
+# yarn
+yarn add @mannisto/astro-metadata
 ```
 
----
-
-## Patterns
+## Usage
 
 There are three ways to use this package. Pick what suits your project, or combine them freely.
 
@@ -83,7 +86,6 @@ import Layout from "../layouts/Layout.astro"
 
 Best for simple sites where pages pass metadata as props to their layout.
 
----
 
 ### 2. Individual components
 
@@ -126,7 +128,6 @@ import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata
 
 Best for when you want to compose only what you need, or when `Head` is too opinionated for your setup.
 
----
 
 ### 3. Metadata utility
 
@@ -177,11 +178,11 @@ const meta = Metadata.resolve({
 
 Best for sites with deeply nested layouts, or when you want to keep metadata co-located with page content.
 
----
 
 ## Components
 
-### Canonical
+<details>
+<summary><strong>Canonical</strong></summary>
 
 Renders a canonical link tag. Falls back to `Astro.url.href` when no value is provided, so every page gets a canonical tag with zero configuration.
 ```astro
@@ -192,9 +193,11 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 |------|------|-------------|
 | `value` | `string` | Canonical URL. Defaults to `Astro.url.href`. |
 
----
+</details>
 
-### Description
+
+<details>
+<summary><strong>Description</strong></summary>
 ```astro
 <Description value="Welcome to my site" />
 ```
@@ -203,9 +206,11 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 |------|------|-------------|
 | `value` | `string` | Page description |
 
----
+</details>
 
-### Favicon
+
+<details>
+<summary><strong>Favicon</strong></summary>
 
 Favicon support with dark and light mode variants, multiple formats, and optional cache busting.
 ```astro
@@ -253,9 +258,11 @@ Favicon support with dark and light mode variants, multiple formats, and optiona
 | `path` | `string` | Path to the file |
 | `size` | `number` | Size in pixels. Rendered as `NxN` in the `sizes` attribute. |
 
----
+</details>
 
-### Head
+
+<details>
+<summary><strong>Head</strong></summary>
 
 Wraps the entire page head and composes all sub-components internally. Charset and viewport are always included and can be overridden if needed.
 ```astro
@@ -308,9 +315,11 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 </Head>
 ```
 
----
+</details>
 
-### Keywords
+
+<details>
+<summary><strong>Keywords</strong></summary>
 ```astro
 <Keywords value={["astro", "seo", "metadata"]} />
 ```
@@ -319,9 +328,11 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 |------|------|-------------|
 | `value` | `string[]` | List of keywords |
 
----
+</details>
 
-### LanguageAlternates
+
+<details>
+<summary><strong>LanguageAlternates</strong></summary>
 
 Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells search engines which language version to serve for a given region.
 ```astro
@@ -340,9 +351,11 @@ Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells sea
 | `alternates[].href` | `string` | Full URL of the alternate page |
 | `alternates[].hreflang` | `string` | Language or region code, e.g. `en`, `fi`, `en-US`, `x-default` |
 
----
+</details>
 
-### OpenGraph
+
+<details>
+<summary><strong>OpenGraph</strong></summary>
 
 Renders Open Graph meta tags for rich previews when your pages are shared on social platforms. When used inside `Head`, `title`, `description` and `url` fall back to the page values automatically.
 ```astro
@@ -374,9 +387,11 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
 | `siteName` | `string` | — | Name of the site |
 | `locale` | `string` | — | Locale, e.g. `en_US` |
 
----
+</details>
 
-### Robots
+
+<details>
+<summary><strong>Robots</strong></summary>
 
 Controls how search engines crawl and index your page. Defaults to `index, follow`.
 ```astro
@@ -394,9 +409,11 @@ Controls how search engines crawl and index your page. Defaults to `index, follo
 | `noSnippet` | `boolean` | — | Prevent text snippets in search results |
 | `extra` | `string` | — | Additional directives, e.g. `"max-snippet:-1, max-image-preview:large"` |
 
----
+</details>
 
-### Schema
+
+<details>
+<summary><strong>Schema</strong></summary>
 
 Outputs a `<script type="application/ld+json">` tag for structured data. Use it to help search engines understand your content and qualify for rich results.
 ```astro
@@ -414,9 +431,11 @@ Outputs a `<script type="application/ld+json">` tag for structured data. Use it 
 |------|------|-------------|
 | `schema` | `Record<string, unknown>` | JSON-LD object |
 
----
+</details>
 
-### Title
+
+<details>
+<summary><strong>Title</strong></summary>
 
 Renders the `<title>` tag. The template must contain `%s`, which is replaced with the page title — TypeScript enforces this at the type level.
 ```astro
@@ -429,9 +448,11 @@ Renders the `<title>` tag. The template must contain `%s`, which is replaced wit
 | `value` | `string` | Page title. Required. |
 | `template` | `` `${string}%s${string}` `` | Template string. Must contain `%s`. |
 
----
+</details>
 
-### Twitter
+
+<details>
+<summary><strong>Twitter</strong></summary>
 
 Renders Twitter card meta tags for rich previews on X. When used inside `Head`, `title` and `description` fall back to the page values automatically.
 ```astro
@@ -456,7 +477,7 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
 | `site` | `string` | — | Twitter handle of the site, e.g. `@mysite` |
 | `creator` | `string` | — | Twitter handle of the content author |
 
----
+</details>
 
 ## License
 
