@@ -1,0 +1,25 @@
+{
+  "name": "@mannisto/astro-metadata",
+  "version": "1.0.0-alpha.1",
+  "type": "module",
+  "description": "Astro components for managing your page head — metadata, social sharing, favicons, and SEO.",
+  "license": "MIT",
+  "homepage": "https://github.com/eremannisto/astro-metadata#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eremannisto/astro-metadata"
+  },
+  "bugs": {
+    "url": "https://github.com/eremannisto/astro-metadata/issues"
+  },
+  "files": ["src", "index.ts"],
+  "exports": "./index.ts",
+  "peerDependencies": {
+    "astro": "^4.3.0 || ^5.0.0"
+  },
+  "devDependencies": {
+    "astro": "^5.17.2",
+    "typescript": "^5.9.3"
+  },
+  "keywords": ["astro-component", "astro", "head", "seo", "meta"]
+}
