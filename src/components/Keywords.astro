@@ -1,0 +1,13 @@
+---
+
+export type Props = {
+  value?: string[]
+}
+
+const { 
+  value = []
+} = Astro.props
+
+---
+
+{value.length > 0 && <meta name="keywords" content={value.join(", ")} />}
