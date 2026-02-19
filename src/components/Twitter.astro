@@ -1,0 +1,32 @@
+---
+
+export type Props = {
+  title?       : string
+  description? : string
+  card?        : "summary" | "summary_large_image"
+  site?        : string
+  creator?     : string
+  image? : {
+    url  : string
+    alt? : string
+  }
+}
+
+const {
+  title,
+  description,
+  image,
+  card = "summary_large_image",
+  site,
+  creator,
+} = Astro.props
+
+---
+
+{card        && <meta name="twitter:card"        content={card}        />}
+{title       && <meta name="twitter:title"       content={title}       />}
+{description && <meta name="twitter:description" content={description} />}
+{image?.url  && <meta name="twitter:image"       content={image.url}   />}
+{image?.alt  && <meta name="twitter:image:alt"   content={image.alt}   />}
+{site        && <meta name="twitter:site"        content={site}        />}
+{creator     && <meta name="twitter:creator"     content={creator}     />}
