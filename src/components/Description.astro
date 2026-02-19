@@ -1,0 +1,13 @@
+---
+
+export type Props = {
+  value?: string
+}
+
+const { 
+  value 
+} = Astro.props
+
+---
+
+{value && <meta name="description" content={value} />}
