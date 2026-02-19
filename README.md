@@ -84,8 +84,6 @@ import Layout from "../layouts/Layout.astro"
 
 Best for simple sites where pages pass metadata as props to their layout.
 
----
-
 ### 2. Individual components
 
 Use components directly inside your own `<head>`. Useful when you only need specific pieces, or want full control over the structure.
@@ -124,8 +122,6 @@ import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata
 ```
 
 Best for when you want to compose only what you need, or when `Head` is too opinionated for your setup.
-
----
 
 ### 3. Metadata utility
 
@@ -176,8 +172,6 @@ const meta = Metadata.resolve({
 
 Best for sites with deeply nested layouts, or when you want to keep metadata co-located with page content.
 
----
-
 ## Components
 
 <details>
@@ -194,8 +188,6 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 
 </details>
 
----
-
 <details>
 <summary><strong>Description</strong></summary>
 ```astro
@@ -208,8 +200,6 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 
 </details>
 
----
-
 <details>
 <summary><strong>Favicon</strong></summary>
 
@@ -219,10 +209,10 @@ Favicon support with light and dark mode variants and automatic MIME type detect
   icons={[
     { path: "/favicon.ico" },
     { path: "/favicon.svg" },
-    { path: "/favicon-96x96.png",      size: 96 },
-    { path: "/apple-touch-icon.png",   size: 180, apple: true },
-    { path: "/favicon-dark.svg",       theme: "dark" },
-    { path: "/favicon-light.svg",      theme: "light" },
+    { path: "/favicon-96x96.png",    size: 96 },
+    { path: "/apple-touch-icon.png", size: 180, apple: true },
+    { path: "/favicon-dark.svg",     theme: "dark" },
+    { path: "/favicon-light.svg",    theme: "light" },
   ]}
   manifest="/site.webmanifest"
 />
@@ -243,8 +233,6 @@ Favicon support with light and dark mode variants and automatic MIME type detect
 | `apple` | `boolean` | Renders as `<link rel="apple-touch-icon">` |
 
 </details>
-
----
 
 <details>
 <summary><strong>Head</strong></summary>
@@ -301,8 +289,6 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 
 </details>
 
----
-
 <details>
 <summary><strong>Keywords</strong></summary>
 ```astro
@@ -314,8 +300,6 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 | `value` | `string[]` | List of keywords |
 
 </details>
-
----
 
 <details>
 <summary><strong>LanguageAlternates</strong></summary>
@@ -338,8 +322,6 @@ Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells sea
 | `alternates[].hreflang` | `string` | Language or region code, e.g. `en`, `fi`, `en-US`, `x-default` |
 
 </details>
-
----
 
 <details>
 <summary><strong>OpenGraph</strong></summary>
@@ -376,8 +358,6 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
 
 </details>
 
----
-
 <details>
 <summary><strong>Robots</strong></summary>
 
@@ -398,8 +378,6 @@ Controls how search engines crawl and index your page. Defaults to `index, follo
 | `extra` | `string` | — | Additional directives, e.g. `"max-snippet:-1, max-image-preview:large"` |
 
 </details>
-
----
 
 <details>
 <summary><strong>Schema</strong></summary>
@@ -422,8 +400,6 @@ Outputs a `<script type="application/ld+json">` tag for structured data. Use it 
 
 </details>
 
----
-
 <details>
 <summary><strong>Title</strong></summary>
 
@@ -438,8 +414,6 @@ Renders the `<title>` tag. The template must contain `%s`, which is replaced wit
 | `template` | `` `${string}%s${string}` `` | Template string. Must contain `%s`. |
 
 </details>
-
----
 
 <details>
 <summary><strong>Twitter</strong></summary>
@@ -468,8 +442,6 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
 | `creator` | `string` | — | Twitter handle of the content author |
 
 </details>
-
----
 
 ## License
 
