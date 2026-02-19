@@ -429,4 +429,4 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
 
 ## License
 
-MIT
+MIT © [Ere Männistö](https://github.com/eremannisto)
