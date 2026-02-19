@@ -1,0 +1,101 @@
+---
+
+import type { ComponentProps } from "astro/types"
+import Title              from "./Title.astro"
+import Description        from "./Description.astro"
+import Canonical          from "./Canonical.astro"
+import Keywords           from "./Keywords.astro"
+import Robots             from "./Robots.astro"
+import OpenGraph          from "./OpenGraph.astro"
+import Twitter            from "./Twitter.astro"
+import Favicon            from "./Favicon.astro"
+import Schema             from "./Schema.astro"
+import LanguageAlternates from "./LanguageAlternates.astro"
+
+export type Props = {
+  title                : string
+  titleTemplate?       : `${string}%s${string}`
+  description?         : string
+  canonical?           : string
+  keywords?            : string[]
+  robots?              : ComponentProps<typeof Robots>
+  openGraph?           : ComponentProps<typeof OpenGraph>
+  twitter?             : ComponentProps<typeof Twitter>
+  favicon?             : ComponentProps<typeof Favicon>
+  schema?              : ComponentProps<typeof Schema>
+  languageAlternates?  : ComponentProps<typeof LanguageAlternates>["alternates"]
+}
+
+const {
+  title,
+  titleTemplate,
+  description,
+  canonical,
+  keywords,
+  robots,
+  openGraph,
+  twitter,
+  favicon,
+  schema,
+  languageAlternates,
+} = Astro.props
+
+---
+
+<head>
+  <slot name="top" />
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <Title value={title} template={titleTemplate} />
+  <Description value={description} />
+  <Canonical value={canonical} />
+  <Keywords value={keywords} />
+  <Robots
+    index={robots?.index}
+    follow={robots?.follow}
+    noArchive={robots?.noArchive}
+    noSnippet={robots?.noSnippet}
+    extra={robots?.extra}
+  />
+
+  {languageAlternates && (
+    <LanguageAlternates alternates={languageAlternates} />
+  )}
+
+  {openGraph && (
+    <OpenGraph
+      title={openGraph.title ?? title}
+      description={openGraph.description ?? description}
+      image={openGraph.image}
+      url={openGraph.url ?? canonical}
+      type={openGraph.type}
+      siteName={openGraph.siteName}
+      locale={openGraph.locale}
+    />
+  )}
+
+  {twitter && (
+    <Twitter
+      title={twitter.title ?? title}
+      description={twitter.description ?? description}
+      image={twitter.image}
+      card={twitter.card}
+      site={twitter.site}
+      creator={twitter.creator}
+    />
+  )}
+
+  {favicon && (
+    <Favicon
+      icons={favicon.icons}
+      manifest={favicon.manifest}
+      cacheBust={favicon.cacheBust}
+    />
+  )}
+
+  {schema && <Schema schema={schema.schema} />}
+
+  <slot />
+</head>
