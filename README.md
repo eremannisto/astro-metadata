@@ -3,7 +3,7 @@
 ![banner](./assets/default/banner.png)
 
 ![npm version](https://img.shields.io/npm/v/@mannisto/astro-metadata)
-![license](https://img.shields.io/npm/l/@mannisto/astro-metadata)
+![license](https://img.shields.io/badge/license-MIT-green)
 ![astro peer dependency](https://img.shields.io/npm/dependency-version/@mannisto/astro-metadata/peer/astro)
 
 Astro components for managing your page head — metadata, social sharing, favicons, and SEO.
