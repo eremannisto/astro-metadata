@@ -1,177 +1,80 @@
 ---
 
 export type FaviconFile = {
-  path  : string
-  size? : number
-}
-
-export type FaviconIcons = {
-  ico?   : FaviconFile
-  png?   : FaviconFile | FaviconFile[]
-  svg?   : FaviconFile
-  apple? : FaviconFile
-}
-
-type PreparedFile = {
-  path  : string
-  size? : string
-}
-
-type PreparedIcons = {
-  ico?   : PreparedFile
-  png?   : PreparedFile[]
-  svg?   : PreparedFile
-  apple? : PreparedFile
+  path   : string
+  size?  : number
+  theme? : "light" | "dark"
+  apple? : boolean
 }
 
 export type Props = {
-  icons: {
-    default?   : FaviconIcons
-    lightMode? : FaviconIcons
-    darkMode?  : FaviconIcons
-  }
-  manifest?  : string
-  cacheBust? : boolean
+  icons     : FaviconFile[]
+  manifest? : string
 }
 
-const {
-  icons,
-  manifest,
-  cacheBust = false
+const { 
+  icons, 
+  manifest 
 } = Astro.props
 
-const cacheBustString = cacheBust
-  ? `?v=${Date.now()}`
-  : ""
-
 /**
- * Prepares a single favicon file by appending the cache bust string
- * and converting the numeric size to the "NxN" format browsers expect.
+ * Detects the MIME type of a favicon file from its extension.
  *
- * @param file - The favicon file to prepare.
- * @returns The prepared favicon file, or undefined if no file was provided.
+ * @param path - The path to the favicon file.
+ * @returns The MIME type of the file.
  */
-function prepareFile(file?: FaviconFile): PreparedFile | undefined {
-  if (!file) return undefined
-  return {
-    path: `${file.path}${cacheBustString}`,
-    size: file.size ? `${file.size}x${file.size}` : undefined,
-  }
+function getMimeType(path: string): string {
+  if (path.endsWith(".svg"))  return "image/svg+xml"
+  if (path.endsWith(".png"))  return "image/png"
+  if (path.endsWith(".webp")) return "image/webp"
+  if (path.endsWith(".jpg") ||
+      path.endsWith(".jpeg")) return "image/jpeg"
+  if (path.endsWith(".ico"))  return "image/x-icon"
+  return "image/x-icon"
 }
 
 /**
- * Prepares a full set of favicon icons by running each format through prepareFile.
- * Normalizes the png field to always be an array for consistent rendering.
+ * Builds the media query string for a given theme.
  *
- * @param set - The favicon icon set to prepare.
- * @returns The prepared favicon icon set, or undefined if no set was provided.
+ * @param theme - The theme to build the media query for.
+ * @returns The media query string, or undefined if no theme was provided.
  */
-function prepareIcons(set?: FaviconIcons): PreparedIcons | undefined {
-  if (!set) return undefined
-  return {
-    ico:   prepareFile(set.ico),
-    svg:   prepareFile(set.svg),
-    apple: prepareFile(set.apple),
-    png:   set.png
-      ? (Array.isArray(set.png) ? set.png : [set.png]).map((file) => prepareFile(file)!)
-      : undefined,
-  }
+function getMedia(theme?: "light" | "dark"): string | undefined {
+  if (theme === "light") return "(prefers-color-scheme: light)"
+  if (theme === "dark")  return "(prefers-color-scheme: dark)"
+  return undefined
 }
 
-const prepared = {
-  default:   prepareIcons(icons.default),
-  lightMode: prepareIcons(icons.lightMode),
-  darkMode:  prepareIcons(icons.darkMode),
-}
+const prepared = icons.map((file) => ({
+  path  : file.path,
+  size  : file.size ? `${file.size}x${file.size}` : undefined,
+  type  : getMimeType(file.path),
+  media : getMedia(file.theme),
+  apple : file.apple ?? false,
+}))
 
 ---
 
 {manifest && <link rel="manifest" href={manifest} />}
 
-{prepared.default?.ico && (
-  <link
-    rel="icon"
-    type="image/x-icon"
-    href={prepared.default.ico.path}
-    sizes={prepared.default.ico.size}
-  />
-)}
-{prepared.default?.svg && (
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href={prepared.default.svg.path}
-    sizes={prepared.default.svg.size}
-  />
-)}
-{prepared.default?.apple && (
-  <link
-    rel="apple-touch-icon"
-    href={prepared.default.apple.path}
-    sizes={prepared.default.apple.size}
-  />
-)}
-{prepared.default?.png?.map((png) => (
-  <link
-    rel="icon"
-    type="image/png"
-    href={png.path}
-    sizes={png.size}
-  />
-))}
+{prepared.map((icon) => {
+  if (icon.apple) {
+    return (
+      <link
+        rel="apple-touch-icon"
+        href={icon.path}
+        sizes={icon.size}
+      />
+    )
+  }
 
-{prepared.lightMode?.ico && (
-  <link
-    rel="icon"
-    type="image/x-icon"
-    href={prepared.lightMode.ico.path}
-    sizes={prepared.lightMode.ico.size}
-    media="(prefers-color-scheme: light)"
-  />
-)}
-{prepared.lightMode?.svg && (
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href={prepared.lightMode.svg.path}
-    sizes={prepared.lightMode.svg.size}
-    media="(prefers-color-scheme: light)"
-  />
-)}
-{prepared.lightMode?.png?.map((png) => (
-  <link
-    rel="icon"
-    type="image/png"
-    href={png.path}
-    sizes={png.size}
-    media="(prefers-color-scheme: light)"
-  />
-))}
-
-{prepared.darkMode?.ico && (
-  <link
-    rel="icon"
-    type="image/x-icon"
-    href={prepared.darkMode.ico.path}
-    sizes={prepared.darkMode.ico.size}
-    media="(prefers-color-scheme: dark)"
-  />
-)}
-{prepared.darkMode?.svg && (
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href={prepared.darkMode.svg.path}
-    sizes={prepared.darkMode.svg.size}
-    media="(prefers-color-scheme: dark)"
-  />
-)}
-{prepared.darkMode?.png?.map((png) => (
-  <link
-    rel="icon"
-    type="image/png"
-    href={png.path}
-    sizes={png.size}
-    media="(prefers-color-scheme: dark)"
-  />
-))}
+  return (
+    <link
+      rel="icon"
+      type={icon.type}
+      href={icon.path}
+      sizes={icon.size}
+      media={icon.media}
+    />
+  )
+})}

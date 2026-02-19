@@ -20,8 +20,7 @@ export type { Props as RobotsProps             } from "./src/components/Robots.a
 export type { Props as OpenGraphProps          } from "./src/components/OpenGraph.astro"
 export type { Props as TwitterProps            } from "./src/components/Twitter.astro"
 export type { Props as FaviconProps,
-              FaviconFile,
-              FaviconIcons                     } from "./src/components/Favicon.astro"
+              FaviconFile                      } from "./src/components/Favicon.astro"
 export type { Props as SchemaProps             } from "./src/components/Schema.astro"
 export type { Props as LanguageAlternatesProps,
               LanguageAlternate                } from "./src/components/LanguageAlternates.astro"

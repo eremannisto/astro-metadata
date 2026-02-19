@@ -1,13 +1,12 @@
 # Astro Metadata
 
-![banner](./assets/default/banner.jpg)
+![banner](./assets/banner.png)
 
 ![npm version](https://img.shields.io/npm/v/@mannisto/astro-metadata)
 ![license](https://img.shields.io/badge/license-MIT-green)
 ![astro peer dependency](https://img.shields.io/npm/dependency-version/@mannisto/astro-metadata/peer/astro)
 
 Astro components for managing your page head — metadata, social sharing, favicons, and SEO.
-
 
 ## Table of contents
 
@@ -30,7 +29,6 @@ Astro components for managing your page head — metadata, social sharing, favic
   - [Twitter](#twitter)
 - [License](#license)
 
-
 ## Installation
 ```bash
 # pnpm
@@ -52,7 +50,6 @@ There are three ways to use this package. Pick what suits your project, or combi
 The simplest approach. Use `Head` in your layout and pass props down from your pages. Charset and viewport are included automatically.
 ```astro
 ---
-
 // layouts/Layout.astro
 import { Head } from "@mannisto/astro-metadata"
 import type { HeadProps } from "@mannisto/astro-metadata"
@@ -60,7 +57,6 @@ import type { HeadProps } from "@mannisto/astro-metadata"
 interface Props extends HeadProps {}
 
 const { title, description, ...rest } = Astro.props
-
 ---
 
 <html>
@@ -75,13 +71,10 @@ const { title, description, ...rest } = Astro.props
   </body>
 </html>
 ```
-
 ```astro
 ---
-
 // pages/index.astro
 import Layout from "../layouts/Layout.astro"
-
 ---
 
 <Layout title="Home" description="Welcome to my site">
@@ -91,16 +84,14 @@ import Layout from "../layouts/Layout.astro"
 
 Best for simple sites where pages pass metadata as props to their layout.
 
+---
 
 ### 2. Individual components
 
 Use components directly inside your own `<head>`. Useful when you only need specific pieces, or want full control over the structure.
-
 ```astro
 ---
-
 import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata"
-
 ---
 
 <html>
@@ -120,12 +111,10 @@ import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata
       }}
     />
     <Favicon
-      icons={{
-        default: {
-          ico: { path: "/favicon.ico" },
-          svg: { path: "/favicon.svg" },
-        },
-      }}
+      icons={[
+        { path: "/favicon.ico" },
+        { path: "/favicon.svg" },
+      ]}
     />
   </head>
   <body>
@@ -136,14 +125,13 @@ import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata
 
 Best for when you want to compose only what you need, or when `Head` is too opinionated for your setup.
 
+---
 
 ### 3. Metadata utility
 
 Set metadata in your page, resolve it in your layout. Eliminates prop drilling through nested layout layers.
-
 ```astro
 ---
-
 // pages/about.astro
 import { Metadata } from "@mannisto/astro-metadata"
 import Layout from "../layouts/Layout.astro"
@@ -158,17 +146,14 @@ Metadata.set({
     },
   },
 })
-
 ---
 
 <Layout>
   <h1>About</h1>
 </Layout>
 ```
-
 ```astro
 ---
-
 // layouts/Layout.astro
 import { Head, Metadata } from "@mannisto/astro-metadata"
 
@@ -177,7 +162,6 @@ const meta = Metadata.resolve({
   description: "Default description",
   titleTemplate: "%s | My Site",
 })
-
 ---
 
 <html>
@@ -192,6 +176,7 @@ const meta = Metadata.resolve({
 
 Best for sites with deeply nested layouts, or when you want to keep metadata co-located with page content.
 
+---
 
 ## Components
 
@@ -199,7 +184,6 @@ Best for sites with deeply nested layouts, or when you want to keep metadata co-
 <summary><strong>Canonical</strong></summary>
 
 Renders a canonical link tag. Falls back to `Astro.url.href` when no value is provided, so every page gets a canonical tag with zero configuration.
-
 ```astro
 <Canonical value="https://example.com/page" />
 ```
@@ -210,10 +194,10 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 
 </details>
 
+---
 
 <details>
 <summary><strong>Description</strong></summary>
-
 ```astro
 <Description value="Welcome to my site" />
 ```
@@ -224,65 +208,48 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 
 </details>
 
+---
 
 <details>
 <summary><strong>Favicon</strong></summary>
 
-Favicon support with dark and light mode variants, multiple formats, and optional cache busting.
-
+Favicon support with light and dark mode variants and automatic MIME type detection.
 ```astro
 <Favicon
-  icons={{
-    default: {
-      ico:   { path: "/favicon.ico" },
-      svg:   { path: "/favicon.svg" },
-      png:   [{ path: "/favicon-96x96.png", size: 96 }],
-      apple: { path: "/apple-touch-icon.png", size: 180 },
-    },
-    lightMode: {
-      svg: { path: "/favicon-light.svg" },
-    },
-    darkMode: {
-      svg: { path: "/favicon-dark.svg" },
-    },
-  }}
+  icons={[
+    { path: "/favicon.ico" },
+    { path: "/favicon.svg" },
+    { path: "/favicon-96x96.png",      size: 96 },
+    { path: "/apple-touch-icon.png",   size: 180, apple: true },
+    { path: "/favicon-dark.svg",       theme: "dark" },
+    { path: "/favicon-light.svg",      theme: "light" },
+  ]}
   manifest="/site.webmanifest"
-  cacheBust
 />
 ```
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `icons.default` | `FaviconIcons` | Default favicon set |
-| `icons.lightMode` | `FaviconIcons` | Favicons shown in light color scheme |
-| `icons.darkMode` | `FaviconIcons` | Favicons shown in dark color scheme |
+| `icons` | `FaviconFile[]` | List of favicon files |
 | `manifest` | `string` | Path to web app manifest |
-| `cacheBust` | `boolean` | Append `?v={timestamp}` to favicon URLs |
-
-#### FaviconIcons
-
-| Prop | Type | Description |
-|------|------|-------------|
-| `ico` | `FaviconFile` | `.ico` favicon |
-| `svg` | `FaviconFile` | `.svg` favicon |
-| `png` | `FaviconFile \| FaviconFile[]` | One or more `.png` favicons |
-| `apple` | `FaviconFile` | Apple touch icon |
 
 #### FaviconFile
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `path` | `string` | Path to the file |
+| `path` | `string` | Path to the file. MIME type is detected automatically. |
 | `size` | `number` | Size in pixels. Rendered as `NxN` in the `sizes` attribute. |
+| `theme` | `"light" \| "dark"` | Adds a `prefers-color-scheme` media query |
+| `apple` | `boolean` | Renders as `<link rel="apple-touch-icon">` |
 
 </details>
 
+---
 
 <details>
 <summary><strong>Head</strong></summary>
 
 Wraps the entire page head and composes all sub-components internally. Charset and viewport are always included and can be overridden if needed.
-
 ```astro
 <Head
   title="Home"
@@ -297,11 +264,10 @@ Wraps the entire page head and composes all sub-components internally. Charset a
     },
   }}
   favicon={{
-    icons: {
-      default: {
-        ico: { path: "/favicon.ico" },
-      },
-    },
+    icons: [
+      { path: "/favicon.ico" },
+      { path: "/favicon.svg" },
+    ],
   }}
 />
 ```
@@ -323,7 +289,6 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 | `languageAlternates` | `LanguageAlternate[]` | — | Hreflang alternate links |
 
 #### Slots
-
 ```astro
 <Head title="My Site">
   <!-- Renders before charset and viewport -->
@@ -336,10 +301,10 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 
 </details>
 
+---
 
 <details>
 <summary><strong>Keywords</strong></summary>
-
 ```astro
 <Keywords value={["astro", "seo", "metadata"]} />
 ```
@@ -350,12 +315,12 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 
 </details>
 
+---
 
 <details>
 <summary><strong>LanguageAlternates</strong></summary>
 
 Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells search engines which language version to serve for a given region.
-
 ```astro
 <LanguageAlternates
   alternates={[
@@ -374,6 +339,7 @@ Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells sea
 
 </details>
 
+---
 
 <details>
 <summary><strong>OpenGraph</strong></summary>
@@ -410,6 +376,7 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
 
 </details>
 
+---
 
 <details>
 <summary><strong>Robots</strong></summary>
@@ -432,6 +399,7 @@ Controls how search engines crawl and index your page. Defaults to `index, follo
 
 </details>
 
+---
 
 <details>
 <summary><strong>Schema</strong></summary>
@@ -454,12 +422,12 @@ Outputs a `<script type="application/ld+json">` tag for structured data. Use it 
 
 </details>
 
+---
 
 <details>
 <summary><strong>Title</strong></summary>
 
 Renders the `<title>` tag. The template must contain `%s`, which is replaced with the page title — TypeScript enforces this at the type level.
-
 ```astro
 <Title value="My Page" template="%s | My Site" />
 ```
@@ -471,12 +439,12 @@ Renders the `<title>` tag. The template must contain `%s`, which is replaced wit
 
 </details>
 
+---
 
 <details>
 <summary><strong>Twitter</strong></summary>
 
 Renders Twitter card meta tags for rich previews on X. When used inside `Head`, `title` and `description` fall back to the page values automatically.
-
 ```astro
 <Twitter
   card="summary_large_image"
@@ -500,6 +468,8 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
 | `creator` | `string` | — | Twitter handle of the content author |
 
 </details>
+
+---
 
 ## License
 

@@ -1,6 +1,6 @@
 {
   "name": "@mannisto/astro-metadata",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "type": "module",
   "description": "Astro components for managing your page head — metadata, social sharing, favicons, and SEO.",
   "license": "MIT",
