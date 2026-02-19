@@ -1,6 +1,6 @@
 # Astro Metadata
 
-![banner](./assets/light/banner.jpg)
+![banner](./assets/default/banner.jpg)
 
 ![npm version](https://img.shields.io/npm/v/@mannisto/astro-metadata)
 ![license](https://img.shields.io/badge/license-MIT-green)
@@ -13,9 +13,9 @@ Astro components for managing your page head — metadata, social sharing, favic
 
 - [Installation](#installation)
 - [Usage](#usage)
-  1. [Head component](#1-head-component)
-  2. [Individual components](#2-individual-components)
-  3. [Metadata utility](#3-metadata-utility)
+  - [Head component](#1-head-component)
+  - [Individual components](#2-individual-components)
+  - [Metadata utility](#3-metadata-utility)
 - [Components](#components)
   - [Canonical](#canonical)
   - [Description](#description)
@@ -52,6 +52,7 @@ There are three ways to use this package. Pick what suits your project, or combi
 The simplest approach. Use `Head` in your layout and pass props down from your pages. Charset and viewport are included automatically.
 ```astro
 ---
+
 // layouts/Layout.astro
 import { Head } from "@mannisto/astro-metadata"
 import type { HeadProps } from "@mannisto/astro-metadata"
@@ -59,6 +60,7 @@ import type { HeadProps } from "@mannisto/astro-metadata"
 interface Props extends HeadProps {}
 
 const { title, description, ...rest } = Astro.props
+
 ---
 
 <html>
@@ -73,10 +75,13 @@ const { title, description, ...rest } = Astro.props
   </body>
 </html>
 ```
+
 ```astro
 ---
+
 // pages/index.astro
 import Layout from "../layouts/Layout.astro"
+
 ---
 
 <Layout title="Home" description="Welcome to my site">
@@ -90,9 +95,12 @@ Best for simple sites where pages pass metadata as props to their layout.
 ### 2. Individual components
 
 Use components directly inside your own `<head>`. Useful when you only need specific pieces, or want full control over the structure.
+
 ```astro
 ---
+
 import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata"
+
 ---
 
 <html>
@@ -132,8 +140,10 @@ Best for when you want to compose only what you need, or when `Head` is too opin
 ### 3. Metadata utility
 
 Set metadata in your page, resolve it in your layout. Eliminates prop drilling through nested layout layers.
+
 ```astro
 ---
+
 // pages/about.astro
 import { Metadata } from "@mannisto/astro-metadata"
 import Layout from "../layouts/Layout.astro"
@@ -148,14 +158,17 @@ Metadata.set({
     },
   },
 })
+
 ---
 
 <Layout>
   <h1>About</h1>
 </Layout>
 ```
+
 ```astro
 ---
+
 // layouts/Layout.astro
 import { Head, Metadata } from "@mannisto/astro-metadata"
 
@@ -164,6 +177,7 @@ const meta = Metadata.resolve({
   description: "Default description",
   titleTemplate: "%s | My Site",
 })
+
 ---
 
 <html>
@@ -185,6 +199,7 @@ Best for sites with deeply nested layouts, or when you want to keep metadata co-
 <summary><strong>Canonical</strong></summary>
 
 Renders a canonical link tag. Falls back to `Astro.url.href` when no value is provided, so every page gets a canonical tag with zero configuration.
+
 ```astro
 <Canonical value="https://example.com/page" />
 ```
@@ -198,6 +213,7 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 
 <details>
 <summary><strong>Description</strong></summary>
+
 ```astro
 <Description value="Welcome to my site" />
 ```
@@ -213,6 +229,7 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 <summary><strong>Favicon</strong></summary>
 
 Favicon support with dark and light mode variants, multiple formats, and optional cache busting.
+
 ```astro
 <Favicon
   icons={{
@@ -265,6 +282,7 @@ Favicon support with dark and light mode variants, multiple formats, and optiona
 <summary><strong>Head</strong></summary>
 
 Wraps the entire page head and composes all sub-components internally. Charset and viewport are always included and can be overridden if needed.
+
 ```astro
 <Head
   title="Home"
@@ -305,6 +323,7 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 | `languageAlternates` | `LanguageAlternate[]` | — | Hreflang alternate links |
 
 #### Slots
+
 ```astro
 <Head title="My Site">
   <!-- Renders before charset and viewport -->
@@ -320,6 +339,7 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 
 <details>
 <summary><strong>Keywords</strong></summary>
+
 ```astro
 <Keywords value={["astro", "seo", "metadata"]} />
 ```
@@ -335,6 +355,7 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 <summary><strong>LanguageAlternates</strong></summary>
 
 Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells search engines which language version to serve for a given region.
+
 ```astro
 <LanguageAlternates
   alternates={[
@@ -438,9 +459,9 @@ Outputs a `<script type="application/ld+json">` tag for structured data. Use it 
 <summary><strong>Title</strong></summary>
 
 Renders the `<title>` tag. The template must contain `%s`, which is replaced with the page title — TypeScript enforces this at the type level.
+
 ```astro
 <Title value="My Page" template="%s | My Site" />
-<!-- <title>My Page | My Site</title> -->
 ```
 
 | Prop | Type | Description |
@@ -455,6 +476,7 @@ Renders the `<title>` tag. The template must contain `%s`, which is replaced wit
 <summary><strong>Twitter</strong></summary>
 
 Renders Twitter card meta tags for rich previews on X. When used inside `Head`, `title` and `description` fall back to the page values automatically.
+
 ```astro
 <Twitter
   card="summary_large_image"
