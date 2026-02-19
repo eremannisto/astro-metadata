@@ -1,5 +1,4 @@
 ---
-
 import type { ComponentProps } from "astro/types"
 import Title              from "./Title.astro"
 import Description        from "./Description.astro"
@@ -13,17 +12,19 @@ import Schema             from "./Schema.astro"
 import LanguageAlternates from "./LanguageAlternates.astro"
 
 export type Props = {
-  title                : string
-  titleTemplate?       : `${string}%s${string}`
-  description?         : string
-  canonical?           : string
-  keywords?            : string[]
-  robots?              : ComponentProps<typeof Robots>
-  openGraph?           : ComponentProps<typeof OpenGraph>
-  twitter?             : ComponentProps<typeof Twitter>
-  favicon?             : ComponentProps<typeof Favicon>
-  schema?              : ComponentProps<typeof Schema>
-  languageAlternates?  : ComponentProps<typeof LanguageAlternates>["alternates"]
+  title               : string
+  titleTemplate?      : `${string}%s${string}`
+  description?        : string
+  canonical?          : string
+  keywords?           : string[]
+  charset?            : string
+  viewport?           : string
+  robots?             : ComponentProps<typeof Robots>
+  openGraph?          : ComponentProps<typeof OpenGraph>
+  twitter?            : ComponentProps<typeof Twitter>
+  favicon?            : ComponentProps<typeof Favicon>
+  schema?             : ComponentProps<typeof Schema>
+  languageAlternates? : ComponentProps<typeof LanguageAlternates>["alternates"]
 }
 
 const {
@@ -32,6 +33,8 @@ const {
   description,
   canonical,
   keywords,
+  charset  = "UTF-8",
+  viewport = "width=device-width, initial-scale=1.0",
   robots,
   openGraph,
   twitter,
@@ -39,14 +42,13 @@ const {
   schema,
   languageAlternates,
 } = Astro.props
-
 ---
 
 <head>
   <slot name="top" />
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset={charset} />
+  <meta name="viewport" content={viewport} />
 
   <Title value={title} template={titleTemplate} />
   <Description value={description} />

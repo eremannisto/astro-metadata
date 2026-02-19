@@ -102,14 +102,19 @@ import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata
     <OpenGraph
       title="My Page"
       description="Welcome to my site"
-      image={{ url: "/og.jpg", alt: "My Site", width: 1200, height: 630 }}
+      image={{
+        url: "/og.jpg",
+        alt: "My Site",
+        width: 1200,
+        height: 630,
+      }}
     />
     <Favicon
       icons={{
         default: {
           ico: { path: "/favicon.ico" },
           svg: { path: "/favicon.svg" },
-        }
+        },
       }}
     />
   </head>
@@ -136,8 +141,11 @@ Metadata.set({
   title: "About",
   description: "Learn more about us",
   openGraph: {
-    image: { url: "/og/about.jpg", alt: "About" }
-  }
+    image: {
+      url: "/og/about.jpg",
+      alt: "About",
+    },
+  },
 })
 ---
 
@@ -249,30 +257,45 @@ Favicon support with dark and light mode variants, multiple formats, and optiona
 
 ### Head
 
-Wraps the entire page head and composes all sub-components internally. Charset and viewport are always included.
+Wraps the entire page head and composes all sub-components internally. Charset and viewport are always included and can be overridden if needed.
 ```astro
 <Head
   title="Home"
   titleTemplate="%s | My Site"
   description="Welcome to my site"
-  openGraph={{ image: { url: "/og.jpg", alt: "My Site", width: 1200, height: 630 } }}
-  favicon={{ icons: { default: { ico: { path: "/favicon.ico" } } } }}
+  openGraph={{
+    image: {
+      url: "/og.jpg",
+      alt: "My Site",
+      width: 1200,
+      height: 630,
+    },
+  }}
+  favicon={{
+    icons: {
+      default: {
+        ico: { path: "/favicon.ico" },
+      },
+    },
+  }}
 />
 ```
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `title` | `string` | Page title. Required. |
-| `titleTemplate` | `` `${string}%s${string}` `` | Title template. Must contain `%s`, e.g. `"%s \| My Site"` |
-| `description` | `string` | Page description |
-| `canonical` | `string` | Canonical URL. Defaults to `Astro.url.href` |
-| `keywords` | `string[]` | List of keywords |
-| `robots` | `RobotsProps` | Robots directives |
-| `openGraph` | `OpenGraphProps` | Open Graph tags |
-| `twitter` | `TwitterProps` | Twitter card tags |
-| `favicon` | `FaviconProps` | Favicon configuration |
-| `schema` | `SchemaProps` | JSON-LD structured data |
-| `languageAlternates` | `LanguageAlternate[]` | Hreflang alternate links |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | — | Page title. Required. |
+| `titleTemplate` | `` `${string}%s${string}` `` | — | Title template. Must contain `%s`, e.g. `"%s \| My Site"` |
+| `description` | `string` | — | Page description |
+| `canonical` | `string` | `Astro.url.href` | Canonical URL |
+| `keywords` | `string[]` | — | List of keywords |
+| `charset` | `string` | `"UTF-8"` | Document charset |
+| `viewport` | `string` | `"width=device-width, initial-scale=1.0"` | Viewport meta content |
+| `robots` | `RobotsProps` | — | Robots directives |
+| `openGraph` | `OpenGraphProps` | — | Open Graph tags |
+| `twitter` | `TwitterProps` | — | Twitter card tags |
+| `favicon` | `FaviconProps` | — | Favicon configuration |
+| `schema` | `SchemaProps` | — | JSON-LD structured data |
+| `languageAlternates` | `LanguageAlternate[]` | — | Hreflang alternate links |
 
 #### Slots
 ```astro
@@ -304,9 +327,9 @@ Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells sea
 ```astro
 <LanguageAlternates
   alternates={[
-    { href: "https://example.com/en",  hreflang: "en" },
-    { href: "https://example.com/fi",  hreflang: "fi" },
-    { href: "https://example.com",     hreflang: "x-default" },
+    { href: "https://example.com/en", hreflang: "en" },
+    { href: "https://example.com/fi", hreflang: "fi" },
+    { href: "https://example.com",    hreflang: "x-default" },
   ]}
 />
 ```
@@ -326,7 +349,12 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
 <OpenGraph
   title="My Page"
   description="Welcome to my site"
-  image={{ url: "/og.jpg", alt: "My Site", width: 1200, height: 630 }}
+  image={{
+    url: "/og.jpg",
+    alt: "My Site",
+    width: 1200,
+    height: 630,
+  }}
   url="https://example.com"
   siteName="My Site"
   locale="en_US"
@@ -411,7 +439,10 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
   card="summary_large_image"
   site="@mysite"
   creator="@myhandle"
-  image={{ url: "/og.jpg", alt: "My Site" }}
+  image={{
+    url: "/og.jpg",
+    alt: "My Site",
+  }}
 />
 ```
 
