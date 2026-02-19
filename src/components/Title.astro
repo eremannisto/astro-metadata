@@ -1,0 +1,15 @@
+---
+
+export type Props = {
+  value     : string
+  template? : `${string}%s${string}`
+}
+
+const { 
+  value, 
+  template = "%s" 
+} = Astro.props
+
+---
+
+<title>{template.replace("%s", value)}</title>
