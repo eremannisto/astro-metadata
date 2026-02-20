@@ -1,29 +1,31 @@
-export { default as Head               } from "./src/components/Head.astro"
-export { default as Title              } from "./src/components/Title.astro"
-export { default as Description        } from "./src/components/Description.astro"
-export { default as Canonical          } from "./src/components/Canonical.astro"
-export { default as Keywords           } from "./src/components/Keywords.astro"
-export { default as Robots             } from "./src/components/Robots.astro"
-export { default as OpenGraph          } from "./src/components/OpenGraph.astro"
-export { default as Twitter            } from "./src/components/Twitter.astro"
-export { default as Favicon            } from "./src/components/Favicon.astro"
-export { default as Schema             } from "./src/components/Schema.astro"
+export type { Props as CanonicalProps } from "./src/components/Canonical.astro"
+export { default as Canonical } from "./src/components/Canonical.astro"
+export type { Props as DescriptionProps } from "./src/components/Description.astro"
+export { default as Description } from "./src/components/Description.astro"
+export type { FaviconFile, Props as FaviconProps } from "./src/components/Favicon.astro"
+export { default as Favicon } from "./src/components/Favicon.astro"
+export type { Props as HeadProps } from "./src/components/Head.astro"
+export { default as Head } from "./src/components/Head.astro"
+export type { Props as KeywordsProps } from "./src/components/Keywords.astro"
+export { default as Keywords } from "./src/components/Keywords.astro"
+export type {
+  LanguageAlternate,
+  Props as LanguageAlternatesProps,
+} from "./src/components/LanguageAlternates.astro"
 export { default as LanguageAlternates } from "./src/components/LanguageAlternates.astro"
-export { Metadata                      } from "./src/lib/metadata.ts"
-
-export type { Props as HeadProps               } from "./src/components/Head.astro"
-export type { Props as TitleProps              } from "./src/components/Title.astro"
-export type { Props as DescriptionProps        } from "./src/components/Description.astro"
-export type { Props as CanonicalProps          } from "./src/components/Canonical.astro"
-export type { Props as KeywordsProps           } from "./src/components/Keywords.astro"
-export type { Props as RobotsProps             } from "./src/components/Robots.astro"
-export type { Props as OpenGraphProps,
-              OpenGraphImage, 
-              OpenGraphVideo, 
-              OpenGraphAudio                   } from "./src/components/OpenGraph.astro"
-export type { Props as TwitterProps            } from "./src/components/Twitter.astro"
-export type { Props as FaviconProps,
-              FaviconFile                      } from "./src/components/Favicon.astro"
-export type { Props as SchemaProps             } from "./src/components/Schema.astro"
-export type { Props as LanguageAlternatesProps,
-              LanguageAlternate                } from "./src/components/LanguageAlternates.astro"
+export type {
+  OpenGraphAudio,
+  OpenGraphImage,
+  OpenGraphVideo,
+  Props as OpenGraphProps,
+} from "./src/components/OpenGraph.astro"
+export { default as OpenGraph } from "./src/components/OpenGraph.astro"
+export type { Props as RobotsProps } from "./src/components/Robots.astro"
+export { default as Robots } from "./src/components/Robots.astro"
+export type { Props as SchemaProps } from "./src/components/Schema.astro"
+export { default as Schema } from "./src/components/Schema.astro"
+export type { Props as TitleProps } from "./src/components/Title.astro"
+export { default as Title } from "./src/components/Title.astro"
+export type { Props as TwitterProps } from "./src/components/Twitter.astro"
+export { default as Twitter } from "./src/components/Twitter.astro"
+export { Metadata } from "./src/lib/metadata.ts"

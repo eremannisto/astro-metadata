@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Keywords", () => {
-
   test.describe("basic", () => {
     test("renders keywords meta tag", async ({ page }) => {
       await page.goto("/keywords/basic")
@@ -15,5 +14,4 @@ test.describe("Keywords", () => {
       await expect(meta).toHaveAttribute("content", "astro, seo, metadata")
     })
   })
-
 })

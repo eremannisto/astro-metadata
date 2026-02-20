@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Twitter", () => {
-
   test.describe("basic", () => {
     test("renders twitter:title", async ({ page }) => {
       await page.goto("/twitter/basic")
@@ -85,5 +84,4 @@ test.describe("Twitter", () => {
       await expect(page.locator("meta[name='twitter:creator']")).toBeAttached()
     })
   })
-
 })

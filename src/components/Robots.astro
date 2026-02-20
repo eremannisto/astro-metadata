@@ -1,29 +1,25 @@
 ---
 export type Props = {
-  index?   : boolean
-  follow?  : boolean
-  archive? : boolean
-  snippet? : boolean
-  extra?   : string
+  index?: boolean
+  follow?: boolean
+  archive?: boolean
+  snippet?: boolean
+  extra?: string
 }
 
-const {
-  index   = true,
-  follow  = true,
-  archive = true,
-  snippet = true,
-  extra,
-} = Astro.props
+const { index = true, follow = true, archive = true, snippet = true, extra } = Astro.props
 
 // Combine the directives into a comma separated string,
 // for example: "index, follow, noarchive, nosnippet"
 const directives = [
-  index   ? "index"   : "noindex",
-  follow  ? "follow"  : "nofollow",
+  index ? "index" : "noindex",
+  follow ? "follow" : "nofollow",
   !archive ? "noarchive" : null,
   !snippet ? "nosnippet" : null,
   extra,
-].filter(Boolean).join(", ")
+]
+  .filter(Boolean)
+  .join(", ")
 ---
 
 <meta name="robots" content={directives} />

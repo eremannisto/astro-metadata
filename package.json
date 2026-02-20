@@ -25,6 +25,8 @@
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.3.0",
     "astro": "^5.17.2",
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
@@ -40,9 +42,9 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:all": "pnpm run test:unit && pnpm run test:e2e",
-    "lint":       "biome lint ./src ./index.ts",
-    "format":     "biome format ./src ./index.ts",
-    "check":      "biome check ./src ./index.ts",
-    "check:fix":  "biome check --write ./src ./index.ts"
+    "lint": "biome lint ./src ./index.ts",
+    "format": "prettier --write .",
+    "check": "biome lint ./src ./index.ts && prettier --check .",
+    "check:fix": "biome lint --write ./src ./index.ts && prettier --write ."
   }
 }

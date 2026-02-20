@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Title", () => {
-
   test.describe("basic", () => {
     test("renders title tag", async ({ page }) => {
       await page.goto("/title/basic")
@@ -15,5 +14,4 @@ test.describe("Title", () => {
       expect(await page.title()).toBe("My Page | My Site")
     })
   })
-
 })

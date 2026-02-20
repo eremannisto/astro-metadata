@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Integration", () => {
-
   test("renders title via Metadata utility", async ({ page }) => {
     await page.goto("/")
     expect(await page.title()).toBe("Home | My Site")
@@ -63,5 +62,4 @@ test.describe("Integration", () => {
     const meta = page.locator("meta[name='viewport']")
     await expect(meta).toHaveAttribute("content", "width=device-width, initial-scale=1.0")
   })
-
 })

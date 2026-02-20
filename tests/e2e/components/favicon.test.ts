@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Favicon", () => {
-
   test.describe("basic", () => {
     test("renders ico favicon", async ({ page }) => {
       await page.goto("/favicon/basic")
@@ -65,12 +64,13 @@ test.describe("Favicon", () => {
       await expect(manifest).toHaveAttribute("href", "/site.webmanifest")
     })
   })
-
-  test.describe("full", () => {
+  ;(test.describe("full", () => {
     test("renders all favicon types", async ({ page }) => {
       await page.goto("/favicon/full")
       await expect(page.locator("link[rel='icon'][type='image/x-icon']")).toBeAttached()
-      await expect(page.locator("link[rel='icon'][type='image/svg+xml']:not([media])")).toBeAttached()
+      await expect(
+        page.locator("link[rel='icon'][type='image/svg+xml']:not([media])")
+      ).toBeAttached()
       await expect(page.locator("link[rel='icon'][type='image/png']")).toBeAttached()
       await expect(page.locator("link[rel='apple-touch-icon']")).toBeAttached()
       await expect(page.locator("link[media='(prefers-color-scheme: dark)']")).toBeAttached()
@@ -78,27 +78,26 @@ test.describe("Favicon", () => {
       await expect(page.locator("link[rel='manifest']")).toBeAttached()
     })
   }),
+    test.describe("sorted", () => {
+      test("renders icons in correct order", async ({ page }) => {
+        await page.goto("/favicon/sorted")
+        const allLinks = await page.locator("link[rel='icon'], link[rel='apple-touch-icon']").all()
+        const hrefs = await Promise.all(allLinks.map((l) => l.getAttribute("href")))
+        expect(hrefs).toEqual([
+          "/favicon.ico",
+          "/favicon-96x96.png",
+          "/favicon.svg",
+          "/apple-touch-icon.png",
+          "/favicon-dark.svg",
+        ])
+      })
+    }))
 
-  test.describe("sorted", () => {
-    test("renders icons in correct order", async ({ page }) => {
-      await page.goto("/favicon/sorted")
-      const allLinks = await page.locator("link[rel='icon'], link[rel='apple-touch-icon']").all()
-      const hrefs = await Promise.all(allLinks.map(l => l.getAttribute("href")))
-      expect(hrefs).toEqual([
-        "/favicon.ico",
-        "/favicon-96x96.png",
-        "/favicon.svg",
-        "/apple-touch-icon.png",
-        "/favicon-dark.svg",
-      ])
-    })
-  })
-  
   test.describe("unsorted", () => {
     test("preserves original order", async ({ page }) => {
       await page.goto("/favicon/unsorted")
       const allLinks = await page.locator("link[rel='icon'], link[rel='apple-touch-icon']").all()
-      const hrefs = await Promise.all(allLinks.map(l => l.getAttribute("href")))
+      const hrefs = await Promise.all(allLinks.map((l) => l.getAttribute("href")))
       expect(hrefs).toEqual([
         "/favicon-dark.svg",
         "/apple-touch-icon.png",

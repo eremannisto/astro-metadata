@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach } from "vitest"
 import { Metadata } from "../../src/lib/metadata.ts"
 
 describe("Metadata", () => {
-
   beforeEach(() => {
     Metadata.set({})
   })
@@ -103,7 +102,7 @@ describe("Metadata", () => {
 
     it("returns defaults when store is empty", () => {
       const result = Metadata.resolve({
-        title:       "My Site",
+        title: "My Site",
         description: "Default description",
       })
       expect(result.title).toBe("My Site")
@@ -115,5 +114,4 @@ describe("Metadata", () => {
       expect(result).toEqual({})
     })
   })
-
 })

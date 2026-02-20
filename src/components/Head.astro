@@ -1,30 +1,30 @@
 ---
 import type { ComponentProps } from "astro/types"
-import Title              from "./Title.astro"
-import Description        from "./Description.astro"
-import Canonical          from "./Canonical.astro"
-import Keywords           from "./Keywords.astro"
-import Robots             from "./Robots.astro"
-import OpenGraph          from "./OpenGraph.astro"
-import Twitter            from "./Twitter.astro"
-import Favicon            from "./Favicon.astro"
-import Schema             from "./Schema.astro"
+import Title from "./Title.astro"
+import Description from "./Description.astro"
+import Canonical from "./Canonical.astro"
+import Keywords from "./Keywords.astro"
+import Robots from "./Robots.astro"
+import OpenGraph from "./OpenGraph.astro"
+import Twitter from "./Twitter.astro"
+import Favicon from "./Favicon.astro"
+import Schema from "./Schema.astro"
 import LanguageAlternates from "./LanguageAlternates.astro"
 
 export type Props = {
-  title               : string
-  titleTemplate?      : `${string}%s${string}`
-  description?        : string
-  canonical?          : string
-  keywords?           : string[]
-  charset?            : string
-  viewport?           : string
-  robots?             : ComponentProps<typeof Robots>
-  openGraph?          : ComponentProps<typeof OpenGraph>
-  twitter?            : ComponentProps<typeof Twitter>
-  favicon?            : ComponentProps<typeof Favicon>
-  schema?             : ComponentProps<typeof Schema>
-  languageAlternates? : ComponentProps<typeof LanguageAlternates>["alternates"]
+  title: string
+  titleTemplate?: `${string}%s${string}`
+  description?: string
+  canonical?: string
+  keywords?: string[]
+  charset?: string
+  viewport?: string
+  robots?: ComponentProps<typeof Robots>
+  openGraph?: ComponentProps<typeof OpenGraph>
+  twitter?: ComponentProps<typeof Twitter>
+  favicon?: ComponentProps<typeof Favicon>
+  schema?: ComponentProps<typeof Schema>
+  languageAlternates?: ComponentProps<typeof LanguageAlternates>["alternates"]
 }
 
 const {
@@ -33,7 +33,7 @@ const {
   description,
   canonical,
   keywords,
-  charset  = "UTF-8",
+  charset = "UTF-8",
   viewport = "width=device-width, initial-scale=1.0",
   robots,
   openGraph,
@@ -62,44 +62,40 @@ const {
     extra={robots?.extra}
   />
 
-  {languageAlternates && (
-    <LanguageAlternates alternates={languageAlternates} />
-  )}
+  {languageAlternates && <LanguageAlternates alternates={languageAlternates} />}
 
-  {openGraph && (
-    <OpenGraph
-      title={openGraph.title ?? title}
-      description={openGraph.description ?? description}
-      url={openGraph.url ?? canonical}
-      type={openGraph.type}
-      siteName={openGraph.siteName}
-      locale={openGraph.locale}
-      localeAlternate={openGraph.localeAlternate}
-      image={openGraph.image}
-      video={openGraph.video}
-      audio={openGraph.audio}
-    />
-  )}
+  {
+    openGraph && (
+      <OpenGraph
+        title={openGraph.title ?? title}
+        description={openGraph.description ?? description}
+        url={openGraph.url ?? canonical}
+        type={openGraph.type}
+        siteName={openGraph.siteName}
+        locale={openGraph.locale}
+        localeAlternate={openGraph.localeAlternate}
+        image={openGraph.image}
+        video={openGraph.video}
+        audio={openGraph.audio}
+      />
+    )
+  }
 
-  {twitter && (
-    <Twitter
-      title={twitter.title ?? title}
-      description={twitter.description ?? description}
-      image={twitter.image}
-      card={twitter.card}
-      site={twitter.site}
-      creator={twitter.creator}
-      url={twitter.url ?? canonical}
-    />
-  )}
+  {
+    twitter && (
+      <Twitter
+        title={twitter.title ?? title}
+        description={twitter.description ?? description}
+        image={twitter.image}
+        card={twitter.card}
+        site={twitter.site}
+        creator={twitter.creator}
+        url={twitter.url ?? canonical}
+      />
+    )
+  }
 
-  {favicon && (
-    <Favicon
-      icons={favicon.icons}
-      manifest={favicon.manifest}
-      sort={favicon.sort}
-    />
-  )}
+  {favicon && <Favicon icons={favicon.icons} manifest={favicon.manifest} sort={favicon.sort} />}
 
   {schema && <Schema schema={schema.schema} />}
 

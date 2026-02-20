@@ -1,7 +1,7 @@
 ---
 export type LanguageAlternate = {
-  href     : string
-  hreflang : string
+  href: string
+  hreflang: string
 }
 
 export type Props = {
@@ -11,10 +11,8 @@ export type Props = {
 const { alternates } = Astro.props
 ---
 
-{alternates.map((alternate) => (
-  <link
-    rel="alternate"
-    href={alternate.href}
-    hreflang={alternate.hreflang}
-  />
-))}
+{
+  alternates.map((alternate) => (
+    <link rel="alternate" href={alternate.href} hreflang={alternate.hreflang} />
+  ))
+}

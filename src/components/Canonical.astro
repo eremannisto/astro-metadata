@@ -1,15 +1,11 @@
 ---
-
 export type Props = {
   value?: string
 }
 
-const { 
-  value 
-} = Astro.props
+const { value } = Astro.props
 
 const canonical = value ?? Astro.url.href
-
 ---
 
 <link rel="canonical" href={canonical} />

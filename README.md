@@ -31,6 +31,7 @@ Astro components for managing your page head — metadata, social sharing, favic
 - [License](#license)
 
 ## Installation
+
 ```bash
 # pnpm
 pnpm add @mannisto/astro-metadata
@@ -49,6 +50,7 @@ There are three ways to use this package. Pick what suits your project, or combi
 ### 1. Head component
 
 The simplest approach. Use `Head` in your layout and pass props down from your pages. Charset and viewport are included automatically.
+
 ```astro
 ---
 // layouts/Layout.astro
@@ -61,17 +63,13 @@ const { title, description, ...rest } = Astro.props
 ---
 
 <html>
-  <Head
-    title={title}
-    description={description}
-    titleTemplate="%s | My Site"
-    {...rest}
-  />
+  <Head title={title} description={description} titleTemplate="%s | My Site" {...rest} />
   <body>
     <slot />
   </body>
 </html>
 ```
+
 ```astro
 ---
 // pages/index.astro
@@ -88,6 +86,7 @@ Best for simple sites where pages pass metadata as props to their layout.
 ### 2. Individual components
 
 Use components directly inside your own `<head>`. Useful when you only need specific pieces, or want full control over the structure.
+
 ```astro
 ---
 import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata"
@@ -103,18 +102,13 @@ import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata
       title="My Page"
       description="Welcome to my site"
       image={{
-        url:    "/og.jpg",
-        alt:    "My Site",
-        width:  1200,
+        url: "/og.jpg",
+        alt: "My Site",
+        width: 1200,
         height: 630,
       }}
     />
-    <Favicon
-      icons={[
-        { path: "/favicon.ico" },
-        { path: "/favicon.svg" },
-      ]}
-    />
+    <Favicon icons={[{ path: "/favicon.ico" }, { path: "/favicon.svg" }]} />
   </head>
   <body>
     <slot />
@@ -127,6 +121,7 @@ Best for when you want to compose only what you need, or when `Head` is too opin
 ### 3. Metadata utility
 
 Set metadata in your page, resolve it in your layout. Eliminates prop drilling through nested layout layers.
+
 ```astro
 ---
 // pages/about.astro
@@ -149,6 +144,7 @@ Metadata.set({
   <h1>About</h1>
 </Layout>
 ```
+
 ```astro
 ---
 // layouts/Layout.astro
@@ -179,12 +175,13 @@ Best for sites with deeply nested layouts, or when you want to keep metadata co-
 <summary><strong>Canonical</strong></summary>
 
 Renders a canonical link tag. Falls back to `Astro.url.href` when no value is provided, so every page gets a canonical tag with zero configuration.
+
 ```astro
 <Canonical value="https://example.com/page" />
 ```
 
-| Prop | Type | Description |
-|------|------|-------------|
+| Prop    | Type     | Description                                  |
+| ------- | -------- | -------------------------------------------- |
 | `value` | `string` | Canonical URL. Defaults to `Astro.url.href`. |
 
 </details>
@@ -195,8 +192,8 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 <Description value="Welcome to my site" />
 ```
 
-| Prop | Type | Description |
-|------|------|-------------|
+| Prop    | Type     | Description      |
+| ------- | -------- | ---------------- |
 | `value` | `string` | Page description |
 
 </details>
@@ -205,15 +202,16 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 <summary><strong>Favicon</strong></summary>
 
 Favicon support with light and dark mode variants, automatic MIME type detection, and automatic sorting.
+
 ```astro
 <Favicon
   icons={[
     { path: "/favicon.ico" },
     { path: "/favicon.svg" },
-    { path: "/favicon-96x96.png",    size: 96 },
+    { path: "/favicon-96x96.png", size: 96 },
     { path: "/apple-touch-icon.png", size: 180, apple: true },
-    { path: "/favicon-dark.svg",     theme: "dark" },
-    { path: "/favicon-light.svg",    theme: "light" },
+    { path: "/favicon-dark.svg", theme: "dark" },
+    { path: "/favicon-light.svg", theme: "light" },
   ]}
   manifest="/site.webmanifest"
 />
@@ -221,20 +219,20 @@ Favicon support with light and dark mode variants, automatic MIME type detection
 
 Icons are automatically sorted in the recommended browser order: `ico` → `png` → `svg` → `apple` → themed variants. Pass `sort={false}` to preserve the original order.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `icons` | `FaviconFile[]` | — | List of favicon files |
-| `manifest` | `string` | — | Path to web app manifest |
-| `sort` | `boolean` | `true` | Sort icons in recommended browser order |
+| Prop       | Type            | Default | Description                             |
+| ---------- | --------------- | ------- | --------------------------------------- |
+| `icons`    | `FaviconFile[]` | —       | List of favicon files                   |
+| `manifest` | `string`        | —       | Path to web app manifest                |
+| `sort`     | `boolean`       | `true`  | Sort icons in recommended browser order |
 
 #### FaviconFile
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `path` | `string` | Path to the file. MIME type is detected automatically. |
-| `size` | `number` | Size in pixels. Rendered as `NxN` in the `sizes` attribute. |
-| `theme` | `"light" \| "dark"` | Adds a `prefers-color-scheme` media query |
-| `apple` | `boolean` | Renders as `<link rel="apple-touch-icon">` |
+| Prop    | Type                | Description                                                 |
+| ------- | ------------------- | ----------------------------------------------------------- |
+| `path`  | `string`            | Path to the file. MIME type is detected automatically.      |
+| `size`  | `number`            | Size in pixels. Rendered as `NxN` in the `sizes` attribute. |
+| `theme` | `"light" \| "dark"` | Adds a `prefers-color-scheme` media query                   |
+| `apple` | `boolean`           | Renders as `<link rel="apple-touch-icon">`                  |
 
 </details>
 
@@ -242,6 +240,7 @@ Icons are automatically sorted in the recommended browser order: `ico` → `png`
 <summary><strong>Head</strong></summary>
 
 Wraps the entire page head and composes all sub-components internally. Charset and viewport are always included and can be overridden if needed.
+
 ```astro
 <Head
   title="Home"
@@ -249,45 +248,43 @@ Wraps the entire page head and composes all sub-components internally. Charset a
   description="Welcome to my site"
   openGraph={{
     image: {
-      url:    "/og.jpg",
-      alt:    "My Site",
-      width:  1200,
+      url: "/og.jpg",
+      alt: "My Site",
+      width: 1200,
       height: 630,
     },
   }}
   favicon={{
-    icons: [
-      { path: "/favicon.ico" },
-      { path: "/favicon.svg" },
-    ],
+    icons: [{ path: "/favicon.ico" }, { path: "/favicon.svg" }],
   }}
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `title` | `string` | — | Page title. Required. |
-| `titleTemplate` | `` `${string}%s${string}` `` | — | Title template. Must contain `%s`, e.g. `"%s \| My Site"` |
-| `description` | `string` | — | Page description |
-| `canonical` | `string` | `Astro.url.href` | Canonical URL |
-| `keywords` | `string[]` | — | List of keywords |
-| `charset` | `string` | `"UTF-8"` | Document charset |
-| `viewport` | `string` | `"width=device-width, initial-scale=1.0"` | Viewport meta content |
-| `robots` | `RobotsProps` | — | Robots directives |
-| `openGraph` | `OpenGraphProps` | — | Open Graph tags |
-| `twitter` | `TwitterProps` | — | Twitter card tags |
-| `favicon` | `FaviconProps` | — | Favicon configuration |
-| `schema` | `SchemaProps` | — | JSON-LD structured data |
-| `languageAlternates` | `LanguageAlternate[]` | — | Hreflang alternate links |
+| Prop                 | Type                         | Default                                   | Description                                               |
+| -------------------- | ---------------------------- | ----------------------------------------- | --------------------------------------------------------- |
+| `title`              | `string`                     | —                                         | Page title. Required.                                     |
+| `titleTemplate`      | `` `${string}%s${string}` `` | —                                         | Title template. Must contain `%s`, e.g. `"%s \| My Site"` |
+| `description`        | `string`                     | —                                         | Page description                                          |
+| `canonical`          | `string`                     | `Astro.url.href`                          | Canonical URL                                             |
+| `keywords`           | `string[]`                   | —                                         | List of keywords                                          |
+| `charset`            | `string`                     | `"UTF-8"`                                 | Document charset                                          |
+| `viewport`           | `string`                     | `"width=device-width, initial-scale=1.0"` | Viewport meta content                                     |
+| `robots`             | `RobotsProps`                | —                                         | Robots directives                                         |
+| `openGraph`          | `OpenGraphProps`             | —                                         | Open Graph tags                                           |
+| `twitter`            | `TwitterProps`               | —                                         | Twitter card tags                                         |
+| `favicon`            | `FaviconProps`               | —                                         | Favicon configuration                                     |
+| `schema`             | `SchemaProps`                | —                                         | JSON-LD structured data                                   |
+| `languageAlternates` | `LanguageAlternate[]`        | —                                         | Hreflang alternate links                                  |
 
 #### Slots
+
 ```astro
 <Head title="My Site">
   <!-- Renders before charset and viewport -->
   <meta slot="top" http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <!-- Renders at the end of <head> -->
-  <script src={analyticsUrl} />
+  <script src={analyticsUrl}></script>
 </Head>
 ```
 
@@ -299,8 +296,8 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 <Keywords value={["astro", "seo", "metadata"]} />
 ```
 
-| Prop | Type | Description |
-|------|------|-------------|
+| Prop    | Type       | Description      |
+| ------- | ---------- | ---------------- |
 | `value` | `string[]` | List of keywords |
 
 </details>
@@ -309,21 +306,22 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 <summary><strong>LanguageAlternates</strong></summary>
 
 Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells search engines which language version to serve for a given region.
+
 ```astro
 <LanguageAlternates
   alternates={[
     { href: "https://example.com/en", hreflang: "en" },
     { href: "https://example.com/fi", hreflang: "fi" },
-    { href: "https://example.com",    hreflang: "x-default" },
+    { href: "https://example.com", hreflang: "x-default" },
   ]}
 />
 ```
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `alternates` | `LanguageAlternate[]` | List of alternate language pages |
-| `alternates[].href` | `string` | Full URL of the alternate page |
-| `alternates[].hreflang` | `string` | Language or region code, e.g. `en`, `fi`, `en-US`, `x-default` |
+| Prop                    | Type                  | Description                                                    |
+| ----------------------- | --------------------- | -------------------------------------------------------------- |
+| `alternates`            | `LanguageAlternate[]` | List of alternate language pages                               |
+| `alternates[].href`     | `string`              | Full URL of the alternate page                                 |
+| `alternates[].hreflang` | `string`              | Language or region code, e.g. `en`, `fi`, `en-US`, `x-default` |
 
 </details>
 
@@ -331,6 +329,7 @@ Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells sea
 <summary><strong>OpenGraph</strong></summary>
 
 Renders Open Graph meta tags for rich previews when your pages are shared on social platforms. When used inside `Head`, `title`, `description` and `url` fall back to the page values automatically.
+
 ```astro
 <OpenGraph
   title="My Page"
@@ -341,69 +340,69 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
   locale="en_US"
   localeAlternate={["fi_FI", "fr_FR"]}
   image={{
-    url:       "/og.jpg",
+    url: "/og.jpg",
     secureUrl: "https://example.com/og.jpg",
-    type:      "image/jpeg",
-    alt:       "My Site",
-    width:     1200,
-    height:    630,
+    type: "image/jpeg",
+    alt: "My Site",
+    width: 1200,
+    height: 630,
   }}
   video={{
-    url:       "https://example.com/video.mp4",
+    url: "https://example.com/video.mp4",
     secureUrl: "https://example.com/video.mp4",
-    type:      "video/mp4",
-    width:     1280,
-    height:    720,
+    type: "video/mp4",
+    width: 1280,
+    height: 720,
   }}
   audio={{
-    url:       "https://example.com/audio.mp3",
+    url: "https://example.com/audio.mp3",
     secureUrl: "https://example.com/audio.mp3",
-    type:      "audio/mpeg",
+    type: "audio/mpeg",
   }}
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `title` | `string` | — | OG title |
-| `description` | `string` | — | OG description |
-| `url` | `string` | — | Canonical URL for the OG object |
-| `type` | `string` | `"website"` | OG type |
-| `siteName` | `string` | — | Name of the site |
-| `locale` | `string` | — | Locale, e.g. `en_US` |
-| `localeAlternate` | `string[]` | — | Alternate locales, e.g. `["fi_FI", "fr_FR"]` |
-| `image` | `OpenGraphImage` | — | Image metadata |
-| `video` | `OpenGraphVideo` | — | Video metadata |
-| `audio` | `OpenGraphAudio` | — | Audio metadata |
+| Prop              | Type             | Default     | Description                                  |
+| ----------------- | ---------------- | ----------- | -------------------------------------------- |
+| `title`           | `string`         | —           | OG title                                     |
+| `description`     | `string`         | —           | OG description                               |
+| `url`             | `string`         | —           | Canonical URL for the OG object              |
+| `type`            | `string`         | `"website"` | OG type                                      |
+| `siteName`        | `string`         | —           | Name of the site                             |
+| `locale`          | `string`         | —           | Locale, e.g. `en_US`                         |
+| `localeAlternate` | `string[]`       | —           | Alternate locales, e.g. `["fi_FI", "fr_FR"]` |
+| `image`           | `OpenGraphImage` | —           | Image metadata                               |
+| `video`           | `OpenGraphVideo` | —           | Video metadata                               |
+| `audio`           | `OpenGraphAudio` | —           | Audio metadata                               |
 
 #### OpenGraphImage
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `url` | `string` | Image URL. Required if image is set. |
-| `secureUrl` | `string` | HTTPS image URL |
-| `type` | `string` | MIME type, e.g. `"image/jpeg"` |
-| `alt` | `string` | Image alt text |
-| `width` | `number` | Image width in pixels. Recommended: `1200` |
-| `height` | `number` | Image height in pixels. Recommended: `630` |
+| Prop        | Type     | Description                                |
+| ----------- | -------- | ------------------------------------------ |
+| `url`       | `string` | Image URL. Required if image is set.       |
+| `secureUrl` | `string` | HTTPS image URL                            |
+| `type`      | `string` | MIME type, e.g. `"image/jpeg"`             |
+| `alt`       | `string` | Image alt text                             |
+| `width`     | `number` | Image width in pixels. Recommended: `1200` |
+| `height`    | `number` | Image height in pixels. Recommended: `630` |
 
 #### OpenGraphVideo
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `url` | `string` | Video URL. Required if video is set. |
-| `secureUrl` | `string` | HTTPS video URL |
-| `type` | `string` | MIME type, e.g. `"video/mp4"` |
-| `width` | `number` | Video width in pixels |
-| `height` | `number` | Video height in pixels |
+| Prop        | Type     | Description                          |
+| ----------- | -------- | ------------------------------------ |
+| `url`       | `string` | Video URL. Required if video is set. |
+| `secureUrl` | `string` | HTTPS video URL                      |
+| `type`      | `string` | MIME type, e.g. `"video/mp4"`        |
+| `width`     | `number` | Video width in pixels                |
+| `height`    | `number` | Video height in pixels               |
 
 #### OpenGraphAudio
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `url` | `string` | Audio URL. Required if audio is set. |
-| `secureUrl` | `string` | HTTPS audio URL |
-| `type` | `string` | MIME type, e.g. `"audio/mpeg"` |
+| Prop        | Type     | Description                          |
+| ----------- | -------- | ------------------------------------ |
+| `url`       | `string` | Audio URL. Required if audio is set. |
+| `secureUrl` | `string` | HTTPS audio URL                      |
+| `type`      | `string` | MIME type, e.g. `"audio/mpeg"`       |
 
 </details>
 
@@ -411,20 +410,18 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
 <summary><strong>Robots</strong></summary>
 
 Controls how search engines crawl and index your page. Defaults to `index, follow`.
+
 ```astro
-<Robots
-  archive={false}
-  extra="max-snippet:-1, max-image-preview:large, max-video-preview:-1"
-/>
+<Robots archive={false} extra="max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `index` | `boolean` | `true` | Allow indexing |
-| `follow` | `boolean` | `true` | Allow following links |
-| `archive` | `boolean` | `true` | Allow search engines to cache the page |
-| `snippet` | `boolean` | `true` | Allow text snippets in search results |
-| `extra` | `string` | — | Additional directives, e.g. `"max-snippet:-1, max-image-preview:large"` |
+| Prop      | Type      | Default | Description                                                             |
+| --------- | --------- | ------- | ----------------------------------------------------------------------- |
+| `index`   | `boolean` | `true`  | Allow indexing                                                          |
+| `follow`  | `boolean` | `true`  | Allow following links                                                   |
+| `archive` | `boolean` | `true`  | Allow search engines to cache the page                                  |
+| `snippet` | `boolean` | `true`  | Allow text snippets in search results                                   |
+| `extra`   | `string`  | —       | Additional directives, e.g. `"max-snippet:-1, max-image-preview:large"` |
 
 </details>
 
@@ -432,19 +429,20 @@ Controls how search engines crawl and index your page. Defaults to `index, follo
 <summary><strong>Schema</strong></summary>
 
 Outputs a `<script type="application/ld+json">` tag for structured data. Use it to help search engines understand your content and qualify for rich results.
+
 ```astro
 <Schema
   schema={{
     "@context": "https://schema.org",
     "@type": "Person",
-    "name": "Ere Männistö",
-    "url": "https://example.com",
+    name: "Ere Männistö",
+    url: "https://example.com",
   }}
 />
 ```
 
-| Prop | Type | Description |
-|------|------|-------------|
+| Prop     | Type                      | Description    |
+| -------- | ------------------------- | -------------- |
 | `schema` | `Record<string, unknown>` | JSON-LD object |
 
 </details>
@@ -453,13 +451,14 @@ Outputs a `<script type="application/ld+json">` tag for structured data. Use it 
 <summary><strong>Title</strong></summary>
 
 Renders the `<title>` tag. The template must contain `%s`, which is replaced with the page title — TypeScript enforces this at the type level.
+
 ```astro
 <Title value="My Page" template="%s | My Site" />
 ```
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `value` | `string` | Page title. Required. |
+| Prop       | Type                         | Description                         |
+| ---------- | ---------------------------- | ----------------------------------- |
+| `value`    | `string`                     | Page title. Required.               |
 | `template` | `` `${string}%s${string}` `` | Template string. Must contain `%s`. |
 
 </details>
@@ -468,6 +467,7 @@ Renders the `<title>` tag. The template must contain `%s`, which is replaced wit
 <summary><strong>Twitter</strong></summary>
 
 Renders Twitter card meta tags for rich previews on X. When used inside `Head`, `title` and `description` fall back to the page values automatically.
+
 ```astro
 <Twitter
   card="summary_large_image"
@@ -481,16 +481,16 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `title` | `string` | — | Card title |
-| `description` | `string` | — | Card description |
-| `url` | `string` | — | Canonical URL for the card |
-| `card` | `"summary" \| "summary_large_image" \| "player" \| "app"` | `"summary_large_image"` | Card type |
-| `site` | `string` | — | Twitter handle of the site, e.g. `@mysite` |
-| `creator` | `string` | — | Twitter handle of the content author |
-| `image.url` | `string` | — | Image URL. Required if image is set. |
-| `image.alt` | `string` | — | Image alt text |
+| Prop          | Type                                                      | Default                 | Description                                |
+| ------------- | --------------------------------------------------------- | ----------------------- | ------------------------------------------ |
+| `title`       | `string`                                                  | —                       | Card title                                 |
+| `description` | `string`                                                  | —                       | Card description                           |
+| `url`         | `string`                                                  | —                       | Canonical URL for the card                 |
+| `card`        | `"summary" \| "summary_large_image" \| "player" \| "app"` | `"summary_large_image"` | Card type                                  |
+| `site`        | `string`                                                  | —                       | Twitter handle of the site, e.g. `@mysite` |
+| `creator`     | `string`                                                  | —                       | Twitter handle of the content author       |
+| `image.url`   | `string`                                                  | —                       | Image URL. Required if image is set.       |
+| `image.alt`   | `string`                                                  | —                       | Image alt text                             |
 
 </details>
 
@@ -499,6 +499,7 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
 ### Setup
 
 Clone the repository and run the init script:
+
 ```bash
 git clone https://github.com/eremannisto/astro-metadata
 cd astro-metadata
@@ -510,16 +511,19 @@ This installs all dependencies, links the local package to the fixture project, 
 ### Running tests
 
 Run unit tests only:
+
 ```bash
 pnpm test:unit
 ```
 
 Run end-to-end component tests:
+
 ```bash
 pnpm test:e2e
 ```
 
 Run all tests:
+
 ```bash
 pnpm test:all
 ```
@@ -529,11 +533,13 @@ pnpm test:all
 This project uses [Biome](https://biomejs.dev) for linting and formatting.
 
 Check for issues:
+
 ```bash
 pnpm check
 ```
 
 Auto-fix issues:
+
 ```bash
 pnpm check:fix
 ```
@@ -541,6 +547,7 @@ pnpm check:fix
 All pull requests must pass the Biome check and unit tests before merging. These are enforced automatically via GitHub Actions.
 
 ### Project structure
+
 ```
 astro-metadata/
   src/

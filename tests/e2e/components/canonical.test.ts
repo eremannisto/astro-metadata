@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Canonical", () => {
-
   test.describe("default", () => {
     test("renders canonical tag", async ({ page }) => {
       await page.goto("/canonical/default")
@@ -29,5 +28,4 @@ test.describe("Canonical", () => {
       await expect(canonical).toHaveAttribute("href", "https://example.com/canonical")
     })
   })
-
 })

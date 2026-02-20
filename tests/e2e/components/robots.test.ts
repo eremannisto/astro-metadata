@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Robots", () => {
-
   test.describe("basic", () => {
     test("renders robots meta tag", async ({ page }) => {
       await page.goto("/robots/basic")
@@ -61,5 +60,4 @@ test.describe("Robots", () => {
       expect(content).toContain("max-image-preview:large")
     })
   })
-
 })

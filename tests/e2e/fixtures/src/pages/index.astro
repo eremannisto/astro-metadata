@@ -6,18 +6,18 @@ Metadata.set({
   description: "Integration test page",
   openGraph: {
     image: {
-      url:    "/og.jpg",
-      alt:    "My Site",
-      width:  1200,
+      url: "/og.jpg",
+      alt: "My Site",
+      width: 1200,
       height: 630,
     },
   },
 })
 
 const meta = Metadata.resolve({
-  title:         "My Site",
+  title: "My Site",
   titleTemplate: "%s | My Site",
-  description:   "Default description",
+  description: "Default description",
 })
 ---
 
@@ -28,10 +28,10 @@ const meta = Metadata.resolve({
       icons: [
         { path: "/favicon.ico" },
         { path: "/favicon.svg" },
-        { path: "/favicon-96x96.png",    size: 96 },
+        { path: "/favicon-96x96.png", size: 96 },
         { path: "/apple-touch-icon.png", size: 180, apple: true },
-        { path: "/favicon-dark.svg",     theme: "dark" },
-        { path: "/favicon-light.svg",    theme: "light" },
+        { path: "/favicon-dark.svg", theme: "dark" },
+        { path: "/favicon-light.svg", theme: "light" },
       ],
     }}
     languageAlternates={[
@@ -41,8 +41,8 @@ const meta = Metadata.resolve({
     schema={{
       schema: {
         "@context": "https://schema.org",
-        "@type":    "WebSite",
-        "name":     "My Site",
+        "@type": "WebSite",
+        name: "My Site",
       },
     }}
   />

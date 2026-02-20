@@ -1,5 +1,5 @@
 import type { ComponentProps } from "astro/types"
-import type Head        from "../components/Head.astro"
+import type Head from "../components/Head.astro"
 
 let store: Partial<ComponentProps<typeof Head>> = {}
 
@@ -8,7 +8,6 @@ let store: Partial<ComponentProps<typeof Head>> = {}
  * Call set() in your page, then resolve() in your layout.
  */
 export const Metadata = {
-
   /**
    * Replace the current metadata store with new values.
    *
@@ -38,15 +37,37 @@ export const Metadata = {
     return { ...defaults, ...store }
   },
 
-  get title()              { return store.title              },
-  get titleTemplate()      { return store.titleTemplate      },
-  get description()        { return store.description        },
-  get canonical()          { return store.canonical          },
-  get keywords()           { return store.keywords           },
-  get robots()             { return store.robots             },
-  get openGraph()          { return store.openGraph          },
-  get twitter()            { return store.twitter            },
-  get favicon()            { return store.favicon            },
-  get schema()             { return store.schema             },
-  get languageAlternates() { return store.languageAlternates },
+  get title() {
+    return store.title
+  },
+  get titleTemplate() {
+    return store.titleTemplate
+  },
+  get description() {
+    return store.description
+  },
+  get canonical() {
+    return store.canonical
+  },
+  get keywords() {
+    return store.keywords
+  },
+  get robots() {
+    return store.robots
+  },
+  get openGraph() {
+    return store.openGraph
+  },
+  get twitter() {
+    return store.twitter
+  },
+  get favicon() {
+    return store.favicon
+  },
+  get schema() {
+    return store.schema
+  },
+  get languageAlternates() {
+    return store.languageAlternates
+  },
 }

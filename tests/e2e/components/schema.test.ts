@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Schema", () => {
-
   test.describe("website", () => {
     test("renders script tag", async ({ page }) => {
       await page.goto("/schema/website")
@@ -67,5 +66,4 @@ test.describe("Schema", () => {
       expect(parsed.email).toBe("ere@example.com")
     })
   })
-
 })

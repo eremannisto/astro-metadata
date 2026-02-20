@@ -1,22 +1,18 @@
 ---
 export type FaviconFile = {
-  path   : string
-  size?  : number
-  theme? : "light" | "dark"
-  apple? : boolean
+  path: string
+  size?: number
+  theme?: "light" | "dark"
+  apple?: boolean
 }
 
 export type Props = {
-  icons  : FaviconFile[]
-  manifest? : string
-  sort?  : boolean
+  icons: FaviconFile[]
+  manifest?: string
+  sort?: boolean
 }
 
-const {
-  icons,
-  manifest,
-  sort = true,
-} = Astro.props
+const { icons, manifest, sort = true } = Astro.props
 
 /**
  * Detects the MIME type of a favicon file from its extension.
@@ -25,12 +21,11 @@ const {
  * @returns The MIME type of the file.
  */
 function getMimeType(path: string): string {
-  if (path.endsWith(".svg"))  return "image/svg+xml"
-  if (path.endsWith(".png"))  return "image/png"
+  if (path.endsWith(".svg")) return "image/svg+xml"
+  if (path.endsWith(".png")) return "image/png"
   if (path.endsWith(".webp")) return "image/webp"
-  if (path.endsWith(".jpg") ||
-      path.endsWith(".jpeg")) return "image/jpeg"
-  if (path.endsWith(".ico"))  return "image/x-icon"
+  if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg"
+  if (path.endsWith(".ico")) return "image/x-icon"
   return "image/x-icon"
 }
 
@@ -42,7 +37,7 @@ function getMimeType(path: string): string {
  */
 function getMedia(theme?: "light" | "dark"): string | undefined {
   if (theme === "light") return "(prefers-color-scheme: light)"
-  if (theme === "dark")  return "(prefers-color-scheme: dark)"
+  if (theme === "dark") return "(prefers-color-scheme: dark)"
   return undefined
 }
 
@@ -53,50 +48,41 @@ function getMedia(theme?: "light" | "dark"): string | undefined {
  * Order: ico → png → svg → apple → themed variants
  */
 function getSortOrder(file: FaviconFile): number {
-  if (file.apple)               return 4
-  if (file.theme)               return 5
-  if (file.path.endsWith(".ico"))  return 0
-  if (file.path.endsWith(".png") ||
-      file.path.endsWith(".webp") ||
-      file.path.endsWith(".jpg") ||
-      file.path.endsWith(".jpeg")) return 1
-  if (file.path.endsWith(".svg"))  return 2
+  if (file.apple) return 4
+  if (file.theme) return 5
+  if (file.path.endsWith(".ico")) return 0
+  if (
+    file.path.endsWith(".png") ||
+    file.path.endsWith(".webp") ||
+    file.path.endsWith(".jpg") ||
+    file.path.endsWith(".jpeg")
+  )
+    return 1
+  if (file.path.endsWith(".svg")) return 2
   return 3
 }
 
-const sorted = sort
-  ? [...icons].sort((a, b) => getSortOrder(a) - getSortOrder(b))
-  : icons
+const sorted = sort ? [...icons].sort((a, b) => getSortOrder(a) - getSortOrder(b)) : icons
 
 const prepared = sorted.map((file) => ({
-  path  : file.path,
-  size  : file.size ? `${file.size}x${file.size}` : undefined,
-  type  : getMimeType(file.path),
-  media : getMedia(file.theme),
-  apple : file.apple ?? false,
+  path: file.path,
+  size: file.size ? `${file.size}x${file.size}` : undefined,
+  type: getMimeType(file.path),
+  media: getMedia(file.theme),
+  apple: file.apple ?? false,
 }))
 ---
 
 {manifest && <link rel="manifest" href={manifest} />}
 
-{prepared.map((icon) => {
-  if (icon.apple) {
-    return (
-      <link
-        rel="apple-touch-icon"
-        href={icon.path}
-        sizes={icon.size}
-      />
-    )
-  }
+{
+  prepared.map((icon) => {
+    if (icon.apple) {
+      return <link rel="apple-touch-icon" href={icon.path} sizes={icon.size} />
+    }
 
-  return (
-    <link
-      rel="icon"
-      type={icon.type}
-      href={icon.path}
-      sizes={icon.size}
-      media={icon.media}
-    />
-  )
-})}
+    return (
+      <link rel="icon" type={icon.type} href={icon.path} sizes={icon.size} media={icon.media} />
+    )
+  })
+}

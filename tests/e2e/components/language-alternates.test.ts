@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("LanguageAlternates", () => {
-
   test.describe("two-languages", () => {
     test("renders correct number of alternates", async ({ page }) => {
       await page.goto("/language-alternates/two-languages")
@@ -35,5 +34,4 @@ test.describe("LanguageAlternates", () => {
       await expect(xDefault).toHaveAttribute("href", "https://example.com")
     })
   })
-
 })

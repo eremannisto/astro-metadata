@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("OpenGraph", () => {
-
   test.describe("basic", () => {
     test("renders og:title", async ({ page }) => {
       await page.goto("/open-graph/basic")
@@ -166,5 +165,4 @@ test.describe("OpenGraph", () => {
       await expect(page.locator("meta[property='og:audio:type']")).toBeAttached()
     })
   })
-
 })
