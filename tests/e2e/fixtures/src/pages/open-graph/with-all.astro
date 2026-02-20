@@ -1,0 +1,38 @@
+---
+import { OpenGraph } from "@mannisto/astro-metadata"
+---
+
+<html>
+  <head>
+    <OpenGraph
+      title="My Page"
+      description="Welcome to my site"
+      url="https://example.com"
+      type="website"
+      siteName="My Site"
+      locale="en_US"
+      localeAlternate={["fi_FI", "fr_FR"]}
+      image={{
+        url:       "/og.jpg",
+        secureUrl: "https://example.com/og.jpg",
+        type:      "image/jpeg",
+        alt:       "My Site",
+        width:     1200,
+        height:    630,
+      }}
+      video={{
+        url:       "https://example.com/video.mp4",
+        secureUrl: "https://example.com/video.mp4",
+        type:      "video/mp4",
+        width:     1280,
+        height:    720,
+      }}
+      audio={{
+        url:       "https://example.com/audio.mp3",
+        secureUrl: "https://example.com/audio.mp3",
+        type:      "audio/mpeg",
+      }}
+    />
+  </head>
+  <body />
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "astro-metadata-fixtures",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev"
+  },
+  "dependencies": {
+    "@mannisto/astro-metadata": "file:../../..",
+    "astro": "^5.0.0"
+  }
+}

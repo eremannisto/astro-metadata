@@ -1,0 +1,19 @@
+---
+import { Favicon } from "@mannisto/astro-metadata"
+---
+
+<html>
+  <head>
+    <Favicon
+      sort={false}
+      icons={[
+        { path: "/favicon-dark.svg",     theme: "dark" },
+        { path: "/apple-touch-icon.png", size: 180, apple: true },
+        { path: "/favicon.svg" },
+        { path: "/favicon-96x96.png",    size: 96 },
+        { path: "/favicon.ico" },
+      ]}
+    />
+  </head>
+  <body />
+</html>

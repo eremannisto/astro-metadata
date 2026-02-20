@@ -1,0 +1,46 @@
+---
+import { Head } from "@mannisto/astro-metadata"
+---
+
+<html>
+  <Head
+    title="My Page"
+    titleTemplate="%s | My Site"
+    description="Welcome to my site"
+    canonical="https://example.com"
+    keywords={["astro", "seo", "metadata"]}
+    robots={{ archive: false }}
+    openGraph={{
+      title: "My Page",
+      description: "Welcome to my site",
+      image: {
+        url:    "/og.jpg",
+        alt:    "My Site",
+        width:  1200,
+        height: 630,
+      },
+    }}
+    twitter={{
+      card: "summary_large_image",
+      site: "@mysite",
+    }}
+    favicon={{
+      icons: [
+        { path: "/favicon.ico" },
+        { path: "/favicon.svg" },
+      ],
+    }}
+    languageAlternates={[
+      { href: "https://example.com/en", hreflang: "en" },
+      { href: "https://example.com/fi", hreflang: "fi" },
+    ]}
+    schema={{
+      schema: {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "My Site",
+      },
+    }}
+  />
+  <body />
+</html>
