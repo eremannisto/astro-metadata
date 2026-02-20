@@ -1,6 +1,6 @@
 {
   "name": "@mannisto/astro-metadata",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-beta.1",
   "type": "module",
   "description": "Astro components for managing your page head — metadata, social sharing, favicons, and SEO.",
   "license": "MIT",
@@ -12,14 +12,37 @@
   "bugs": {
     "url": "https://github.com/eremannisto/astro-metadata/issues"
   },
-  "files": ["src", "index.ts"],
+  "files": [
+    "src",
+    "index.ts"
+  ],
   "exports": "./index.ts",
   "peerDependencies": {
     "astro": "^4.3.0 || ^5.0.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.3",
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.0",
     "astro": "^5.17.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   },
-  "keywords": ["astro-component", "astro", "head", "seo", "meta"]
+  "keywords": [
+    "astro-component",
+    "astro",
+    "head",
+    "seo",
+    "meta"
+  ],
+  "scripts": {
+    "init": "bash scripts/init.sh",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test:all": "pnpm run test:unit && pnpm run test:e2e",
+    "lint":       "biome lint ./src ./index.ts",
+    "format":     "biome format ./src ./index.ts",
+    "check":      "biome check ./src ./index.ts",
+    "check:fix":  "biome check --write ./src ./index.ts"
+  }
 }
