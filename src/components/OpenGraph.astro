@@ -1,39 +1,77 @@
 ---
+export type OpenGraphImage = {
+  url        : string
+  secureUrl? : string
+  type?      : string
+  alt?       : string
+  width?     : number
+  height?    : number
+}
+
+export type OpenGraphVideo = {
+  url        : string
+  secureUrl? : string
+  type?      : string
+  width?     : number
+  height?    : number
+}
+
+export type OpenGraphAudio = {
+  url        : string
+  secureUrl? : string
+  type?      : string
+}
 
 export type Props = {
-  title?       : string
-  description? : string
-  url?         : string
-  type?        : string
-  siteName?    : string
-  locale?      : string
-  image?       : {
-    url     : string
-    alt?    : string
-    width?  : number
-    height? : number
-  }
+  title?           : string
+  description?     : string
+  url?             : string
+  type?            : string
+  siteName?        : string
+  locale?          : string
+  localeAlternate? : string[]
+  image?           : OpenGraphImage
+  video?           : OpenGraphVideo
+  audio?           : OpenGraphAudio
 }
 
 const {
   title,
   description,
-  image,
   url,
   type = "website",
   siteName,
   locale,
+  localeAlternate,
+  image,
+  video,
+  audio,
 } = Astro.props
-
 ---
 
-{title         && <meta property="og:title"        content={title}                />}
-{description   && <meta property="og:description"  content={description}          />}
-{image?.url    && <meta property="og:image"        content={image.url}            />}
-{image?.alt    && <meta property="og:image:alt"    content={image.alt}            />}
-{image?.width  && <meta property="og:image:width"  content={String(image.width)}  />}
-{image?.height && <meta property="og:image:height" content={String(image.height)} />}
-{url           && <meta property="og:url"          content={url}                  />}
-{type          && <meta property="og:type"         content={type}                 />}
-{siteName      && <meta property="og:site_name"    content={siteName}             />}
-{locale        && <meta property="og:locale"       content={locale}               />}
+{title                  && <meta property="og:title"              content={title}                    />}
+{description            && <meta property="og:description"        content={description}              />}
+{url                    && <meta property="og:url"                content={url}                      />}
+{type                   && <meta property="og:type"               content={type}                     />}
+{siteName               && <meta property="og:site_name"          content={siteName}                 />}
+{locale                 && <meta property="og:locale"             content={locale}                   />}
+{localeAlternate?.map((loc: string) => (
+  <meta property="og:locale:alternate" content={loc} />
+))}
+
+{image?.url             && <meta property="og:image"              content={image.url}                />}
+{image?.secureUrl       && <meta property="og:image:secure_url"   content={image.secureUrl}          />}
+{image?.type            && <meta property="og:image:type"         content={image.type}               />}
+{image?.alt             && <meta property="og:image:alt"          content={image.alt}                />}
+{image?.width           && <meta property="og:image:width"        content={String(image.width)}      />}
+{image?.height          && <meta property="og:image:height"       content={String(image.height)}     />}
+
+{video?.url             && <meta property="og:video"              content={video.url}                />}
+{video?.secureUrl       && <meta property="og:video:secure_url"   content={video.secureUrl}          />}
+{video?.type            && <meta property="og:video:type"         content={video.type}               />}
+{video?.width           && <meta property="og:video:width"        content={String(video.width)}      />}
+{video?.height          && <meta property="og:video:height"       content={String(video.height)}     />}
+
+{audio?.url             && <meta property="og:audio"              content={audio.url}                />}
+{audio?.secureUrl       && <meta property="og:audio:secure_url"   content={audio.secureUrl}          />}
+{audio?.type            && <meta property="og:audio:type"         content={audio.type}               />}
