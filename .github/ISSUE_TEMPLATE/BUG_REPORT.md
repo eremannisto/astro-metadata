@@ -16,6 +16,7 @@ What happens instead?
 Minimal example to reproduce the issue.
 
 **Environment**
+
 - Package version:
 - Astro version:
 - Node version:

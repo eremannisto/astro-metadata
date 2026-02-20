@@ -18,6 +18,9 @@
       "recommended": true,
       "correctness": {
         "useJsxKeyInIterable": "off"
+      },
+      "style": {
+        "useImportType": "off"
       }
     }
   },

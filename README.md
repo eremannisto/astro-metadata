@@ -530,7 +530,7 @@ pnpm test:all
 
 ### Linting and formatting
 
-This project uses [Biome](https://biomejs.dev) for linting and formatting.
+This project uses [Biome](https://biomejs.dev) for linting and [Prettier](https://prettier.io) for formatting.
 
 Check for issues:
 
@@ -538,13 +538,13 @@ Check for issues:
 pnpm check
 ```
 
-Auto-fix issues:
+Format files:
 
 ```bash
-pnpm check:fix
+pnpm format
 ```
 
-All pull requests must pass the Biome check and unit tests before merging. These are enforced automatically via GitHub Actions.
+All pull requests must pass `pnpm check` before merging. This is enforced automatically via GitHub Actions.
 
 ### Project structure
 
@@ -565,6 +565,7 @@ astro-metadata/
   playwright.config.ts
   vitest.config.ts
   biome.json
+  prettier.config.ts
 ```
 
 ## License
