@@ -1,5 +1,4 @@
 ---
-
 export type FaviconFile = {
   path   : string
   size?  : number
@@ -8,13 +7,15 @@ export type FaviconFile = {
 }
 
 export type Props = {
-  icons     : FaviconFile[]
+  icons  : FaviconFile[]
   manifest? : string
+  sort?  : boolean
 }
 
-const { 
-  icons, 
-  manifest 
+const {
+  icons,
+  manifest,
+  sort = true,
 } = Astro.props
 
 /**
@@ -45,14 +46,35 @@ function getMedia(theme?: "light" | "dark"): string | undefined {
   return undefined
 }
 
-const prepared = icons.map((file) => ({
+/**
+ * Returns a sort priority for a given favicon file.
+ * Lower number = rendered first.
+ *
+ * Order: ico → png → svg → apple → themed variants
+ */
+function getSortOrder(file: FaviconFile): number {
+  if (file.apple)               return 4
+  if (file.theme)               return 5
+  if (file.path.endsWith(".ico"))  return 0
+  if (file.path.endsWith(".png") ||
+      file.path.endsWith(".webp") ||
+      file.path.endsWith(".jpg") ||
+      file.path.endsWith(".jpeg")) return 1
+  if (file.path.endsWith(".svg"))  return 2
+  return 3
+}
+
+const sorted = sort
+  ? [...icons].sort((a, b) => getSortOrder(a) - getSortOrder(b))
+  : icons
+
+const prepared = sorted.map((file) => ({
   path  : file.path,
   size  : file.size ? `${file.size}x${file.size}` : undefined,
   type  : getMimeType(file.path),
   media : getMedia(file.theme),
   apple : file.apple ?? false,
 }))
-
 ---
 
 {manifest && <link rel="manifest" href={manifest} />}
