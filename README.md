@@ -499,7 +499,6 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
 ### Setup
 
 Clone the repository and run the init script:
-
 ```bash
 git clone https://github.com/eremannisto/astro-metadata
 cd astro-metadata
@@ -511,43 +510,37 @@ This installs all dependencies, links the local package to the fixture project, 
 ### Running tests
 
 Run unit tests only:
-
 ```bash
 pnpm test:unit
 ```
 
 Run end-to-end component tests:
-
 ```bash
 pnpm test:e2e
 ```
 
 Run all tests:
-
 ```bash
 pnpm test:all
 ```
 
 ### Linting and formatting
 
-This project uses [Biome](https://biomejs.dev) for linting and formatting.
+This project uses [Biome](https://biomejs.dev) for linting and [Prettier](https://prettier.io) for formatting.
 
 Check for issues:
-
 ```bash
 pnpm check
 ```
 
-Auto-fix issues:
-
+Format files:
 ```bash
-pnpm check:fix
+pnpm format
 ```
 
-All pull requests must pass the Biome check and unit tests before merging. These are enforced automatically via GitHub Actions.
+All pull requests must pass `pnpm check` before merging. This is enforced automatically via GitHub Actions.
 
 ### Project structure
-
 ```
 astro-metadata/
   src/
@@ -565,6 +558,7 @@ astro-metadata/
   playwright.config.ts
   vitest.config.ts
   biome.json
+  prettier.config.ts
 ```
 
 ## License
