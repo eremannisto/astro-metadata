@@ -2,3 +2,4 @@ node_modules
 tests/e2e/fixtures/node_modules
 tests/e2e/results
 dist
+.github

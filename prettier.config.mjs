@@ -1,10 +1,4 @@
-import type { Config } from "prettier"
-
-/**
- * NOTE: Prettier will be removed in the future and replaced with Biome,
- * when we have a way to format Astro files with Biome.
- */
-const config: Config = {
+const config = {
   plugins: ["prettier-plugin-astro"],
   semi: false,
   singleQuote: false,
