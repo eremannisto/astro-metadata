@@ -17,7 +17,10 @@ export type { Props as DescriptionProps        } from "./src/components/Descript
 export type { Props as CanonicalProps          } from "./src/components/Canonical.astro"
 export type { Props as KeywordsProps           } from "./src/components/Keywords.astro"
 export type { Props as RobotsProps             } from "./src/components/Robots.astro"
-export type { Props as OpenGraphProps          } from "./src/components/OpenGraph.astro"
+export type { Props as OpenGraphProps,
+              OpenGraphImage, 
+              OpenGraphVideo, 
+              OpenGraphAudio                   } from "./src/components/OpenGraph.astro"
 export type { Props as TwitterProps            } from "./src/components/Twitter.astro"
 export type { Props as FaviconProps,
               FaviconFile                      } from "./src/components/Favicon.astro"

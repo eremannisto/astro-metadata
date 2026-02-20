@@ -57,8 +57,8 @@ const {
   <Robots
     index={robots?.index}
     follow={robots?.follow}
-    noArchive={robots?.noArchive}
-    noSnippet={robots?.noSnippet}
+    archive={robots?.archive}
+    snippet={robots?.snippet}
     extra={robots?.extra}
   />
 
@@ -70,11 +70,14 @@ const {
     <OpenGraph
       title={openGraph.title ?? title}
       description={openGraph.description ?? description}
-      image={openGraph.image}
       url={openGraph.url ?? canonical}
       type={openGraph.type}
       siteName={openGraph.siteName}
       locale={openGraph.locale}
+      localeAlternate={openGraph.localeAlternate}
+      image={openGraph.image}
+      video={openGraph.video}
+      audio={openGraph.audio}
     />
   )}
 
@@ -86,6 +89,7 @@ const {
       card={twitter.card}
       site={twitter.site}
       creator={twitter.creator}
+      url={twitter.url ?? canonical}
     />
   )}
 
@@ -93,6 +97,7 @@ const {
     <Favicon
       icons={favicon.icons}
       manifest={favicon.manifest}
+      sort={favicon.sort}
     />
   )}
 
