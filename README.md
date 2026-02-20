@@ -171,8 +171,7 @@ Best for sites with deeply nested layouts, or when you want to keep metadata co-
 
 ## Components
 
-<details>
-<summary><strong>Canonical</strong></summary>
+### Canonical
 
 Renders a canonical link tag. Falls back to `Astro.url.href` when no value is provided, so every page gets a canonical tag with zero configuration.
 
@@ -184,10 +183,8 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 | ------- | -------- | -------------------------------------------- |
 | `value` | `string` | Canonical URL. Defaults to `Astro.url.href`. |
 
-</details>
+### Description
 
-<details>
-<summary><strong>Description</strong></summary>
 ```astro
 <Description value="Welcome to my site" />
 ```
@@ -196,10 +193,7 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 | ------- | -------- | ---------------- |
 | `value` | `string` | Page description |
 
-</details>
-
-<details>
-<summary><strong>Favicon</strong></summary>
+### Favicon
 
 Favicon support with light and dark mode variants, automatic MIME type detection, and automatic sorting.
 
@@ -234,10 +228,7 @@ Icons are automatically sorted in the recommended browser order: `ico` → `png`
 | `theme` | `"light" \| "dark"` | Adds a `prefers-color-scheme` media query                   |
 | `apple` | `boolean`           | Renders as `<link rel="apple-touch-icon">`                  |
 
-</details>
-
-<details>
-<summary><strong>Head</strong></summary>
+### Head
 
 Wraps the entire page head and composes all sub-components internally. Charset and viewport are always included and can be overridden if needed.
 
@@ -288,10 +279,8 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 </Head>
 ```
 
-</details>
+### Keywords
 
-<details>
-<summary><strong>Keywords</strong></summary>
 ```astro
 <Keywords value={["astro", "seo", "metadata"]} />
 ```
@@ -300,10 +289,7 @@ Wraps the entire page head and composes all sub-components internally. Charset a
 | ------- | ---------- | ---------------- |
 | `value` | `string[]` | List of keywords |
 
-</details>
-
-<details>
-<summary><strong>LanguageAlternates</strong></summary>
+### LanguageAlternates
 
 Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells search engines which language version to serve for a given region.
 
@@ -323,10 +309,7 @@ Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells sea
 | `alternates[].href`     | `string`              | Full URL of the alternate page                                 |
 | `alternates[].hreflang` | `string`              | Language or region code, e.g. `en`, `fi`, `en-US`, `x-default` |
 
-</details>
-
-<details>
-<summary><strong>OpenGraph</strong></summary>
+### OpenGraph
 
 Renders Open Graph meta tags for rich previews when your pages are shared on social platforms. When used inside `Head`, `title`, `description` and `url` fall back to the page values automatically.
 
@@ -404,10 +387,7 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
 | `secureUrl` | `string` | HTTPS audio URL                      |
 | `type`      | `string` | MIME type, e.g. `"audio/mpeg"`       |
 
-</details>
-
-<details>
-<summary><strong>Robots</strong></summary>
+### Robots
 
 Controls how search engines crawl and index your page. Defaults to `index, follow`.
 
@@ -423,10 +403,7 @@ Controls how search engines crawl and index your page. Defaults to `index, follo
 | `snippet` | `boolean` | `true`  | Allow text snippets in search results                                   |
 | `extra`   | `string`  | —       | Additional directives, e.g. `"max-snippet:-1, max-image-preview:large"` |
 
-</details>
-
-<details>
-<summary><strong>Schema</strong></summary>
+### Schema
 
 Outputs a `<script type="application/ld+json">` tag for structured data. Use it to help search engines understand your content and qualify for rich results.
 
@@ -445,10 +422,7 @@ Outputs a `<script type="application/ld+json">` tag for structured data. Use it 
 | -------- | ------------------------- | -------------- |
 | `schema` | `Record<string, unknown>` | JSON-LD object |
 
-</details>
-
-<details>
-<summary><strong>Title</strong></summary>
+### Title
 
 Renders the `<title>` tag. The template must contain `%s`, which is replaced with the page title — TypeScript enforces this at the type level.
 
@@ -461,10 +435,7 @@ Renders the `<title>` tag. The template must contain `%s`, which is replaced wit
 | `value`    | `string`                     | Page title. Required.               |
 | `template` | `` `${string}%s${string}` `` | Template string. Must contain `%s`. |
 
-</details>
-
-<details>
-<summary><strong>Twitter</strong></summary>
+### Twitter
 
 Renders Twitter card meta tags for rich previews on X. When used inside `Head`, `title` and `description` fall back to the page values automatically.
 
@@ -492,71 +463,21 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
 | `image.url`   | `string`                                                  | —                       | Image URL. Required if image is set.       |
 | `image.alt`   | `string`                                                  | —                       | Image alt text                             |
 
-</details>
-
 ## Contributing
 
-### Setup
-
-Clone the repository and run the init script:
-
-```bash
-git clone https://github.com/eremannisto/astro-metadata
-cd astro-metadata
-pnpm run init
-```
-
-This installs all dependencies, links the local package to the fixture project, and installs Playwright browsers.
-
-### Running tests
-
-Run unit tests only:
-
-```bash
-pnpm test:unit
-```
-
-Run end-to-end component tests:
-
-```bash
-pnpm test:e2e
-```
-
-Run all tests:
-
-```bash
-pnpm test:all
-```
-
-### Linting and formatting
-
-This project uses [Biome](https://biomejs.dev) for linting and [Prettier](https://prettier.io) for formatting.
-
-Check for issues:
-
-```bash
-pnpm check
-```
-
-Format files:
-
-```bash
-pnpm format
-```
-
-All pull requests must pass `pnpm check` before merging. This is enforced automatically via GitHub Actions.
+Clone the repo and run `pnpm run init` to install dependencies, link the local package to the fixture project, and set up Playwright. Then use `pnpm test:unit`, `pnpm test:e2e`, or `pnpm test:all` to run tests, and `pnpm check` / `pnpm format` for linting and formatting. All PRs must pass `pnpm check` — enforced via GitHub Actions.
 
 ### Project structure
 
 ```
 astro-metadata/
   src/
-    components/       # Astro components
-    lib/              # Metadata utility
+    components/
+    lib/
   tests/
     e2e/
-      components/     # Playwright component tests
-      fixtures/       # Astro test project
+      components/
+      fixtures/
     unit/
       metadata.test.ts
   scripts/
