@@ -23,3 +23,6 @@ pnpm-debug.log*
 
 # JetBrains setting folder
 .idea/
+
+# Test results
+tests/e2e/results/
