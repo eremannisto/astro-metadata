@@ -27,6 +27,7 @@ Astro components for managing your page head — metadata, social sharing, favic
   - [Schema](#schema)
   - [Title](#title)
   - [Twitter](#twitter)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Installation
@@ -102,9 +103,9 @@ import { Title, Description, OpenGraph, Favicon } from "@mannisto/astro-metadata
       title="My Page"
       description="Welcome to my site"
       image={{
-        url: "/og.jpg",
-        alt: "My Site",
-        width: 1200,
+        url:    "/og.jpg",
+        alt:    "My Site",
+        width:  1200,
         height: 630,
       }}
     />
@@ -203,7 +204,7 @@ Renders a canonical link tag. Falls back to `Astro.url.href` when no value is pr
 <details>
 <summary><strong>Favicon</strong></summary>
 
-Favicon support with light and dark mode variants and automatic MIME type detection.
+Favicon support with light and dark mode variants, automatic MIME type detection, and automatic sorting.
 ```astro
 <Favicon
   icons={[
@@ -218,10 +219,13 @@ Favicon support with light and dark mode variants and automatic MIME type detect
 />
 ```
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `icons` | `FaviconFile[]` | List of favicon files |
-| `manifest` | `string` | Path to web app manifest |
+Icons are automatically sorted in the recommended browser order: `ico` → `png` → `svg` → `apple` → themed variants. Pass `sort={false}` to preserve the original order.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icons` | `FaviconFile[]` | — | List of favicon files |
+| `manifest` | `string` | — | Path to web app manifest |
+| `sort` | `boolean` | `true` | Sort icons in recommended browser order |
 
 #### FaviconFile
 
@@ -245,9 +249,9 @@ Wraps the entire page head and composes all sub-components internally. Charset a
   description="Welcome to my site"
   openGraph={{
     image: {
-      url: "/og.jpg",
-      alt: "My Site",
-      width: 1200,
+      url:    "/og.jpg",
+      alt:    "My Site",
+      width:  1200,
       height: 630,
     },
   }}
@@ -331,15 +335,31 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
 <OpenGraph
   title="My Page"
   description="Welcome to my site"
-  image={{
-    url: "/og.jpg",
-    alt: "My Site",
-    width: 1200,
-    height: 630,
-  }}
   url="https://example.com"
+  type="website"
   siteName="My Site"
   locale="en_US"
+  localeAlternate={["fi_FI", "fr_FR"]}
+  image={{
+    url:       "/og.jpg",
+    secureUrl: "https://example.com/og.jpg",
+    type:      "image/jpeg",
+    alt:       "My Site",
+    width:     1200,
+    height:    630,
+  }}
+  video={{
+    url:       "https://example.com/video.mp4",
+    secureUrl: "https://example.com/video.mp4",
+    type:      "video/mp4",
+    width:     1280,
+    height:    720,
+  }}
+  audio={{
+    url:       "https://example.com/audio.mp3",
+    secureUrl: "https://example.com/audio.mp3",
+    type:      "audio/mpeg",
+  }}
 />
 ```
 
@@ -347,14 +367,43 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
 |------|------|---------|-------------|
 | `title` | `string` | — | OG title |
 | `description` | `string` | — | OG description |
-| `image.url` | `string` | — | Image URL. Required if image is set. |
-| `image.alt` | `string` | — | Image alt text |
-| `image.width` | `number` | — | Image width in pixels. Recommended: `1200` |
-| `image.height` | `number` | — | Image height in pixels. Recommended: `630` |
 | `url` | `string` | — | Canonical URL for the OG object |
 | `type` | `string` | `"website"` | OG type |
 | `siteName` | `string` | — | Name of the site |
 | `locale` | `string` | — | Locale, e.g. `en_US` |
+| `localeAlternate` | `string[]` | — | Alternate locales, e.g. `["fi_FI", "fr_FR"]` |
+| `image` | `OpenGraphImage` | — | Image metadata |
+| `video` | `OpenGraphVideo` | — | Video metadata |
+| `audio` | `OpenGraphAudio` | — | Audio metadata |
+
+#### OpenGraphImage
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `url` | `string` | Image URL. Required if image is set. |
+| `secureUrl` | `string` | HTTPS image URL |
+| `type` | `string` | MIME type, e.g. `"image/jpeg"` |
+| `alt` | `string` | Image alt text |
+| `width` | `number` | Image width in pixels. Recommended: `1200` |
+| `height` | `number` | Image height in pixels. Recommended: `630` |
+
+#### OpenGraphVideo
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `url` | `string` | Video URL. Required if video is set. |
+| `secureUrl` | `string` | HTTPS video URL |
+| `type` | `string` | MIME type, e.g. `"video/mp4"` |
+| `width` | `number` | Video width in pixels |
+| `height` | `number` | Video height in pixels |
+
+#### OpenGraphAudio
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `url` | `string` | Audio URL. Required if audio is set. |
+| `secureUrl` | `string` | HTTPS audio URL |
+| `type` | `string` | MIME type, e.g. `"audio/mpeg"` |
 
 </details>
 
@@ -364,7 +413,7 @@ Renders Open Graph meta tags for rich previews when your pages are shared on soc
 Controls how search engines crawl and index your page. Defaults to `index, follow`.
 ```astro
 <Robots
-  noArchive
+  archive={false}
   extra="max-snippet:-1, max-image-preview:large, max-video-preview:-1"
 />
 ```
@@ -373,8 +422,8 @@ Controls how search engines crawl and index your page. Defaults to `index, follo
 |------|------|---------|-------------|
 | `index` | `boolean` | `true` | Allow indexing |
 | `follow` | `boolean` | `true` | Allow following links |
-| `noArchive` | `boolean` | — | Prevent search engines from caching the page |
-| `noSnippet` | `boolean` | — | Prevent text snippets in search results |
+| `archive` | `boolean` | `true` | Allow search engines to cache the page |
+| `snippet` | `boolean` | `true` | Allow text snippets in search results |
 | `extra` | `string` | — | Additional directives, e.g. `"max-snippet:-1, max-image-preview:large"` |
 
 </details>
@@ -424,6 +473,7 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
   card="summary_large_image"
   site="@mysite"
   creator="@myhandle"
+  url="https://example.com"
   image={{
     url: "/og.jpg",
     alt: "My Site",
@@ -435,13 +485,80 @@ Renders Twitter card meta tags for rich previews on X. When used inside `Head`, 
 |------|------|---------|-------------|
 | `title` | `string` | — | Card title |
 | `description` | `string` | — | Card description |
-| `image.url` | `string` | — | Image URL. Required if image is set. |
-| `image.alt` | `string` | — | Image alt text |
-| `card` | `"summary" \| "summary_large_image"` | `"summary_large_image"` | Card type |
+| `url` | `string` | — | Canonical URL for the card |
+| `card` | `"summary" \| "summary_large_image" \| "player" \| "app"` | `"summary_large_image"` | Card type |
 | `site` | `string` | — | Twitter handle of the site, e.g. `@mysite` |
 | `creator` | `string` | — | Twitter handle of the content author |
+| `image.url` | `string` | — | Image URL. Required if image is set. |
+| `image.alt` | `string` | — | Image alt text |
 
 </details>
+
+## Contributing
+
+### Setup
+
+Clone the repository and run the init script:
+```bash
+git clone https://github.com/eremannisto/astro-metadata
+cd astro-metadata
+pnpm run init
+```
+
+This installs all dependencies, links the local package to the fixture project, and installs Playwright browsers.
+
+### Running tests
+
+Run unit tests only:
+```bash
+pnpm test:unit
+```
+
+Run end-to-end component tests:
+```bash
+pnpm test:e2e
+```
+
+Run all tests:
+```bash
+pnpm test:all
+```
+
+### Linting and formatting
+
+This project uses [Biome](https://biomejs.dev) for linting and formatting.
+
+Check for issues:
+```bash
+pnpm check
+```
+
+Auto-fix issues:
+```bash
+pnpm check:fix
+```
+
+All pull requests must pass the Biome check and unit tests before merging. These are enforced automatically via GitHub Actions.
+
+### Project structure
+```
+astro-metadata/
+  src/
+    components/       # Astro components
+    lib/              # Metadata utility
+  tests/
+    e2e/
+      components/     # Playwright component tests
+      fixtures/       # Astro test project
+    unit/
+      metadata.test.ts
+  scripts/
+    init.sh
+  index.ts
+  playwright.config.ts
+  vitest.config.ts
+  biome.json
+```
 
 ## License
 
