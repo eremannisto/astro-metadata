@@ -1,9 +1,8 @@
 # Keywords
 
-Renders a meta keywords tag for your page.
+Renders a `<meta name="keywords">` tag.
 
 ## Import
-
 ```astro
 ---
 import { Keywords } from "@mannisto/astro-metadata"
@@ -11,57 +10,14 @@ import { Keywords } from "@mannisto/astro-metadata"
 ```
 
 ## Usage
-
-### Basic
-
 ```astro
 <Keywords value={["astro", "seo", "metadata"]} />
-<!-- Output: <meta name="keywords" content="astro, seo, metadata"> -->
-```
 
-### With Head component
+<!-- With Head -->
+<Head title="My Page" keywords={["astro", "seo", "metadata"]} />
 
-```astro
-<Head
-  title="My Page"
-  keywords={["astro", "seo", "metadata"]}
-/>
-```
-
-### With Metadata API
-
-```astro
----
-import { Metadata } from "@mannisto/astro-metadata"
-
-Metadata.set({
-  title: "About",
-  keywords: ["astro", "seo", "metadata"],
-})
----
-```
-
-### In a layout
-
-```astro
----
-import { Keywords } from "@mannisto/astro-metadata"
-
-interface Props {
-  keywords?: string[]
-}
-
-const { keywords } = Astro.props
----
-
-<html>
-  <head>
-    {keywords && <Keywords value={keywords} />}
-  </head>
-  <body>
-    <slot />
-  </body>
-</html>
+<!-- Disabled -->
+<Head title="My Page" keywords={false} />
 ```
 
 ## Props
