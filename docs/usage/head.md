@@ -1,11 +1,8 @@
-# Head Component
+# Head component
 
-The simplest approach — use `Head` in your layout and pass props down from pages. Charset and viewport are included automatically.
+The simplest approach — use `Head` in your layout and pass props down from pages. Charset and viewport are included automatically. Title, description and image flow into Open Graph and Twitter by default.
 
 ## Basic setup
-
-Create a layout that accepts metadata props:
-
 ```astro
 ---
 // layouts/Layout.astro
@@ -13,87 +10,13 @@ import { Head, type HeadProps } from "@mannisto/astro-metadata"
 
 interface Props extends HeadProps {}
 
-const { title, description, ...rest } = Astro.props
+const { title, ...rest } = Astro.props
 ---
 
 <html lang="en">
   <Head
     title={title}
     titleTemplate="%s | My Site"
-    description={description}
-    {...rest}
-  />
-  <body>
-    <slot />
-  </body>
-</html>
-```
-
-Then use it in your pages:
-
-```astro
----
-// pages/index.astro
-import Layout from "../layouts/Layout.astro"
----
-
-<Layout
-  title="Home"
-  description="Welcome to my site"
->
-  <h1>Hello</h1>
-</Layout>
-```
-
-## Adding Open Graph and Twitter
-
-Pass social sharing configuration as props:
-
-```astro
----
-// pages/about.astro
-import Layout from "../layouts/Layout.astro"
----
-
-<Layout
-  title="About"
-  description="Learn more about us"
-  openGraph={{
-    image: {
-      url: "/og/about.jpg",
-      alt: "About us",
-      width: 1200,
-      height: 630,
-    },
-  }}
-  twitter={{
-    card: "summary_large_image",
-    site: "@mysite",
-  }}
->
-  <h1>About</h1>
-</Layout>
-```
-
-## Adding favicon
-
-Configure favicons in your layout for site-wide usage:
-
-```astro
----
-// layouts/Layout.astro
-import { Head, type HeadProps } from "@mannisto/astro-metadata"
-
-interface Props extends HeadProps {}
-
-const { title, description, ...rest } = Astro.props
----
-
-<html lang="en">
-  <Head
-    title={title}
-    titleTemplate="%s | My Site"
-    description={description}
     favicon={{
       icons: [
         { path: "/favicon.ico" },
@@ -109,92 +32,65 @@ const { title, description, ...rest } = Astro.props
   </body>
 </html>
 ```
-
-## Adding structured data
-
-Pass JSON-LD schema for rich search results:
-
 ```astro
 ---
-// pages/blog/[slug].astro
-import Layout from "../../layouts/Layout.astro"
-
-const post = await getPost(Astro.params.slug)
+// pages/index.astro
+import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout
-  title={post.title}
-  description={post.excerpt}
-  openGraph={{
-    type: "article",
-    image: {
-      url: post.coverImage,
-      alt: post.title,
-    },
-  }}
-  schema={{
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.excerpt,
-    datePublished: post.publishedAt,
-    author: {
-      "@type": "Person",
-      name: post.author.name,
-    },
-  }}
+  title="Home"
+  description="Welcome to my site"
+  image={{ url: "/og.jpg", alt: "My Site", width: 1200, height: 630 }}
 >
-  <article>
-    <h1>{post.title}</h1>
-  </article>
-</Layout>
-```
-
-## Using slots
-
-Add custom elements to the head:
-
-```astro
-<Layout title="Home" description="Welcome">
-  <!-- Add to layout's Head component -->
-</Layout>
-```
-
-In your layout, expose slots:
-
-```astro
----
-// layouts/Layout.astro
-import { Head, type HeadProps } from "@mannisto/astro-metadata"
-
-interface Props extends HeadProps {}
-
-const { title, description, ...rest } = Astro.props
----
-
-<html lang="en">
-  <Head title={title} description={description} {...rest}>
-    <slot name="head" />
-  </Head>
-  <body>
-    <slot />
-  </body>
-</html>
-```
-
-Then use it:
-
-```astro
-<Layout title="Home" description="Welcome">
-  <link slot="head" rel="preconnect" href="https://fonts.googleapis.com" />
-  <script slot="head" src="/analytics.js"></script>
-
   <h1>Hello</h1>
 </Layout>
 ```
 
-## When to use
+The `image` prop flows into Open Graph and Twitter automatically. No extra configuration needed for basic social sharing.
 
-- Simple sites with a single layout
-- When prop drilling is acceptable
-- When you want the simplest possible setup
+## Overriding per page
+
+You can override any prop on a per-page basis, or disable components entirely with `false`:
+```astro
+<Layout
+  title="About"
+  description="Learn more about us"
+  openGraph={{ title: "A different title for social sharing" }}
+  twitter={false}
+/>
+```
+
+## Slots
+
+Add custom elements to the head:
+```astro
+<Head title="My Site">
+  <!-- Renders before charset and viewport -->
+  <meta slot="top" http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- Renders at the end of <head> -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+</Head>
+```
+
+## Props
+
+| Prop                 | Type                                      | Default                                   | Description                        |
+| -------------------- | ----------------------------------------- | ----------------------------------------- | ---------------------------------- |
+| `title`              | `string`                                  | —                                         | Page title. Required.              |
+| `titleTemplate`      | `` `${string}%s${string}` ``              | —                                         | Title template, e.g. `"%s \| My Site"` |
+| `description`        | `string \| false`                         | —                                         | Page description                   |
+| `canonical`          | `string \| false`                         | `Astro.url.href`                          | Canonical URL                      |
+| `keywords`           | `string[] \| false`                       | —                                         | List of keywords                   |
+| `charset`            | `string`                                  | `"UTF-8"`                                 | Document charset                   |
+| `viewport`           | `string`                                  | `"width=device-width, initial-scale=1.0"` | Viewport meta content              |
+| `image`              | `OpenGraphImage \| false`                 | —                                         | Image passed to OG and Twitter     |
+| `robots`             | `RobotsProps \| false`                    | —                                         | Robots directives                  |
+| `openGraph`          | `OpenGraphProps \| false`                 | —                                         | Open Graph overrides               |
+| `twitter`            | `TwitterProps \| false`                   | —                                         | Twitter card overrides             |
+| `favicon`            | `FaviconProps \| false`                   | —                                         | Favicon configuration              |
+| `schema`             | `SchemaProps \| false`                    | —                                         | JSON-LD structured data            |
+| `languageAlternates` | `LanguageAlternate[] \| false`            | —                                         | Hreflang alternate links           |
+
+Any prop that accepts `false` can be used to disable that component entirely on a per-page basis.

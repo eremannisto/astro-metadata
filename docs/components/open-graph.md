@@ -1,9 +1,8 @@
 # OpenGraph
 
-Renders Open Graph meta tags for rich previews when your pages are shared on social platforms. When used inside `Head`, `title`, `description` and `url` fall back to the page values automatically.
+Renders Open Graph meta tags for rich previews when pages are shared on social platforms. When used inside `Head`, `title`, `description`, `image` and `url` are inherited from the page automatically.
 
 ## Import
-
 ```astro
 ---
 import { OpenGraph } from "@mannisto/astro-metadata"
@@ -13,154 +12,43 @@ import { OpenGraph } from "@mannisto/astro-metadata"
 ## Usage
 
 ### Basic
-
 ```astro
 <OpenGraph
   title="My Page"
   description="Welcome to my site"
-  image={{
-    url: "/og.jpg",
-    alt: "My Site",
-  }}
+  image={{ url: "/og.jpg", alt: "My Site", width: 1200, height: 630 }}
 />
-<!--
-  Output:
-  <meta property="og:title" content="My Page">
-  <meta property="og:description" content="Welcome to my site">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="/og.jpg">
-  <meta property="og:image:alt" content="My Site">
--->
-```
-
-### With image dimensions
-
-```astro
-<OpenGraph
-  title="My Page"
-  description="Welcome to my site"
-  image={{
-    url: "/og.jpg",
-    alt: "My Site",
-    width: 1200,
-    height: 630,
-  }}
-/>
-<!--
-  Output:
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
--->
 ```
 
 ### With site name and locale
-
 ```astro
 <OpenGraph
   title="My Page"
-  description="Welcome to my site"
   siteName="My Site"
   locale="en_US"
-/>
-<!--
-  Output:
-  <meta property="og:site_name" content="My Site">
-  <meta property="og:locale" content="en_US">
--->
-```
-
-### Article type
-
-```astro
-<OpenGraph
-  title="How to Build an Astro Site"
-  description="A complete guide"
-  type="article"
-/>
-<!-- Output: <meta property="og:type" content="article"> -->
-```
-
-### With video
-
-```astro
-<OpenGraph
-  title="My Page"
-  description="Watch our video"
-  video={{
-    url: "https://example.com/video.mp4",
-    type: "video/mp4",
-    width: 1280,
-    height: 720,
-  }}
+  localeAlternate={["fi_FI"]}
+  image={{ url: "/og.jpg", alt: "My Site" }}
 />
 ```
 
 ### With Head component
-
 ```astro
+<!-- Inherits title, description, image from page automatically -->
 <Head
   title="My Page"
   description="Welcome to my site"
-  openGraph={{
-    siteName: "My Site",
-    locale: "en_US",
-    image: {
-      url: "/og.jpg",
-      alt: "My Site",
-      width: 1200,
-      height: 630,
-    },
-  }}
+  image={{ url: "/og.jpg", alt: "My Site", width: 1200, height: 630 }}
 />
-```
 
-### With Metadata API
+<!-- Override specific OG values -->
+<Head
+  title="My Page"
+  image={{ url: "/og.jpg", alt: "My Site" }}
+  openGraph={{ title: "A different title for sharing", type: "article" }}
+/>
 
-```astro
----
-import { Metadata } from "@mannisto/astro-metadata"
-
-Metadata.set({
-  title: "About",
-  description: "Learn more about us",
-  openGraph: {
-    type: "article",
-    image: {
-      url: "/og/about.jpg",
-      alt: "About us",
-    },
-  },
-})
----
-```
-
-### In a layout
-
-```astro
----
-import { OpenGraph } from "@mannisto/astro-metadata"
-
-interface Props {
-  title: string
-  description: string
-  image?: string
-}
-
-const { title, description, image } = Astro.props
----
-
-<html>
-  <head>
-    <OpenGraph
-      title={title}
-      description={description}
-      image={image ? { url: image, alt: title } : undefined}
-    />
-  </head>
-  <body>
-    <slot />
-  </body>
-</html>
+<!-- Disable OG entirely -->
+<Head title="My Page" openGraph={false} />
 ```
 
 ## Props
@@ -169,7 +57,7 @@ const { title, description, image } = Astro.props
 | ----------------- | ---------------- | ----------- | -------------------------------------------- |
 | `title`           | `string`         | —           | OG title                                     |
 | `description`     | `string`         | —           | OG description                               |
-| `url`             | `string`         | —           | Canonical URL for the OG object              |
+| `url`             | `string`         | —           | Canonical URL                                |
 | `type`            | `string`         | `"website"` | OG type                                      |
 | `siteName`        | `string`         | —           | Name of the site                             |
 | `locale`          | `string`         | —           | Locale, e.g. `en_US`                         |

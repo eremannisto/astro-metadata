@@ -52,6 +52,9 @@ export const Metadata = {
   get keywords() {
     return store.keywords
   },
+  get image() {
+    return store.image
+  },
   get robots() {
     return store.robots
   },

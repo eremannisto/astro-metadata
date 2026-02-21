@@ -9,54 +9,200 @@ test.describe("Head", () => {
 
     test("renders default charset", async ({ page }) => {
       await page.goto("/head/basic")
-      const meta = page.locator("meta[charset]")
-      await expect(meta).toHaveAttribute("charset", "UTF-8")
+      await expect(page.locator("meta[charset]")).toHaveAttribute("charset", "UTF-8")
     })
 
     test("renders default viewport", async ({ page }) => {
       await page.goto("/head/basic")
-      const meta = page.locator("meta[name='viewport']")
-      await expect(meta).toHaveAttribute("content", "width=device-width, initial-scale=1.0")
+      await expect(page.locator("meta[name='viewport']")).toHaveAttribute(
+        "content",
+        "width=device-width, initial-scale=1.0"
+      )
+    })
+
+    test("og and twitter render by default", async ({ page }) => {
+      await page.goto("/head/basic")
+      await expect(page.locator("meta[property='og:title']")).toBeAttached()
+      await expect(page.locator("meta[name='twitter:title']")).toBeAttached()
     })
   })
 
   test.describe("with-charset", () => {
     test("renders custom charset", async ({ page }) => {
       await page.goto("/head/with-charset")
-      const meta = page.locator("meta[charset]")
-      await expect(meta).toHaveAttribute("charset", "ISO-8859-1")
+      await expect(page.locator("meta[charset]")).toHaveAttribute("charset", "ISO-8859-1")
     })
 
     test("renders custom viewport", async ({ page }) => {
       await page.goto("/head/with-charset")
-      const meta = page.locator("meta[name='viewport']")
-      await expect(meta).toHaveAttribute("content", "width=device-width, initial-scale=0.5")
+      await expect(page.locator("meta[name='viewport']")).toHaveAttribute(
+        "content",
+        "width=device-width, initial-scale=0.5"
+      )
     })
   })
 
   test.describe("with-slots", () => {
     test("renders first top slot item", async ({ page }) => {
       await page.goto("/head/with-slots")
-      const meta = page.locator("meta[http-equiv='X-UA-Compatible']")
-      await expect(meta).toHaveAttribute("content", "IE=edge")
+      await expect(page.locator("meta[http-equiv='X-UA-Compatible']")).toHaveAttribute(
+        "content",
+        "IE=edge"
+      )
     })
 
     test("renders second top slot item", async ({ page }) => {
       await page.goto("/head/with-slots")
-      const meta = page.locator("meta[name='theme-color']")
-      await expect(meta).toHaveAttribute("content", "#ffffff")
+      await expect(page.locator("meta[name='theme-color']")).toHaveAttribute("content", "#ffffff")
     })
 
     test("renders first default slot item", async ({ page }) => {
       await page.goto("/head/with-slots")
-      const meta = page.locator("meta[name='custom']")
-      await expect(meta).toHaveAttribute("content", "test")
+      await expect(page.locator("meta[name='custom']")).toHaveAttribute("content", "test")
     })
 
     test("renders second default slot item", async ({ page }) => {
       await page.goto("/head/with-slots")
-      const meta = page.locator("meta[name='author']")
-      await expect(meta).toHaveAttribute("content", "Ere Männistö")
+      await expect(page.locator("meta[name='author']")).toHaveAttribute("content", "Ere Männistö")
+    })
+  })
+
+  test.describe("with-image", () => {
+    test("flows into og:image", async ({ page }) => {
+      await page.goto("/head/with-image")
+      await expect(page.locator("meta[property='og:image']")).toHaveAttribute("content", "/og.jpg")
+    })
+
+    test("flows into og:image:alt", async ({ page }) => {
+      await page.goto("/head/with-image")
+      await expect(page.locator("meta[property='og:image:alt']")).toHaveAttribute(
+        "content",
+        "My Site"
+      )
+    })
+
+    test("flows into og:image:width", async ({ page }) => {
+      await page.goto("/head/with-image")
+      await expect(page.locator("meta[property='og:image:width']")).toHaveAttribute(
+        "content",
+        "1200"
+      )
+    })
+
+    test("flows into og:image:height", async ({ page }) => {
+      await page.goto("/head/with-image")
+      await expect(page.locator("meta[property='og:image:height']")).toHaveAttribute(
+        "content",
+        "630"
+      )
+    })
+
+    test("flows into twitter:image", async ({ page }) => {
+      await page.goto("/head/with-image")
+      await expect(page.locator("meta[name='twitter:image']")).toHaveAttribute("content", "/og.jpg")
+    })
+
+    test("flows into twitter:image:alt", async ({ page }) => {
+      await page.goto("/head/with-image")
+      await expect(page.locator("meta[name='twitter:image:alt']")).toHaveAttribute(
+        "content",
+        "My Site"
+      )
+    })
+
+    test("og:title falls back to page title", async ({ page }) => {
+      await page.goto("/head/with-image")
+      await expect(page.locator("meta[property='og:title']")).toHaveAttribute("content", "My Page")
+    })
+
+    test("twitter:title falls back to page title", async ({ page }) => {
+      await page.goto("/head/with-image")
+      await expect(page.locator("meta[name='twitter:title']")).toHaveAttribute("content", "My Page")
+    })
+  })
+
+  test.describe("disabled", () => {
+    test("no description", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("meta[name='description']")).not.toBeAttached()
+    })
+
+    test("no canonical", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("link[rel='canonical']")).not.toBeAttached()
+    })
+
+    test("no keywords", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("meta[name='keywords']")).not.toBeAttached()
+    })
+
+    test("no robots", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("meta[name='robots']")).not.toBeAttached()
+    })
+
+    test("no og tags", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("meta[property='og:title']")).not.toBeAttached()
+    })
+
+    test("no twitter tags", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("meta[name='twitter:card']")).not.toBeAttached()
+    })
+
+    test("no favicon", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("link[rel='icon']")).not.toBeAttached()
+    })
+
+    test("no schema", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("script[type='application/ld+json']")).not.toBeAttached()
+    })
+
+    test("no hreflang", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("link[rel='alternate']")).not.toBeAttached()
+    })
+
+    test("no og:image when image=false", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("meta[property='og:image']")).not.toBeAttached()
+    })
+
+    test("no twitter:image when image=false", async ({ page }) => {
+      await page.goto("/head/disabled")
+      await expect(page.locator("meta[name='twitter:image']")).not.toBeAttached()
+    })
+  })
+
+  test.describe("overrides", () => {
+    test("og:title uses override over page title", async ({ page }) => {
+      await page.goto("/head/overrides")
+      await expect(page.locator("meta[property='og:title']")).toHaveAttribute(
+        "content",
+        "Custom OG Title"
+      )
+    })
+
+    test("og:image uses override over top-level image", async ({ page }) => {
+      await page.goto("/head/overrides")
+      await expect(page.locator("meta[property='og:image']")).toHaveAttribute(
+        "content",
+        "/og-specific.jpg"
+      )
+    })
+
+    test("twitter:image falls back to top-level image when not overridden", async ({ page }) => {
+      await page.goto("/head/overrides")
+      await expect(page.locator("meta[name='twitter:image']")).toHaveAttribute("content", "/og.jpg")
+    })
+
+    test("twitter:card uses override", async ({ page }) => {
+      await page.goto("/head/overrides")
+      await expect(page.locator("meta[name='twitter:card']")).toHaveAttribute("content", "summary")
     })
   })
 
@@ -66,53 +212,14 @@ test.describe("Head", () => {
       expect(await page.title()).toBe("My Page | My Site")
     })
 
-    test("renders description", async ({ page }) => {
+    test("renders og:image from top-level image", async ({ page }) => {
       await page.goto("/head/full")
-      const meta = page.locator("meta[name='description']")
-      await expect(meta).toHaveAttribute("content", "Welcome to my site")
+      await expect(page.locator("meta[property='og:image']")).toHaveAttribute("content", "/og.jpg")
     })
 
-    test("renders canonical", async ({ page }) => {
+    test("renders twitter:image from top-level image", async ({ page }) => {
       await page.goto("/head/full")
-      const link = page.locator("link[rel='canonical']")
-      await expect(link).toHaveAttribute("href", "https://example.com")
-    })
-
-    test("renders keywords", async ({ page }) => {
-      await page.goto("/head/full")
-      const meta = page.locator("meta[name='keywords']")
-      await expect(meta).toHaveAttribute("content", "astro, seo, metadata")
-    })
-
-    test("renders robots", async ({ page }) => {
-      await page.goto("/head/full")
-      const meta = page.locator("meta[name='robots']")
-      const content = await meta.getAttribute("content")
-      expect(content).toContain("noarchive")
-    })
-
-    test("renders og:title", async ({ page }) => {
-      await page.goto("/head/full")
-      const meta = page.locator("meta[property='og:title']")
-      await expect(meta).toHaveAttribute("content", "My Page")
-    })
-
-    test("renders twitter:card", async ({ page }) => {
-      await page.goto("/head/full")
-      const meta = page.locator("meta[name='twitter:card']")
-      await expect(meta).toHaveAttribute("content", "summary_large_image")
-    })
-
-    test("renders favicon", async ({ page }) => {
-      await page.goto("/head/full")
-      const ico = page.locator("link[rel='icon'][type='image/x-icon']")
-      await expect(ico).toHaveAttribute("href", "/favicon.ico")
-    })
-
-    test("renders hreflang alternates", async ({ page }) => {
-      await page.goto("/head/full")
-      const en = page.locator("link[hreflang='en']")
-      await expect(en).toHaveAttribute("href", "https://example.com/en")
+      await expect(page.locator("meta[name='twitter:image']")).toHaveAttribute("content", "/og.jpg")
     })
 
     test("renders schema", async ({ page }) => {

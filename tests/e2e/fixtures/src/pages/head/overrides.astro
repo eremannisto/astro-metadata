@@ -1,0 +1,14 @@
+---
+import { Head } from "@mannisto/astro-metadata"
+---
+
+<html>
+  <Head
+    title="My Page"
+    description="Default description"
+    image={{ url: "/og.jpg", alt: "My Site" }}
+    openGraph={{ title: "Custom OG Title", image: { url: "/og-specific.jpg" } }}
+    twitter={{ card: "summary" }}
+  />
+  <body> </body>
+</html>

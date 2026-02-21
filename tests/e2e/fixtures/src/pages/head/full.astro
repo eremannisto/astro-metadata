@@ -9,21 +9,13 @@ import { Head } from "@mannisto/astro-metadata"
     description="Welcome to my site"
     canonical="https://example.com"
     keywords={["astro", "seo", "metadata"]}
+    image={{
+      url: "/og.jpg",
+      alt: "My Site",
+      width: 1200,
+      height: 630,
+    }}
     robots={{ archive: false }}
-    openGraph={{
-      title: "My Page",
-      description: "Welcome to my site",
-      image: {
-        url: "/og.jpg",
-        alt: "My Site",
-        width: 1200,
-        height: 630,
-      },
-    }}
-    twitter={{
-      card: "summary_large_image",
-      site: "@mysite",
-    }}
     favicon={{
       icons: [{ path: "/favicon.ico" }, { path: "/favicon.svg" }],
     }}

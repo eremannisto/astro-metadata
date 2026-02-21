@@ -8,30 +8,7 @@
 
 Astro components for managing your page head — metadata, social sharing, favicons, and SEO.
 
-## Table of contents
-
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Head component](docs/usage/head.md)
-  - [Metadata API](docs/usage/metadata.md)
-  - [Individual components](docs/usage/components.md)
-- Components
-  - [Canonical](docs/components/canonical.md)
-  - [Description](docs/components/description.md)
-  - [Favicon](docs/components/favicon.md)
-  - [Head](docs/components/head.md)
-  - [Keywords](docs/components/keywords.md)
-  - [LanguageAlternates](docs/components/language-alternates.md)
-  - [OpenGraph](docs/components/open-graph.md)
-  - [Robots](docs/components/robots.md)
-  - [Schema](docs/components/schema.md)
-  - [Title](docs/components/title.md)
-  - [Twitter](docs/components/twitter.md)
-- [Contributing](CONTRIBUTING.md)
-- [License](#license)
-
 ## Installation
-
 ```bash
 # pnpm
 pnpm add @mannisto/astro-metadata
@@ -49,8 +26,7 @@ There are three ways to use this package. Pick what suits your project, or combi
 
 ### Head component
 
-The simplest approach — use `Head` in your layout and pass props down from pages.
-
+The simplest approach — use `Head` in your layout and pass props down from pages. Title, description and image flow into Open Graph and Twitter automatically.
 ```astro
 ---
 import { Head } from "@mannisto/astro-metadata"
@@ -61,6 +37,7 @@ import { Head } from "@mannisto/astro-metadata"
     title="Home"
     titleTemplate="%s | My Site"
     description="Welcome to my site"
+    image={{ url: "/og.jpg", alt: "My Site", width: 1200, height: 630 }}
   />
   <body>
     <slot />
@@ -68,12 +45,11 @@ import { Head } from "@mannisto/astro-metadata"
 </html>
 ```
 
-[Full guide →](docs/usage/head.md)
+[Read more →](docs/usage/head.md)
 
 ### Metadata API
 
 Set metadata in pages, resolve in layouts — no prop drilling.
-
 ```astro
 ---
 // pages/about.astro
@@ -85,7 +61,6 @@ Metadata.set({
 })
 ---
 ```
-
 ```astro
 ---
 // layouts/Layout.astro
@@ -105,12 +80,11 @@ const meta = Metadata.resolve({
 </html>
 ```
 
-[Full guide →](docs/usage/metadata.md)
+[Read more →](docs/usage/metadata.md)
 
 ### Individual components
 
 Use components directly in your `<head>` for full control.
-
 ```astro
 ---
 import { Title, Description, OpenGraph } from "@mannisto/astro-metadata"
@@ -133,7 +107,25 @@ import { Title, Description, OpenGraph } from "@mannisto/astro-metadata"
 </html>
 ```
 
-[Full guide →](docs/usage/components.md)
+[Read more →](docs/usage/components.md)
+
+## Components
+
+- [Canonical](docs/components/canonical.md)
+- [Description](docs/components/description.md)
+- [Favicon](docs/components/favicon.md)
+- [Head](docs/components/head.md)
+- [Keywords](docs/components/keywords.md)
+- [LanguageAlternates](docs/components/language-alternates.md)
+- [OpenGraph](docs/components/open-graph.md)
+- [Robots](docs/components/robots.md)
+- [Schema](docs/components/schema.md)
+- [Title](docs/components/title.md)
+- [Twitter](docs/components/twitter.md)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and contribution guidelines.
 
 ## License
 
