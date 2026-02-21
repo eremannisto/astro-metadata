@@ -10,21 +10,23 @@ import Twitter from "./Twitter.astro"
 import Favicon from "./Favicon.astro"
 import Schema from "./Schema.astro"
 import LanguageAlternates from "./LanguageAlternates.astro"
+import type { OpenGraphImage } from "./OpenGraph.astro"
 
 export type Props = {
   title: string
   titleTemplate?: `${string}%s${string}`
-  description?: string
-  canonical?: string
-  keywords?: string[]
+  description?: string | false
+  canonical?: string | false
+  keywords?: string[] | false
   charset?: string
   viewport?: string
-  robots?: ComponentProps<typeof Robots>
-  openGraph?: ComponentProps<typeof OpenGraph>
-  twitter?: ComponentProps<typeof Twitter>
-  favicon?: ComponentProps<typeof Favicon>
-  schema?: ComponentProps<typeof Schema>
-  languageAlternates?: ComponentProps<typeof LanguageAlternates>["alternates"]
+  image?: OpenGraphImage | false
+  robots?: ComponentProps<typeof Robots> | false
+  openGraph?: ComponentProps<typeof OpenGraph> | false
+  twitter?: ComponentProps<typeof Twitter> | false
+  favicon?: ComponentProps<typeof Favicon> | false
+  schema?: ComponentProps<typeof Schema> | false
+  languageAlternates?: ComponentProps<typeof LanguageAlternates>["alternates"] | false
 }
 
 const {
@@ -35,6 +37,7 @@ const {
   keywords,
   charset = "UTF-8",
   viewport = "width=device-width, initial-scale=1.0",
+  image,
   robots,
   openGraph,
   twitter,
@@ -42,6 +45,32 @@ const {
   schema,
   languageAlternates,
 } = Astro.props
+
+const enabled = <T,>(value: T | false | undefined): value is T => {
+  return value !== false && value !== undefined
+}
+
+const og =
+  openGraph !== false
+    ? {
+        title,
+        description: enabled(description) ? description : undefined,
+        image: enabled(image) ? image : undefined,
+        url: enabled(canonical) ? canonical : undefined,
+        ...openGraph,
+      }
+    : false
+
+const tw =
+  twitter !== false
+    ? {
+        title,
+        description: enabled(description) ? description : undefined,
+        image: enabled(image) ? image : undefined,
+        url: enabled(canonical) ? canonical : undefined,
+        ...twitter,
+      }
+    : false
 ---
 
 <head>
@@ -51,53 +80,16 @@ const {
   <meta name="viewport" content={viewport} />
 
   <Title value={title} template={titleTemplate} />
-  <Description value={description} />
-  <Canonical value={canonical} />
-  <Keywords value={keywords} />
-  <Robots
-    index={robots?.index}
-    follow={robots?.follow}
-    archive={robots?.archive}
-    snippet={robots?.snippet}
-    extra={robots?.extra}
-  />
 
-  {languageAlternates && <LanguageAlternates alternates={languageAlternates} />}
-
-  {
-    openGraph && (
-      <OpenGraph
-        title={openGraph.title ?? title}
-        description={openGraph.description ?? description}
-        url={openGraph.url ?? canonical}
-        type={openGraph.type}
-        siteName={openGraph.siteName}
-        locale={openGraph.locale}
-        localeAlternate={openGraph.localeAlternate}
-        image={openGraph.image}
-        video={openGraph.video}
-        audio={openGraph.audio}
-      />
-    )
-  }
-
-  {
-    twitter && (
-      <Twitter
-        title={twitter.title ?? title}
-        description={twitter.description ?? description}
-        image={twitter.image}
-        card={twitter.card}
-        site={twitter.site}
-        creator={twitter.creator}
-        url={twitter.url ?? canonical}
-      />
-    )
-  }
-
-  {favicon && <Favicon icons={favicon.icons} manifest={favicon.manifest} sort={favicon.sort} />}
-
-  {schema && <Schema schema={schema.schema} />}
+  {enabled(description) && <Description value={description} />}
+  {enabled(canonical) && <Canonical value={canonical} />}
+  {enabled(keywords) && <Keywords value={keywords} />}
+  {enabled(robots) && <Robots {...robots} />}
+  {enabled(og) && <OpenGraph {...og} />}
+  {enabled(tw) && <Twitter {...tw} />}
+  {enabled(favicon) && <Favicon {...favicon} />}
+  {enabled(schema) && <Schema {...schema} />}
+  {enabled(languageAlternates) && <LanguageAlternates alternates={languageAlternates} />}
 
   <slot />
 </head>
