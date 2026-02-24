@@ -5,7 +5,7 @@ export default defineConfig({
   outputDir: "./tests/e2e/results",
   webServer: {
     command: "pnpm astro dev",
-    cwd: "./tests/e2e/fixtures",
+    cwd: "./tests/e2e/fixtures/basic",
     port: 4321,
     reuseExistingServer: !process.env.CI,
   },

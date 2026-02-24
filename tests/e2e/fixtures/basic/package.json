@@ -1,11 +1,11 @@
 {
-  "name": "astro-metadata-fixtures",
+  "name": "astro-metadata-fixtures-basic",
   "type": "module",
   "scripts": {
     "dev": "astro dev"
   },
   "dependencies": {
-    "@mannisto/astro-metadata": "file:../../..",
+    "@mannisto/astro-metadata": "workspace:*",
     "astro": "^5.0.0"
   }
 }
