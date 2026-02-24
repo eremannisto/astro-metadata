@@ -1,6 +1,6 @@
-node_modules
-tests/e2e/fixtures/node_modules
+**/node_modules
 tests/e2e/results
 dist
 .github
 *.md
+.pnpm-store

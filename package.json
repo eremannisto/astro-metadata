@@ -1,6 +1,6 @@
 {
   "name": "@mannisto/astro-metadata",
-  "version": "1.0.0-beta.6",
+  "version": "1.0.0-beta.7",
   "description": "Astro components for managing your page head — metadata, social sharing, favicons, and SEO.",
   "license": "MIT",
   "type": "module",
@@ -24,13 +24,12 @@
     "index.ts"
   ],
   "scripts": {
-    "init": "bash scripts/init.sh",
     "lint": "biome lint ./src ./index.ts",
     "format": "prettier --write .",
     "check": "biome lint ./src ./index.ts && prettier --check .",
+    "test": "pnpm run test:unit && pnpm run test:e2e",
     "test:unit": "vitest run",
-    "test:e2e": "playwright test",
-    "test:all": "pnpm run test:unit && pnpm run test:e2e"
+    "test:e2e": "playwright test"
   },
   "peerDependencies": {
     "astro": "^4.3.0 || ^5.0.0"

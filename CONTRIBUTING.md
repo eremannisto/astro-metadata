@@ -4,11 +4,12 @@ Thanks for your interest in contributing to `@mannisto/astro-metadata`!
 
 ## Getting started
 
-Clone the repo and run the init script to install dependencies, link the local package to the fixture project, and set up Playwright:
+Clone the repo and install dependencies:
 ```bash
 git clone https://github.com/eremannisto/astro-metadata.git
 cd astro-metadata
-pnpm run init
+pnpm install
+pnpm playwright install chromium
 ```
 
 ## Development workflow

@@ -32,6 +32,15 @@ importers:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.3.0)
 
+  tests/e2e/fixtures/basic:
+    dependencies:
+      "@mannisto/astro-metadata":
+        specifier: workspace:*
+        version: link:../../../..
+      astro:
+        specifier: ^5.0.0
+        version: 5.17.2(@types/node@25.3.0)(rollup@4.57.1)(typescript@5.9.3)
+
 packages:
   "@astrojs/compiler@2.13.1":
     resolution:
