@@ -1,4 +1,5 @@
 import type { ComponentProps } from "astro/types"
+
 import type Head from "../components/Head.astro"
 
 let store: Partial<ComponentProps<typeof Head>> = {}

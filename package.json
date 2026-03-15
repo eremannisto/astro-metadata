@@ -1,6 +1,6 @@
 {
   "name": "@mannisto/astro-metadata",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Astro components for managing your page head — metadata, social sharing, favicons, and SEO.",
   "license": "MIT",
   "type": "module",
@@ -24,24 +24,28 @@
     "index.ts"
   ],
   "scripts": {
-    "lint": "biome lint ./src ./index.ts",
+    "lint": "eslint . --fix",
     "format": "prettier --write .",
-    "check": "biome lint ./src ./index.ts && prettier --check .",
+    "check": "eslint . && prettier --check .",
     "test": "pnpm run test:unit && pnpm run test:e2e",
     "test:unit": "vitest run",
     "test:e2e": "playwright test"
   },
   "peerDependencies": {
-    "astro": "^4.3.0 || ^5.0.0"
+    "astro": "^4.3.0 || ^5.0.0 || ^6.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.3",
+    "@eslint/js": "^10.0.1",
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@playwright/test": "^1.58.2",
-    "@types/node": "^25.3.0",
-    "astro": "^5.17.2",
+    "@types/node": "^22.19.15",
+    "astro": "^5.18.1",
+    "eslint": "^10.0.3",
+    "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "typescript-eslint": "^8.57.0",
+    "vitest": "^4.1.0"
   }
 }
