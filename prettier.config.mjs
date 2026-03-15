@@ -5,12 +5,7 @@ const config = {
   tabWidth: 2,
   printWidth: 100,
   trailingComma: "es5",
-  importOrder: [
-    "<BUILTIN_MODULES>",
-    "<THIRD_PARTY_MODULES>",
-    "",
-    "^[./]",
-  ],
+  importOrder: ["<BUILTIN_MODULES>", "<THIRD_PARTY_MODULES>", "", "^[./]"],
   importOrderParserPlugins: ["typescript"],
   overrides: [
     {
