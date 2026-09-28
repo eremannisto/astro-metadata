@@ -66,4 +66,15 @@ test.describe("Schema", () => {
       expect(parsed.email).toBe("ere@example.com")
     })
   })
+
+  test.describe("escaped", () => {
+    test("keeps a closing script tag inside the JSON", async ({ page }) => {
+      await page.goto("/schema/escaped")
+      const schemas = page.locator("script[type='application/ld+json']")
+      await expect(schemas).toHaveCount(1)
+      const parsed = JSON.parse((await schemas.textContent())!)
+      expect(parsed.name).toBe("</script><script>window.injected = true</script>")
+      expect(await page.evaluate(() => "injected" in window)).toBe(false)
+    })
+  })
 })
