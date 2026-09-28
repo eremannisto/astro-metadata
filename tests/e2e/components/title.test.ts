@@ -14,4 +14,11 @@ test.describe("Title", () => {
       expect(await page.title()).toBe("My Page | My Site")
     })
   })
+
+  test.describe("with-dollar", () => {
+    test("keeps dollar patterns in the title as text", async ({ page }) => {
+      await page.goto("/title/with-dollar")
+      expect(await page.title()).toBe("Price $& $1 $$ more | My Site")
+    })
+  })
 })

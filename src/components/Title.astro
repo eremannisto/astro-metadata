@@ -5,6 +5,9 @@ export type Props = {
 }
 
 const { value, template = "%s" } = Astro.props
+
+// A replacer function keeps "$&" and other "$" patterns in the title as text
+const title = template.replace("%s", () => value)
 ---
 
-<title>{template.replace("%s", value)}</title>
+<title>{title}</title>
