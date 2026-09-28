@@ -107,4 +107,22 @@ test.describe("Favicon", () => {
       ])
     })
   })
+
+  test.describe("with-query", () => {
+    test("detects the type of paths with capital letters, queries and hashes", async ({ page }) => {
+      await page.goto("/favicon/with-query")
+      const icon = (href: string) => page.locator(`link[rel='icon'][href='${href}']`)
+      await expect(icon("/favicon.SVG?v=2")).toHaveAttribute("type", "image/svg+xml")
+      await expect(icon("/favicon.PNG#hash")).toHaveAttribute("type", "image/png")
+      await expect(icon("/favicon.ico?v=2")).toHaveAttribute("type", "image/x-icon")
+    })
+
+    test("sorts paths with queries by type", async ({ page }) => {
+      await page.goto("/favicon/with-query")
+      const hrefs = await page.locator("link[rel='icon']").evaluateAll((links) => {
+        return links.map((link) => link.getAttribute("href"))
+      })
+      expect(hrefs).toEqual(["/favicon.ico?v=2", "/favicon.PNG#hash", "/favicon.SVG?v=2"])
+    })
+  })
 })
