@@ -68,16 +68,14 @@ const tw =
         title,
         description: enabled(description) ? description : undefined,
         image: enabled(image) ? image : undefined,
-        url: enabled(canonical) ? canonical : undefined,
         ...twitter,
       }
     : false
 ---
 
 <head>
-  <slot name="top" />
-
   <meta charset={charset} />
+  <slot name="top" />
   <meta name="viewport" content={viewport} />
 
   <Title value={title} template={titleTemplate} />

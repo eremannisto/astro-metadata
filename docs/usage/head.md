@@ -66,7 +66,7 @@ You can override any prop on a per-page basis, or disable components entirely wi
 Add custom elements to the head:
 ```astro
 <Head title="My Site">
-  <!-- Renders before charset and viewport -->
+  <!-- Renders after charset, before viewport -->
   <meta slot="top" http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <!-- Renders at the end of <head> -->

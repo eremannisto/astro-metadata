@@ -230,4 +230,12 @@ test.describe("Head", () => {
       expect(parsed["@type"]).toBe("WebSite")
     })
   })
+
+  test.describe("charset position", () => {
+    test("renders charset as the first element of the head", async ({ page }) => {
+      await page.goto("/head/with-slots")
+      const first = await page.evaluate(() => document.head.firstElementChild?.outerHTML)
+      expect(first).toContain("charset")
+    })
+  })
 })

@@ -38,10 +38,9 @@ test.describe("Twitter", () => {
   })
 
   test.describe("with-url", () => {
-    test("renders twitter:url", async ({ page }) => {
+    test("does not render twitter:url", async ({ page }) => {
       await page.goto("/twitter/with-url")
-      const meta = page.locator("meta[name='twitter:url']")
-      await expect(meta).toHaveAttribute("content", "https://example.com")
+      await expect(page.locator("meta[name='twitter:url']")).not.toBeAttached()
     })
   })
 
@@ -77,7 +76,7 @@ test.describe("Twitter", () => {
       await expect(page.locator("meta[name='twitter:card']")).toBeAttached()
       await expect(page.locator("meta[name='twitter:title']")).toBeAttached()
       await expect(page.locator("meta[name='twitter:description']")).toBeAttached()
-      await expect(page.locator("meta[name='twitter:url']")).toBeAttached()
+      await expect(page.locator("meta[name='twitter:url']")).not.toBeAttached()
       await expect(page.locator("meta[name='twitter:image']")).toBeAttached()
       await expect(page.locator("meta[name='twitter:image:alt']")).toBeAttached()
       await expect(page.locator("meta[name='twitter:site']")).toBeAttached()

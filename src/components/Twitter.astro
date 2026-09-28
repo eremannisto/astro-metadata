@@ -2,6 +2,9 @@
 export type Props = {
   title?: string
   description?: string
+  /**
+   * @deprecated X does not read `twitter:url`. The component ignores this value.
+   */
   url?: string
   card?: "summary" | "summary_large_image" | "player" | "app"
   site?: string
@@ -12,13 +15,12 @@ export type Props = {
   }
 }
 
-const { title, description, url, card = "summary_large_image", site, creator, image } = Astro.props
+const { title, description, card = "summary_large_image", site, creator, image } = Astro.props
 ---
 
 {card && <meta name="twitter:card" content={card} />}
 {title && <meta name="twitter:title" content={title} />}
 {description && <meta name="twitter:description" content={description} />}
-{url && <meta name="twitter:url" content={url} />}
 {image?.url && <meta name="twitter:image" content={image.url} />}
 {image?.alt && <meta name="twitter:image:alt" content={image.alt} />}
 {site && <meta name="twitter:site" content={site} />}

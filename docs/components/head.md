@@ -64,7 +64,7 @@ By default OG and Twitter inherit `title`, `description` and `image`. Override s
 ### Using slots
 ```astro
 <Head title="My Site">
-  <!-- Renders before charset and viewport -->
+  <!-- Renders after charset, before viewport -->
   <meta slot="top" http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <!-- Renders at the end of <head> -->
@@ -113,5 +113,5 @@ const { title, ...rest } = Astro.props
 
 | Slot      | Description                         |
 | --------- | ----------------------------------- |
-| `top`     | Renders before charset and viewport |
+| `top`     | Renders after charset, before viewport |
 | (default) | Renders at the end of `<head>`      |
