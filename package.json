@@ -1,13 +1,13 @@
 {
   "name": "@mannisto/astro-metadata",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Astro components for managing your page head — metadata, social sharing, favicons, and SEO.",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/eremannisto/astro-metadata#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eremannisto/astro-metadata"
+    "url": "git+https://github.com/eremannisto/astro-metadata.git"
   },
   "bugs": {
     "url": "https://github.com/eremannisto/astro-metadata/issues"
@@ -29,17 +29,18 @@
     "check": "eslint . && prettier --check .",
     "test": "pnpm run test:unit && pnpm run test:e2e",
     "test:unit": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "pnpm test:fixtures && playwright test",
+    "test:fixtures": "pnpm --filter \"./tests/e2e/fixtures/**\" exec astro build"
   },
   "peerDependencies": {
-    "astro": "^4.3.0 || ^5.0.0 || ^6.0.0"
+    "astro": "^4.3.0 || ^5.0.0 || ^6.0.0 || ^7.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@playwright/test": "^1.58.2",
     "@types/node": "^22.19.15",
-    "astro": "^5.18.1",
+    "astro": "^6.4.8",
     "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.1",
@@ -47,5 +48,6 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.0",
     "vitest": "^4.1.0"
-  }
+  },
+  "packageManager": "pnpm@10.32.1"
 }
