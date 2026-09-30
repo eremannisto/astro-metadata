@@ -69,6 +69,58 @@ async function resolveFavicon(root, options, logger) {
 }
 
 /**
+ * Returns the paths of all HTML files in a directory and its subdirectories.
+ *
+ * @param {string} dir
+ * @returns {string[]}
+ */
+function findHtmlFiles(dir) {
+  return fs
+    .readdirSync(dir, { recursive: true, encoding: "utf-8" })
+    .filter((file) => {
+      return file.endsWith(".html")
+    })
+    .map((file) => {
+      return path.join(dir, file)
+    })
+    .sort()
+}
+
+/**
+ * Checks the metadata of the built pages and logs the problems.
+ *
+ * @param {string} dir - The output directory of the build.
+ * @param {import("astro").AstroIntegrationLogger} logger - The integration logger.
+ */
+async function checkPages(dir, logger) {
+  const { checkHead, parseHead } = await import("./lib/checks.js")
+  let count = 0
+
+  for (const file of findHtmlFiles(dir)) {
+    const html = fs.readFileSync(file, "utf-8")
+    // Astro writes redirects as HTML pages without metadata
+    if (/<meta[^>]+http-equiv=["']?refresh/i.test(html)) continue
+
+    const problems = checkHead(parseHead(html)).filter((check) => {
+      return check.level !== "info"
+    })
+    if (problems.length === 0) continue
+
+    count++
+    const page = `/${path.relative(dir, file).split(path.sep).join("/")}`
+    const lines = problems.map((check) => {
+      return `  - ${check.message}`
+    })
+    logger.warn(`${page}\n${lines.join("\n")}`)
+  }
+
+  if (count > 0) {
+    const pages = count === 1 ? "1 page has" : `${count} pages have`
+    logger.warn(`${pages} metadata problems. Set \`checks: false\` to hide these warnings.`)
+  }
+}
+
+/**
  * The Astro integration of `@mannisto/astro-metadata`. It loads the site-wide defaults
  * from `src/metadata.config.ts` and gives them to the components.
  *
@@ -79,7 +131,15 @@ export default function metadata(options = {}) {
   return {
     name: NAME,
     hooks: {
-      "astro:config:setup": async ({ config, updateConfig, injectScript, injectRoute, logger }) => {
+      "astro:config:setup": async ({
+        config,
+        command,
+        updateConfig,
+        injectScript,
+        injectRoute,
+        addDevToolbarApp,
+        logger,
+      }) => {
         const configFile = findConfigFile(config.root, options.config)
         const favicon = options.favicon
           ? await resolveFavicon(config.root, options.favicon, logger)
@@ -121,6 +181,15 @@ export default function metadata(options = {}) {
           })
         }
 
+        if (command === "dev") {
+          addDevToolbarApp({
+            id: "mannisto-astro-metadata",
+            name: "Metadata",
+            icon: "file-search",
+            entrypoint: new URL("./toolbar/app.ts", import.meta.url),
+          })
+        }
+
         if (favicon) {
           for (const file of FAVICON_FILES) {
             if (file === "icon.svg" && !favicon.svg) continue
@@ -131,6 +200,10 @@ export default function metadata(options = {}) {
             })
           }
         }
+      },
+      "astro:build:done": async ({ dir, logger }) => {
+        if (options.checks === false) return
+        await checkPages(fileURLToPath(dir), logger)
       },
     },
   }

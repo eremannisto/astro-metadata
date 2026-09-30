@@ -24,6 +24,11 @@ export type MetadataOptions = {
    * Generates the favicon files from one source image.
    */
   favicon?: FaviconOptions
+  /**
+   * Checks the metadata of the built pages and logs the problems, e.g. a missing
+   * description or a title that is too long. Defaults to true.
+   */
+  checks?: boolean
 }
 
 /**
