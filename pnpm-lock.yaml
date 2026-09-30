@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      schema-dts:
+        specifier: ^2.0.0
+        version: 2.0.0(typescript@5.9.3)
       sharp:
         specifier: ^0.34.0
         version: 0.34.5
@@ -2897,6 +2900,21 @@ packages:
       }
     engines: { node: ">=11.0.0" }
 
+  schema-dts-lib@1.0.0:
+    resolution:
+      {
+        integrity: sha512-9MEO5vpQH9JdBioUupqluzxSYxPLjhmqRUudk15adUl/ypnRsM2/M1kN3AmVJQeG7nZqcL68H8JlGqQQT6vy9A==,
+      }
+    engines: { node: ">=14.0.0" }
+    peerDependencies:
+      typescript: ">=4.9.5"
+
+  schema-dts@2.0.0:
+    resolution:
+      {
+        integrity: sha512-t7NoCy3Rn5GHGx6p7s1qIYK/AeIb8ZxJNR9WUNFkwMv2CiiGZBmqqYWc2FlZVm5ZbiHMY4OvBWhj7QtyrFO2Jw==,
+      }
+
   semver@7.7.4:
     resolution:
       {
@@ -5408,6 +5426,16 @@ snapshots:
       suf-log: 2.5.3
 
   sax@1.5.0: {}
+
+  schema-dts-lib@1.0.0(typescript@5.9.3):
+    dependencies:
+      typescript: 5.9.3
+
+  schema-dts@2.0.0(typescript@5.9.3):
+    dependencies:
+      schema-dts-lib: 1.0.0(typescript@5.9.3)
+    transitivePeerDependencies:
+      - typescript
 
   semver@7.7.4: {}
 

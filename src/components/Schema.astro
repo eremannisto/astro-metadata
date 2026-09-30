@@ -1,5 +1,7 @@
 ---
-export type SchemaData = Record<string, unknown>
+import type { SchemaData } from "../lib/schema.ts"
+
+export type { SchemaData }
 
 export type Props = {
   data: SchemaData | SchemaData[]

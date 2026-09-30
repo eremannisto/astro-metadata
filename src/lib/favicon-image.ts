@@ -105,12 +105,14 @@ export async function renderFavicon(file: FaviconFile): Promise<Response> {
         return { size, png: await renderPng(favicon, size) }
       })
     )
-    return new Response(toIco(images), { headers: { "Content-Type": "image/x-icon" } })
+    return new Response(new Uint8Array(toIco(images)), {
+      headers: { "Content-Type": "image/x-icon" },
+    })
   }
 
   const options = FILES[file]
   const png = options.background
     ? await renderPadded(favicon, options.size, options.content)
     : await renderPng(favicon, options.size)
-  return new Response(png, { headers: { "Content-Type": "image/png" } })
+  return new Response(new Uint8Array(png), { headers: { "Content-Type": "image/png" } })
 }

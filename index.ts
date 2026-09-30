@@ -34,3 +34,11 @@ export type { ConfigFeed, ThemeColor } from "./src/lib/config.ts"
 export type { ManifestIcon } from "./src/lib/favicon.ts"
 export { icons } from "./src/lib/favicon.ts"
 export type { ManifestConfig } from "./src/lib/manifest.ts"
+export type {
+  SchemaArticle,
+  SchemaAuthor,
+  SchemaBreadcrumb,
+  SchemaOrganization,
+  SchemaWebsite,
+} from "./src/lib/schema.ts"
+export { schema } from "./src/lib/schema.ts"

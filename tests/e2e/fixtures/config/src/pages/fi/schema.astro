@@ -1,0 +1,18 @@
+---
+import { Head, schema } from "@mannisto/astro-metadata"
+---
+
+<html>
+  <Head
+    title="Rakenne"
+    locale="fi"
+    schema={[
+      schema.website({ locale: "fi" }),
+      schema.breadcrumbs([
+        { name: "Koti", url: "/fi" },
+        { name: "Rakenne", url: "/fi/schema" },
+      ]),
+    ]}
+  />
+  <body> </body>
+</html>

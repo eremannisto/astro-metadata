@@ -57,6 +57,7 @@
   },
   "packageManager": "pnpm@10.32.1",
   "dependencies": {
+    "schema-dts": "^2.0.0",
     "sharp": "^0.34.0"
   }
 }
