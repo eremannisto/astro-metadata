@@ -34,4 +34,23 @@ test.describe("Alternates", () => {
       await expect(xDefault).toHaveAttribute("href", "https://example.com")
     })
   })
+
+  test.describe("feeds", () => {
+    test("renders an RSS feed link by default", async ({ page }) => {
+      await page.goto("/alternates/feeds")
+      const rss = page.locator("link[rel='alternate'][type='application/rss+xml']")
+      await expect(rss).toHaveAttribute("href", "/rss.xml")
+      await expect(rss).toHaveAttribute("title", "Blog")
+    })
+
+    test("renders Atom and JSON feed links", async ({ page }) => {
+      await page.goto("/alternates/feeds")
+      await expect(
+        page.locator("link[rel='alternate'][type='application/atom+xml']")
+      ).toHaveAttribute("href", "/atom.xml")
+      await expect(
+        page.locator("link[rel='alternate'][type='application/feed+json']")
+      ).toHaveAttribute("href", "/feed.json")
+    })
+  })
 })

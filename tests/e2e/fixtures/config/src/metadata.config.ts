@@ -24,4 +24,12 @@ export default defineMetadata({
   twitter: {
     site: "@configsite",
   },
+  themeColor: "#123456",
+  colorScheme: "light dark",
+  feeds: [
+    {
+      href: "/rss.xml",
+      title: { en: "Blog", fi: "Blogi" },
+    },
+  ],
 })

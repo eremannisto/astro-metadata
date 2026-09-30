@@ -284,4 +284,30 @@ test.describe("Head", () => {
       )
     })
   })
+
+  test.describe("with-colors", () => {
+    test("renders one theme color for each color mode", async ({ page }) => {
+      await page.goto("/head/with-colors")
+      const light = page.locator("meta[name='theme-color'][media='(prefers-color-scheme: light)']")
+      const dark = page.locator("meta[name='theme-color'][media='(prefers-color-scheme: dark)']")
+      await expect(light).toHaveAttribute("content", "#ffffff")
+      await expect(dark).toHaveAttribute("content", "#000000")
+    })
+
+    test("renders the color scheme", async ({ page }) => {
+      await page.goto("/head/with-colors")
+      await expect(page.locator("meta[name='color-scheme']")).toHaveAttribute(
+        "content",
+        "light dark"
+      )
+    })
+
+    test("renders one theme color without a media query", async ({ page }) => {
+      await page.goto("/head/with-theme-color")
+      const color = page.locator("meta[name='theme-color']")
+      await expect(color).toHaveCount(1)
+      await expect(color).toHaveAttribute("content", "#ff0000")
+      await expect(color).not.toHaveAttribute("media", /.*/)
+    })
+  })
 })

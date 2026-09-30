@@ -1,4 +1,8 @@
-export type { LanguageAlternate, Props as AlternatesProps } from "./src/components/Alternates.astro"
+export type {
+  Feed,
+  LanguageAlternate,
+  Props as AlternatesProps,
+} from "./src/components/Alternates.astro"
 export { default as Alternates } from "./src/components/Alternates.astro"
 export type { Props as CanonicalProps } from "./src/components/Canonical.astro"
 export { default as Canonical } from "./src/components/Canonical.astro"
@@ -26,3 +30,4 @@ export { default as Twitter } from "./src/components/Twitter.astro"
 export { url } from "./src/lib/url.ts"
 export type { Localized, MetadataConfig } from "./src/lib/config.ts"
 export { defineMetadata } from "./src/lib/config.ts"
+export type { ConfigFeed, ThemeColor } from "./src/lib/config.ts"

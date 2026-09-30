@@ -1,18 +1,44 @@
 ---
+import { withBase } from "../lib/url.ts"
+
 export type LanguageAlternate = {
   href: string
   hreflang: string
 }
 
-export type Props = {
-  languages?: LanguageAlternate[]
+export type Feed = {
+  href: string
+  title?: string
+  /** The feed format. Defaults to "rss". */
+  type?: "rss" | "atom" | "json"
 }
 
-const { languages = [] } = Astro.props
+export type Props = {
+  languages?: LanguageAlternate[]
+  feeds?: Feed[]
+}
+
+const { languages = [], feeds = [] } = Astro.props
+
+const FEED_TYPES = {
+  rss: "application/rss+xml",
+  atom: "application/atom+xml",
+  json: "application/feed+json",
+}
 ---
 
 {
   languages.map((language) => (
     <link rel="alternate" href={language.href} hreflang={language.hreflang} />
+  ))
+}
+{
+  feeds.map((feed) => (
+    <link
+      rel="alternate"
+      type={FEED_TYPES[feed.type ?? "rss"]}
+      title={feed.title}
+      href={withBase(feed.href)}
+    />
   ))
 }

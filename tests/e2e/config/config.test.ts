@@ -88,3 +88,19 @@ test.describe("props override the config", () => {
     await expect(page.locator("meta[property='og:image']")).not.toBeAttached()
   })
 })
+
+test.describe("colors and feeds", () => {
+  test("renders the theme color and color scheme from the config", async ({ page }) => {
+    await page.goto("/")
+    await expect(page.locator("meta[name='theme-color']")).toHaveAttribute("content", "#123456")
+    await expect(page.locator("meta[name='color-scheme']")).toHaveAttribute("content", "light dark")
+  })
+
+  test("renders the feed with the title of the locale", async ({ page }) => {
+    await page.goto("/")
+    const feed = page.locator("link[type='application/rss+xml']")
+    await expect(feed).toHaveAttribute("title", "Blog")
+    await page.goto("/finnish")
+    await expect(feed).toHaveAttribute("title", "Blogi")
+  })
+})
