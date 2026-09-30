@@ -15,7 +15,7 @@ test.describe("Integration", () => {
   test("renders og:image", async ({ page }) => {
     await page.goto("/")
     const og = page.locator("meta[property='og:image']")
-    await expect(og).toHaveAttribute("content", "/og.jpg")
+    await expect(og).toHaveAttribute("content", "https://example.com/og.jpg")
   })
 
   test("renders og:image:width", async ({ page }) => {

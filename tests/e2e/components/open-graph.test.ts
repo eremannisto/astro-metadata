@@ -25,7 +25,7 @@ test.describe("OpenGraph", () => {
     test("renders og:image", async ({ page }) => {
       await page.goto("/open-graph/with-image")
       const meta = page.locator("meta[property='og:image']")
-      await expect(meta).toHaveAttribute("content", "/og.jpg")
+      await expect(meta).toHaveAttribute("content", "https://example.com/og.jpg")
     })
 
     test("renders og:image:secure_url", async ({ page }) => {

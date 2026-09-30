@@ -1,4 +1,6 @@
 ---
+import { withBase } from "../lib/url.ts"
+
 export type IconFile = {
   path: string
   size?: number
@@ -72,7 +74,7 @@ function getSortOrder(file: IconFile): number {
 const sorted = sort ? [...icons].sort((a, b) => getSortOrder(a) - getSortOrder(b)) : icons
 
 const prepared = sorted.map((file) => ({
-  path: file.path,
+  path: withBase(file.path),
   size: file.size ? `${file.size}x${file.size}` : undefined,
   type: getMimeType(file.path),
   media: getMedia(file.theme),

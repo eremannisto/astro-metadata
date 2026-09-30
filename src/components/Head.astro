@@ -1,6 +1,7 @@
 ---
 import type { ComponentProps } from "astro/types"
 
+import { url, withBase } from "../lib/url.ts"
 import Alternates from "./Alternates.astro"
 import type { LanguageAlternate } from "./Alternates.astro"
 import Canonical from "./Canonical.astro"
@@ -52,13 +53,16 @@ const enabled = <T,>(value: T | false | undefined): value is T => {
   return value !== false && value !== undefined
 }
 
+// The canonical URL of the page: the prop, or the absolute URL of the current page
+const canonicalUrl = canonical === false ? undefined : url(canonical ?? Astro.url.pathname)
+
 const og =
   openGraph !== false
     ? {
         title,
         description: enabled(description) ? description : undefined,
         image: enabled(image) ? image : undefined,
-        url: enabled(canonical) ? canonical : undefined,
+        url: canonicalUrl,
         ...openGraph,
       }
     : false
@@ -82,12 +86,12 @@ const tw =
   {title && <Title value={title} template={titleTemplate} />}
 
   {enabled(description) && <Description value={description} />}
-  {enabled(canonical) && <Canonical value={canonical} />}
+  {canonicalUrl && <Canonical value={canonicalUrl} />}
   {enabled(robots) && <Robots {...robots} />}
   {enabled(og) && <OpenGraph {...og} />}
   {enabled(tw) && <Twitter {...tw} />}
   {enabled(icons) && <Icons {...icons} />}
-  {enabled(manifest) && <link rel="manifest" href={manifest} />}
+  {enabled(manifest) && <link rel="manifest" href={withBase(manifest)} />}
   {enabled(schema) && <Schema data={schema} />}
   {enabled(languages) && <Alternates languages={languages} />}
 

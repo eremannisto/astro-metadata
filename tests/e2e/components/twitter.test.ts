@@ -41,7 +41,7 @@ test.describe("Twitter", () => {
     test("renders twitter:image", async ({ page }) => {
       await page.goto("/twitter/with-image")
       const meta = page.locator("meta[name='twitter:image']")
-      await expect(meta).toHaveAttribute("content", "/og.jpg")
+      await expect(meta).toHaveAttribute("content", "https://example.com/og.jpg")
     })
 
     test("renders twitter:image:alt", async ({ page }) => {

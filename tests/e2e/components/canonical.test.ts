@@ -12,7 +12,10 @@ test.describe("Canonical", () => {
       await page.goto("/canonical/default")
       const canonical = page.locator("link[rel='canonical']")
       // The build adds a trailing slash to the page URL
-      await expect(canonical).toHaveAttribute("href", /\/canonical\/default\/?$/)
+      await expect(canonical).toHaveAttribute(
+        "href",
+        /^https:\/\/example\.com\/canonical\/default\/?$/
+      )
     })
   })
 

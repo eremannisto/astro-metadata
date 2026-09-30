@@ -1,11 +1,14 @@
 ---
+import { url } from "../lib/url.ts"
+
 export type Props = {
   value?: string
 }
 
 const { value } = Astro.props
 
-const canonical = value ?? Astro.url.href
+// Without a value, the canonical URL is the absolute URL of the current page
+const canonical = url(value ?? Astro.url.pathname)
 ---
 
 <link rel="canonical" href={canonical} />

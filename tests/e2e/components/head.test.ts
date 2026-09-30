@@ -70,7 +70,10 @@ test.describe("Head", () => {
   test.describe("with-image", () => {
     test("flows into og:image", async ({ page }) => {
       await page.goto("/head/with-image")
-      await expect(page.locator("meta[property='og:image']")).toHaveAttribute("content", "/og.jpg")
+      await expect(page.locator("meta[property='og:image']")).toHaveAttribute(
+        "content",
+        "https://example.com/og.jpg"
+      )
     })
 
     test("flows into og:image:alt", async ({ page }) => {
@@ -99,7 +102,10 @@ test.describe("Head", () => {
 
     test("flows into twitter:image", async ({ page }) => {
       await page.goto("/head/with-image")
-      await expect(page.locator("meta[name='twitter:image']")).toHaveAttribute("content", "/og.jpg")
+      await expect(page.locator("meta[name='twitter:image']")).toHaveAttribute(
+        "content",
+        "https://example.com/og.jpg"
+      )
     })
 
     test("flows into twitter:image:alt", async ({ page }) => {
@@ -186,13 +192,16 @@ test.describe("Head", () => {
       await page.goto("/head/overrides")
       await expect(page.locator("meta[property='og:image']")).toHaveAttribute(
         "content",
-        "/og-specific.jpg"
+        "https://example.com/og-specific.jpg"
       )
     })
 
     test("twitter:image falls back to top-level image when not overridden", async ({ page }) => {
       await page.goto("/head/overrides")
-      await expect(page.locator("meta[name='twitter:image']")).toHaveAttribute("content", "/og.jpg")
+      await expect(page.locator("meta[name='twitter:image']")).toHaveAttribute(
+        "content",
+        "https://example.com/og.jpg"
+      )
     })
 
     test("twitter:card uses override", async ({ page }) => {
@@ -209,12 +218,18 @@ test.describe("Head", () => {
 
     test("renders og:image from top-level image", async ({ page }) => {
       await page.goto("/head/full")
-      await expect(page.locator("meta[property='og:image']")).toHaveAttribute("content", "/og.jpg")
+      await expect(page.locator("meta[property='og:image']")).toHaveAttribute(
+        "content",
+        "https://example.com/og.jpg"
+      )
     })
 
     test("renders twitter:image from top-level image", async ({ page }) => {
       await page.goto("/head/full")
-      await expect(page.locator("meta[name='twitter:image']")).toHaveAttribute("content", "/og.jpg")
+      await expect(page.locator("meta[name='twitter:image']")).toHaveAttribute(
+        "content",
+        "https://example.com/og.jpg"
+      )
     })
 
     test("renders schema", async ({ page }) => {
@@ -249,6 +264,24 @@ test.describe("Head", () => {
       await page.goto("/head/without-title")
       await expect(page.locator("title")).not.toBeAttached()
       await expect(page.locator("meta[name='description']")).toBeAttached()
+    })
+  })
+
+  test.describe("default canonical", () => {
+    test("renders the absolute URL of the page without the prop", async ({ page }) => {
+      await page.goto("/head/basic")
+      await expect(page.locator("link[rel='canonical']")).toHaveAttribute(
+        "href",
+        /^https:\/\/example\.com\/head\/basic\/?$/
+      )
+    })
+
+    test("uses the canonical URL for og:url", async ({ page }) => {
+      await page.goto("/head/basic")
+      await expect(page.locator("meta[property='og:url']")).toHaveAttribute(
+        "content",
+        /^https:\/\/example\.com\/head\/basic\/?$/
+      )
     })
   })
 })
