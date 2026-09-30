@@ -1,5 +1,6 @@
 import fs from "node:fs/promises"
-import sharp from "sharp"
+import { createRequire } from "node:module"
+import type Sharp from "sharp"
 
 import { getFavicon } from "./favicon.ts"
 import type { FaviconInfo } from "./favicon.ts"
@@ -19,10 +20,20 @@ const FILES = {
 export type FaviconFile = keyof typeof FILES | "favicon.ico" | "icon.svg"
 
 /**
+ * Loads sharp from the path that the integration found. The build writes this code into
+ * the dist folder of the project, and with pnpm the project can not see the dependencies
+ * of this package from there.
+ */
+function loadSharp(favicon: FaviconInfo): typeof Sharp {
+  return createRequire(import.meta.url)(favicon.sharp)
+}
+
+/**
  * Renders a square PNG of the source with transparent space around it.
  * An SVG source is rasterized at a density that gives a sharp result at the size.
  */
 async function renderPng(favicon: FaviconInfo, size: number): Promise<Buffer> {
+  const sharp = loadSharp(favicon)
   const source = await fs.readFile(favicon.source)
   const meta = await sharp(source).metadata()
   const smallest = Math.min(meta.width ?? size, meta.height ?? size)
@@ -41,6 +52,7 @@ async function renderPadded(favicon: FaviconInfo, size: number, content: number)
   const inner = Math.round(size * content)
   const logo = await renderPng(favicon, inner)
   const offset = Math.floor((size - inner) / 2)
+  const sharp = loadSharp(favicon)
 
   return sharp({
     create: { width: size, height: size, channels: 4, background: favicon.background },

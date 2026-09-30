@@ -12,6 +12,8 @@ export type FaviconInfo = {
   svg: boolean
   /** A short hash of the source file, for cache busting. */
   hash: string
+  /** The absolute path of the sharp package, found from this package. */
+  sharp: string
 }
 
 /**

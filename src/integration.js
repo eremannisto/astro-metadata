@@ -1,5 +1,6 @@
 import crypto from "node:crypto"
 import fs from "node:fs"
+import { createRequire } from "node:module"
 import path from "node:path"
 import { fileURLToPath, URL } from "node:url"
 
@@ -65,7 +66,9 @@ async function resolveFavicon(root, options, logger) {
     logger.warn("The favicon SVG has no viewBox. It can not scale correctly.")
   }
 
-  return { source, background: options.background ?? "#ffffff", svg, hash }
+  // The endpoints load sharp from this path: see `loadSharp` in lib/favicon-image.ts
+  const sharpPath = createRequire(import.meta.url).resolve("sharp")
+  return { source, background: options.background ?? "#ffffff", svg, hash, sharp: sharpPath }
 }
 
 /**
