@@ -132,11 +132,6 @@ test.describe("Head", () => {
       await expect(page.locator("link[rel='canonical']")).not.toBeAttached()
     })
 
-    test("no keywords", async ({ page }) => {
-      await page.goto("/head/disabled")
-      await expect(page.locator("meta[name='keywords']")).not.toBeAttached()
-    })
-
     test("no robots", async ({ page }) => {
       await page.goto("/head/disabled")
       await expect(page.locator("meta[name='robots']")).not.toBeAttached()
@@ -236,6 +231,24 @@ test.describe("Head", () => {
       await page.goto("/head/with-slots")
       const first = await page.evaluate(() => document.head.firstElementChild?.outerHTML)
       expect(first).toContain("charset")
+    })
+  })
+
+  test.describe("with-manifest", () => {
+    test("renders the manifest link", async ({ page }) => {
+      await page.goto("/head/with-manifest")
+      await expect(page.locator("link[rel='manifest']")).toHaveAttribute(
+        "href",
+        "/site.webmanifest"
+      )
+    })
+  })
+
+  test.describe("without-title", () => {
+    test("renders no title tag without a title", async ({ page }) => {
+      await page.goto("/head/without-title")
+      await expect(page.locator("title")).not.toBeAttached()
+      await expect(page.locator("meta[name='description']")).toBeAttached()
     })
   })
 })

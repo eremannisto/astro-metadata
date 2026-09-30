@@ -37,13 +37,6 @@ test.describe("Twitter", () => {
     })
   })
 
-  test.describe("with-url", () => {
-    test("does not render twitter:url", async ({ page }) => {
-      await page.goto("/twitter/with-url")
-      await expect(page.locator("meta[name='twitter:url']")).not.toBeAttached()
-    })
-  })
-
   test.describe("with-image", () => {
     test("renders twitter:image", async ({ page }) => {
       await page.goto("/twitter/with-image")

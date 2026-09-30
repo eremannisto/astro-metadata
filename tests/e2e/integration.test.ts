@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test"
 
 test.describe("Integration", () => {
-  test("renders title via Metadata utility", async ({ page }) => {
+  test("renders title with the template", async ({ page }) => {
     await page.goto("/")
     expect(await page.title()).toBe("Home | My Site")
   })
@@ -12,13 +12,13 @@ test.describe("Integration", () => {
     await expect(meta).toHaveAttribute("content", "Integration test page")
   })
 
-  test("renders og:image from Metadata", async ({ page }) => {
+  test("renders og:image", async ({ page }) => {
     await page.goto("/")
     const og = page.locator("meta[property='og:image']")
     await expect(og).toHaveAttribute("content", "/og.jpg")
   })
 
-  test("renders og:image:width from Metadata", async ({ page }) => {
+  test("renders og:image:width", async ({ page }) => {
     await page.goto("/")
     const og = page.locator("meta[property='og:image:width']")
     await expect(og).toHaveAttribute("content", "1200")

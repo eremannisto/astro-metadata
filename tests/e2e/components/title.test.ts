@@ -21,4 +21,11 @@ test.describe("Title", () => {
       expect(await page.title()).toBe("Price $& $1 $$ more | My Site")
     })
   })
+
+  test.describe("without-placeholder", () => {
+    test("renders the title unchanged when the template has no %s", async ({ page }) => {
+      await page.goto("/title/without-placeholder")
+      expect(await page.title()).toBe("My Page")
+    })
+  })
 })

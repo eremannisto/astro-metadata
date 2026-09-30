@@ -1,33 +1,34 @@
 ---
 import type { ComponentProps } from "astro/types"
 
+import Alternates from "./Alternates.astro"
+import type { LanguageAlternate } from "./Alternates.astro"
 import Canonical from "./Canonical.astro"
 import Description from "./Description.astro"
-import Favicon from "./Favicon.astro"
-import Keywords from "./Keywords.astro"
-import LanguageAlternates from "./LanguageAlternates.astro"
+import Icons from "./Icons.astro"
 import OpenGraph from "./OpenGraph.astro"
 import type { OpenGraphImage } from "./OpenGraph.astro"
 import Robots from "./Robots.astro"
 import Schema from "./Schema.astro"
+import type { SchemaData } from "./Schema.astro"
 import Title from "./Title.astro"
 import Twitter from "./Twitter.astro"
 
 export type Props = {
-  title: string
-  titleTemplate?: `${string}%s${string}`
+  title?: string
+  titleTemplate?: string
   description?: string | false
   canonical?: string | false
-  keywords?: string[] | false
   charset?: string
   viewport?: string
   image?: OpenGraphImage | false
   robots?: ComponentProps<typeof Robots> | false
   openGraph?: ComponentProps<typeof OpenGraph> | false
   twitter?: ComponentProps<typeof Twitter> | false
-  favicon?: ComponentProps<typeof Favicon> | false
-  schema?: ComponentProps<typeof Schema> | false
-  languageAlternates?: ComponentProps<typeof LanguageAlternates>["alternates"] | false
+  icons?: ComponentProps<typeof Icons> | false
+  schema?: SchemaData | SchemaData[] | false
+  languages?: LanguageAlternate[] | false
+  manifest?: string | false
 }
 
 const {
@@ -35,16 +36,16 @@ const {
   titleTemplate,
   description,
   canonical,
-  keywords,
   charset = "UTF-8",
   viewport = "width=device-width, initial-scale=1.0",
   image,
   robots,
   openGraph,
   twitter,
-  favicon,
+  icons,
   schema,
-  languageAlternates,
+  languages,
+  manifest,
 } = Astro.props
 
 const enabled = <T,>(value: T | false | undefined): value is T => {
@@ -78,17 +79,17 @@ const tw =
   <slot name="top" />
   <meta name="viewport" content={viewport} />
 
-  <Title value={title} template={titleTemplate} />
+  {title && <Title value={title} template={titleTemplate} />}
 
   {enabled(description) && <Description value={description} />}
   {enabled(canonical) && <Canonical value={canonical} />}
-  {enabled(keywords) && <Keywords value={keywords} />}
   {enabled(robots) && <Robots {...robots} />}
   {enabled(og) && <OpenGraph {...og} />}
   {enabled(tw) && <Twitter {...tw} />}
-  {enabled(favicon) && <Favicon {...favicon} />}
-  {enabled(schema) && <Schema {...schema} />}
-  {enabled(languageAlternates) && <LanguageAlternates alternates={languageAlternates} />}
+  {enabled(icons) && <Icons {...icons} />}
+  {enabled(manifest) && <link rel="manifest" href={manifest} />}
+  {enabled(schema) && <Schema data={schema} />}
+  {enabled(languages) && <Alternates languages={languages} />}
 
   <slot />
 </head>

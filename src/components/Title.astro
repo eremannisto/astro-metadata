@@ -1,13 +1,19 @@
 ---
 export type Props = {
   value: string
-  template?: `${string}%s${string}`
+  template?: string
 }
 
-const { value, template = "%s" } = Astro.props
+const { value, template } = Astro.props
 
-// A replacer function keeps "$&" and other "$" patterns in the title as text
-const title = template.replace("%s", () => value)
+// A template without "%s" gives the title unchanged. A replacer function keeps
+// "$&" and other "$" patterns in the title as text.
+const title =
+  template && template.includes("%s")
+    ? template.replace("%s", () => {
+        return value
+      })
+    : value
 ---
 
 <title>{title}</title>

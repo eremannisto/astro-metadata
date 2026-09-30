@@ -8,7 +8,6 @@ import { Head } from "@mannisto/astro-metadata"
     titleTemplate="%s | My Site"
     description="Welcome to my site"
     canonical="https://example.com"
-    keywords={["astro", "seo", "metadata"]}
     image={{
       url: "/og.jpg",
       alt: "My Site",
@@ -16,19 +15,17 @@ import { Head } from "@mannisto/astro-metadata"
       height: 630,
     }}
     robots={{ archive: false }}
-    favicon={{
+    icons={{
       icons: [{ path: "/favicon.ico" }, { path: "/favicon.svg" }],
     }}
-    languageAlternates={[
+    languages={[
       { href: "https://example.com/en", hreflang: "en" },
       { href: "https://example.com/fi", hreflang: "fi" },
     ]}
     schema={{
-      schema: {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        name: "My Site",
-      },
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "My Site",
     }}
   />
   <body> </body>

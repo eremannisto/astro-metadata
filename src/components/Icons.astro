@@ -1,5 +1,5 @@
 ---
-export type FaviconFile = {
+export type IconFile = {
   path: string
   size?: number
   theme?: "light" | "dark"
@@ -7,12 +7,11 @@ export type FaviconFile = {
 }
 
 export type Props = {
-  icons: FaviconFile[]
-  manifest?: string
+  icons: IconFile[]
   sort?: boolean
 }
 
-const { icons, manifest, sort = true } = Astro.props
+const { icons, sort = true } = Astro.props
 
 /**
  * Returns the file extension of a favicon path in lowercase, without the
@@ -60,7 +59,7 @@ function getMedia(theme?: "light" | "dark"): string | undefined {
  *
  * Order: ico → png → svg → apple → themed variants
  */
-function getSortOrder(file: FaviconFile): number {
+function getSortOrder(file: IconFile): number {
   if (file.apple) return 4
   if (file.theme) return 5
   const extension = getExtension(file.path)
@@ -80,8 +79,6 @@ const prepared = sorted.map((file) => ({
   apple: file.apple ?? false,
 }))
 ---
-
-{manifest && <link rel="manifest" href={manifest} />}
 
 {
   prepared.map((icon) => {

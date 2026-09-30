@@ -1,13 +1,15 @@
 ---
+export type SchemaData = Record<string, unknown>
+
 export type Props = {
-  schema: Record<string, unknown>
+  data: SchemaData | SchemaData[]
 }
 
-const { schema } = Astro.props
+const { data } = Astro.props
 
 // Escape the characters that can end the script tag or break the JavaScript parser.
 // A value such as "</script>" in the schema then stays inside the JSON.
-const json = JSON.stringify(schema)
+const json = JSON.stringify(data)
   .replace(/</g, "\\u003c")
   .replace(/>/g, "\\u003e")
   .replace(/&/g, "\\u0026")

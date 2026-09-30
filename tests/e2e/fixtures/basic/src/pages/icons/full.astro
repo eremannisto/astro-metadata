@@ -1,10 +1,10 @@
 ---
-import { Favicon } from "@mannisto/astro-metadata"
+import { Icons } from "@mannisto/astro-metadata"
 ---
 
 <html>
   <head>
-    <Favicon
+    <Icons
       icons={[
         { path: "/favicon.ico" },
         { path: "/favicon.svg" },
@@ -13,7 +13,6 @@ import { Favicon } from "@mannisto/astro-metadata"
         { path: "/favicon-dark.svg", theme: "dark" },
         { path: "/favicon-light.svg", theme: "light" },
       ]}
-      manifest="/site.webmanifest"
     />
   </head>
   <body> </body>

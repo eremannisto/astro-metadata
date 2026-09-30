@@ -1,0 +1,18 @@
+---
+export type LanguageAlternate = {
+  href: string
+  hreflang: string
+}
+
+export type Props = {
+  languages?: LanguageAlternate[]
+}
+
+const { languages = [] } = Astro.props
+---
+
+{
+  languages.map((language) => (
+    <link rel="alternate" href={language.href} hreflang={language.hreflang} />
+  ))
+}
