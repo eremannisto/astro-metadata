@@ -2,6 +2,7 @@ import type { Feed } from "../components/Alternates.astro"
 import type { OpenGraphImage } from "../components/OpenGraph.astro"
 import type { Props as RobotsProps } from "../components/Robots.astro"
 import type { Props as TwitterProps } from "../components/Twitter.astro"
+import type { ManifestConfig } from "./manifest.ts"
 
 /**
  * A text value: one string for all locales, or one string for each locale.
@@ -43,6 +44,8 @@ export type MetadataConfig = {
   colorScheme?: string
   /** The RSS, Atom or JSON feeds of the site. */
   feeds?: ConfigFeed[]
+  /** The web app manifest. The integration serves it at /manifest.webmanifest. */
+  manifest?: ManifestConfig
 }
 
 const KEY = Symbol.for("@mannisto/astro-metadata/config")

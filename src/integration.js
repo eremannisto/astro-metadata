@@ -112,6 +112,15 @@ export default function metadata(options = {}) {
         // Runs on the server before each page, so the components can read the config
         injectScript("page-ssr", `import ${JSON.stringify(CONFIG_ID)}`)
 
+        // The route reads the manifest from the config file. Without a manifest, it has no paths.
+        if (configFile) {
+          injectRoute({
+            pattern: "/[...lang]/manifest.webmanifest",
+            entrypoint: new URL("./routes/manifest.ts", import.meta.url),
+            prerender: true,
+          })
+        }
+
         if (favicon) {
           for (const file of FAVICON_FILES) {
             if (file === "icon.svg" && !favicon.svg) continue

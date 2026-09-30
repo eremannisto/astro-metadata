@@ -3,6 +3,7 @@ import type { ComponentProps } from "astro/types"
 
 import { getConfig, localize } from "../lib/config.ts"
 import type { ThemeColor } from "../lib/config.ts"
+import { manifestUrl } from "../lib/manifest.ts"
 import { url, withBase } from "../lib/url.ts"
 import Alternates from "./Alternates.astro"
 import type { Feed, LanguageAlternate } from "./Alternates.astro"
@@ -71,6 +72,7 @@ const template = titleTemplate ?? localize(config.titleTemplate, locale)
 const pageDescription = description ?? localize(config.description, locale)
 const pageImage = image ?? config.image
 const pageRobots = robots ?? config.robots
+const pageManifest = manifest ?? manifestUrl(config, locale)
 const pageThemeColor = themeColor ?? config.themeColor
 const pageColorScheme = colorScheme ?? config.colorScheme
 const pageFeeds =
@@ -139,7 +141,7 @@ const tw =
   {enabled(og) && <OpenGraph {...og} />}
   {enabled(tw) && <Twitter {...tw} />}
   {icons !== false && <Icons {...icons} />}
-  {enabled(manifest) && <link rel="manifest" href={withBase(manifest)} />}
+  {enabled(pageManifest) && <link rel="manifest" href={withBase(pageManifest)} />}
   {enabled(schema) && <Schema data={schema} />}
   <Alternates
     languages={enabled(languages) ? languages : undefined}

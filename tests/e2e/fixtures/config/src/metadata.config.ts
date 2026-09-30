@@ -32,4 +32,11 @@ export default defineMetadata({
       title: { en: "Blog", fi: "Blogi" },
     },
   ],
+  manifest: {
+    name: { en: "Config Site", fi: "Config-sivusto" },
+    shortName: "Config",
+    extra: {
+      categories: ["art"],
+    },
+  },
 })
