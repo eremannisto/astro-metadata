@@ -1,97 +1,144 @@
 # Schema
 
-Outputs a `<script type="application/ld+json">` tag for structured data. Use it to help search engines understand your content and qualify for rich results.
+Renders a `<script type="application/ld+json">` tag with structured data. Search engines use structured data to understand your content, and to show rich results.
 
 ## Import
+
 ```astro
 ---
-import { Schema } from "@mannisto/astro-metadata"
+import { Schema, schema } from "@mannisto/astro-metadata"
 ---
 ```
 
-## Usage
+## Builders
 
-### Person
-```astro
-<Schema
-  schema={{
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Ere Männistö",
-    url: "https://example.com",
-    jobTitle: "Software Engineer",
-  }}
-/>
-```
+The `schema` builders make the most common types. They fill in the site name from `src/metadata.config.ts`, and they make all URLs absolute.
 
-### Organization
 ```astro
-<Schema
-  schema={{
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "My Company",
-    url: "https://example.com",
-    logo: "https://example.com/logo.png",
-  }}
-/>
-```
+---
+import { Head, schema } from "@mannisto/astro-metadata"
 
-### Article
-```astro
-<Schema
-  schema={{
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: "How to Build an Astro Site",
-    datePublished: "2024-01-15",
-    author: {
-      "@type": "Person",
-      name: "Ere Männistö",
-    },
-  }}
-/>
-```
+const locale = Astro.currentLocale
+---
 
-### With Head component
-```astro
 <Head
-  title="My Page"
-  schema={{
+  title="Home"
+  schema={[
+    schema.website({ locale }),
+    schema.organization({ logo: "/logo.png", sameAs: ["https://x.com/mysite"], locale }),
+  ]}
+/>
+```
+
+### `schema.website()`
+
+```ts
+schema.website()
+// {
+//   "@context": "https://schema.org",
+//   "@type": "WebSite",
+//   "name": "My Site",                     // siteName in the config
+//   "description": "The default description",
+//   "url": "https://example.com/"
+// }
+```
+
+| Option        | Type     | Default                     |
+| ------------- | -------- | --------------------------- |
+| `name`        | `string` | `siteName` in the config    |
+| `description` | `string` | `description` in the config |
+| `url`         | `string` | The site root               |
+| `locale`      | `string` | —                           |
+
+### `schema.organization()`
+
+| Option   | Type       | Default                  |
+| -------- | ---------- | ------------------------ |
+| `name`   | `string`   | `siteName` in the config |
+| `url`    | `string`   | The site root            |
+| `logo`   | `string`   | —                        |
+| `sameAs` | `string[]` | —                        |
+| `locale` | `string`   | —                        |
+
+### `schema.article()`
+
+```astro
+---
+const { post } = Astro.props
+
+const article = schema.article({
+  type: "BlogPosting",
+  title: post.title,
+  description: post.description,
+  image: post.image,
+  published: post.date,
+  author: { name: "Ere Männistö", url: "/about" },
+  url: Astro.url.pathname,
+})
+---
+
+<Head title={post.title} schema={article} />
+```
+
+The publisher is the site, with `siteName` from the config.
+
+| Option        | Type                                        | Default     | Description                                 |
+| ------------- | ------------------------------------------- | ----------- | ------------------------------------------- |
+| `type`        | `"Article" \| "BlogPosting" \| "NewsArticle"` | `"Article"` | The type of the article                   |
+| `title`       | `string`                                    | —           | The headline. Required.                     |
+| `description` | `string`                                    | —           | The description                             |
+| `image`       | `string \| string[]`                        | —           | The paths or URLs of the images             |
+| `published`   | `Date \| string`                            | —           | The date of publication                     |
+| `modified`    | `Date \| string`                            | —           | The date of the last change                 |
+| `author`      | `SchemaAuthor \| SchemaAuthor[]`            | —           | A name, or `{ name, url }`                  |
+| `url`         | `string`                                    | —           | The URL of the article page                 |
+| `locale`      | `string`                                    | —           | The language of the article                 |
+
+### `schema.breadcrumbs()`
+
+```ts
+schema.breadcrumbs([
+  { name: "Home", url: "/" },
+  { name: "Exhibitions", url: "/exhibitions" },
+])
+```
+
+The builder numbers the items in their order.
+
+## Your own data
+
+Give any schema.org object to `data`. The types from [`schema-dts`](https://github.com/google/schema-dts) give your editor completion for all schema.org types:
+
+```astro
+<Schema
+  data={{
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "My Site",
-    url: "https://example.com",
+    "@type": "Event",
+    name: "Spring Exhibition",
+    startDate: "2026-04-01",
   }}
 />
+```
+
+A list gives one script with a JSON array:
+
+```astro
+<Schema data={[schema.website(), schema.breadcrumbs(items)]} />
+```
+
+The component escapes the characters that can end the script tag, for example `</script>` in a value.
+
+### With the Head component
+
+```astro
+<Head title="My Page" schema={schema.website()} />
 
 <!-- Disabled -->
 <Head title="My Page" schema={false} />
 ```
 
-### With Metadata API
-```astro
----
-import { Metadata } from "@mannisto/astro-metadata"
-
-Metadata.set({
-  title: "How to Build an Astro Site",
-  schema: {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: "How to Build an Astro Site",
-    datePublished: "2024-01-15",
-    author: {
-      "@type": "Person",
-      name: "Ere Männistö",
-    },
-  },
-})
----
-```
-
 ## Props
 
-| Prop     | Type                      | Description    |
-| -------- | ------------------------- | -------------- |
-| `schema` | `Record<string, unknown>` | JSON-LD object |
+| Prop   | Type                         | Description         |
+| ------ | ---------------------------- | ------------------- |
+| `data` | `SchemaData \| SchemaData[]` | The JSON-LD data    |

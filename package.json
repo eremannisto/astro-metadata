@@ -1,7 +1,7 @@
 {
   "name": "@mannisto/astro-metadata",
   "version": "2.0.0-alpha.1",
-  "description": "Astro components for managing your page head — metadata, social sharing, favicons, and SEO.",
+  "description": "Astro components for the page head: metadata, social cards, favicons, the web app manifest and structured data.",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/eremannisto/astro-metadata#readme",

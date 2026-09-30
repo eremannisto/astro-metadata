@@ -1,6 +1,8 @@
 # Twitter
 
-Renders Twitter card meta tags for rich previews on X. When used inside `Head`, `title`, `description` and `image` are inherited from the page automatically.
+Renders Twitter card meta tags for rich previews on X. Inside `Head`, the component gets `title`, `description` and `image` from the page. `Head` also uses `twitter` in `src/metadata.config.ts`, for example the `site` handle.
+
+The image URL becomes absolute with the Astro `site`.
 
 ## Import
 ```astro
@@ -46,7 +48,6 @@ import { Twitter } from "@mannisto/astro-metadata"
 | ------------- | --------------------------------------------------------- | ----------------------- | ------------------------------------ |
 | `title`       | `string`                                                  | —                       | Card title                           |
 | `description` | `string`                                                  | —                       | Card description                     |
-| `url`         | `string`                                                  | —                       | Deprecated. X does not read `twitter:url`, so the component ignores it |
 | `card`        | `"summary" \| "summary_large_image" \| "player" \| "app"` | `"summary_large_image"` | Card type                            |
 | `site`        | `string`                                                  | —                       | Twitter handle of the site           |
 | `creator`     | `string`                                                  | —                       | Twitter handle of the content author |

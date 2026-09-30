@@ -1,8 +1,11 @@
 # Head
 
-Wraps the entire page head and composes all sub-components internally. Charset and viewport are always included. Title, description and image flow into Open Graph and Twitter automatically.
+Renders the full `<head>` with all other components. The charset and the viewport are always included, and the canonical URL is included by default. The title, the description and the image also go into the Open Graph and Twitter tags.
+
+`Head` uses the values in `src/metadata.config.ts` when a prop is missing. See [Config file and integration](../usage/config.md).
 
 ## Import
+
 ```astro
 ---
 import { Head, type HeadProps } from "@mannisto/astro-metadata"
@@ -12,59 +15,91 @@ import { Head, type HeadProps } from "@mannisto/astro-metadata"
 ## Usage
 
 ### Basic
+
 ```astro
 <Head
   title="Home"
   description="Welcome to my site"
-  image={{ 
-    url: "/og.jpg", 
-    alt: "My OpenGraph banner", 
-    width: 1200, 
-    height: 630 
+  image={{
+    url: "/og.jpg",
+    alt: "My Open Graph banner",
+    width: 1200,
+    height: 630,
   }}
 />
 ```
 
-### With title template
+### With a title template
 
-The `%s` placeholder is replaced with the page title. Use it to append or prepend a site name across all pages. In the following example, the output would be "Welcome | My Site"
+`Head` replaces `%s` with the page title. In this example, the title is "Welcome | My Site":
 
 ```astro
-<Head
-  title="Welcome"
-  titleTemplate="%s | My Site"
-/>
+<Head title="Welcome" titleTemplate="%s | My Site" />
 ```
 
-### Disabling components
+### Disable parts
 
-Any prop can be set to `false` to disable it entirely:
+Set a prop to `false` to remove that part:
+
 ```astro
-<Head
-  title="My Page"
-  twitter={false}
-  robots={false}
-  canonical={false}
-/>
+<Head title="My Page" twitter={false} robots={false} canonical={false} />
 ```
 
-### Overriding OG and Twitter
+### Override the Open Graph and Twitter values
 
-By default OG and Twitter inherit `title`, `description` and `image`. Override specific values when needed:
+Open Graph and Twitter use `title`, `description` and `image`. Override specific values when necessary:
+
 ```astro
 <Head
   title="My Page"
   description="Default description"
   image={{ url: "/og.jpg", alt: "My Site" }}
-  openGraph={{ title: "A punchier title for sharing" }}
+  openGraph={{ title: "A shorter title for sharing" }}
   twitter={{ card: "summary" }}
 />
 ```
 
-### Using slots
+### Theme color and color scheme
+
+```astro
+<Head
+  title="My Page"
+  themeColor={{ light: "#ffffff", dark: "#111111" }}
+  colorScheme="light dark"
+/>
+```
+
+Two colors give two `theme-color` tags with `prefers-color-scheme` media queries.
+
+### Languages and feeds
+
+```astro
+<Head
+  title="My Page"
+  languages={[
+    { href: "/en/page", hreflang: "en" },
+    { href: "/fi/page", hreflang: "fi" },
+    { href: "/en/page", hreflang: "x-default" },
+  ]}
+  feeds={[{ href: "/rss.xml", title: "Blog" }]}
+/>
+```
+
+### Structured data
+
+```astro
+---
+import { Head, schema } from "@mannisto/astro-metadata"
+---
+
+<Head title="Home" schema={[schema.website(), schema.organization({ logo: "/logo.png" })]} />
+```
+
+### Slots
+
 ```astro
 <Head title="My Site">
-  <!-- Renders after charset, before viewport -->
+  <!-- Renders after the charset, before the viewport -->
   <meta slot="top" http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <!-- Renders at the end of <head> -->
@@ -72,46 +107,32 @@ By default OG and Twitter inherit `title`, `description` and `image`. Override s
 </Head>
 ```
 
-### In a layout
-```astro
----
-import { Head, type HeadProps } from "@mannisto/astro-metadata"
-
-interface Props extends HeadProps {}
-
-const { title, ...rest } = Astro.props
----
-
-<html>
-  <Head title={title} titleTemplate="%s | My Site" {...rest} />
-  <body>
-    <slot />
-  </body>
-</html>
-```
-
 ## Props
 
-| Prop                 | Type                           | Default                                   | Description                           |
-| -------------------- | ------------------------------ | ----------------------------------------- | ------------------------------------- |
-| `title`              | `string`                       | —                                         | Page title. Required.                 |
-| `titleTemplate`      | `` `${string}%s${string}` ``   | —                                         | Title template, e.g. `"%s \| My Site"` |
-| `description`        | `string \| false`              | —                                         | Page description                      |
-| `canonical`          | `string \| false`              | `Astro.url.href`                          | Canonical URL                         |
-| `keywords`           | `string[] \| false`            | —                                         | List of keywords                      |
-| `charset`            | `string`                       | `"UTF-8"`                                 | Document charset                      |
-| `viewport`           | `string`                       | `"width=device-width, initial-scale=1.0"` | Viewport meta content                 |
-| `image`              | `OpenGraphImage \| false`      | —                                         | Image passed to OG and Twitter        |
-| `robots`             | `RobotsProps \| false`         | —                                         | Robots directives                     |
-| `openGraph`          | `OpenGraphProps \| false`      | —                                         | Open Graph overrides                  |
-| `twitter`            | `TwitterProps \| false`        | —                                         | Twitter card overrides                |
-| `favicon`            | `FaviconProps \| false`        | —                                         | Favicon configuration                 |
-| `schema`             | `SchemaProps \| false`         | —                                         | JSON-LD structured data               |
-| `languageAlternates` | `LanguageAlternate[] \| false` | —                                         | Hreflang alternate links              |
+| Prop            | Type                                    | Default                                   | Description                                         |
+| --------------- | --------------------------------------- | ----------------------------------------- | --------------------------------------------------- |
+| `title`         | `string`                                | `siteName` in the config                  | The page title                                      |
+| `titleTemplate` | `string`                                | `titleTemplate` in the config             | The title template, e.g. `"%s \| My Site"`          |
+| `description`   | `string \| false`                       | `description` in the config               | The page description                                |
+| `canonical`     | `string \| false`                       | The URL of the current page               | The canonical URL                                   |
+| `charset`       | `string`                                | `"UTF-8"`                                 | The document charset                                |
+| `viewport`      | `string`                                | `"width=device-width, initial-scale=1.0"` | The viewport meta content                           |
+| `image`         | `OpenGraphImage \| false`               | `image` in the config                     | The image for Open Graph and Twitter                |
+| `robots`        | `RobotsProps \| false`                  | `robots` in the config                    | The robots directives                               |
+| `openGraph`     | `OpenGraphProps \| false`               | —                                         | Open Graph overrides                                |
+| `twitter`       | `TwitterProps \| false`                 | `twitter` in the config                   | Twitter card overrides                              |
+| `icons`         | `IconsProps \| false`                   | The generated favicons                    | The favicon files                                   |
+| `manifest`      | `string \| false`                       | The manifest from the config              | The path of the web app manifest                    |
+| `schema`        | `SchemaData \| SchemaData[] \| false`   | —                                         | JSON-LD structured data                             |
+| `languages`     | `LanguageAlternate[] \| false`          | —                                         | The `hreflang` links                                |
+| `feeds`         | `Feed[] \| false`                       | `feeds` in the config                     | The RSS, Atom or JSON feed links                    |
+| `themeColor`    | `string \| { light, dark } \| false`    | `themeColor` in the config                | The color of the browser interface                  |
+| `colorScheme`   | `string \| false`                       | `colorScheme` in the config               | The color modes of the page, e.g. `"light dark"`    |
+| `locale`        | `string`                                | `Astro.currentLocale`                     | The locale of the localized config values           |
 
 ## Slots
 
-| Slot      | Description                         |
-| --------- | ----------------------------------- |
-| `top`     | Renders after charset, before viewport |
-| (default) | Renders at the end of `<head>`      |
+| Slot      | Description                              |
+| --------- | ---------------------------------------- |
+| `top`     | Renders after the charset, before the viewport |
+| (default) | Renders at the end of `<head>`           |

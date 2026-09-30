@@ -18,7 +18,7 @@ pnpm playwright install chromium
 ```bash
 pnpm test:unit   # Unit tests
 pnpm test:e2e    # E2E tests
-pnpm test:all    # All tests
+pnpm test        # All tests
 ```
 
 ### Linting and formatting
@@ -33,28 +33,31 @@ All PRs must pass `pnpm check` — enforced via GitHub Actions.
 ```
 astro-metadata/
   src/
-    components
-    lib/
+    components/     # The Astro components
+    lib/            # The config, URL, favicon, manifest, schema and check functions
+    routes/         # The injected favicon and manifest endpoints
+    toolbar/        # The dev toolbar app
+    integration.js  # The Astro integration (plain JavaScript)
   tests/
     e2e/
-      components/
+      components/   # Tests for the basic fixture
+      config/       # Tests for the config fixture
+      favicon/      # Tests for the favicon fixture
       fixtures/
     unit/
-      metadata.test.ts
-  scripts/
-    init.sh
   index.ts
   playwright.config.ts
   vitest.config.ts
-  biome.json
   prettier.config.mjs
 ```
+
+The e2e tests run each fixture with `astro dev` and with `astro preview`. Astro 7 moves the servers into the background when it detects an agent. Set `ASTRO_DEV_BACKGROUND=0 ASTRO_PREVIEW_BACKGROUND=0` to prevent this.
 
 ## Pull request guidelines
 
 1. Create a feature branch from `main`
 2. Make your changes
-3. Run `pnpm check` and `pnpm test:all`
+3. Run `pnpm check` and `pnpm test`
 4. Submit a PR with a clear description
 
 ## Code style

@@ -1,8 +1,9 @@
 # Title
 
-Renders the `<title>` tag. The template must contain `%s` — TypeScript enforces this at the type level.
+Renders the `<title>` tag. The component replaces `%s` in the template with the title.
 
 ## Import
+
 ```astro
 ---
 import { Title } from "@mannisto/astro-metadata"
@@ -10,6 +11,7 @@ import { Title } from "@mannisto/astro-metadata"
 ```
 
 ## Usage
+
 ```astro
 <Title value="My Page" />
 <!-- Output: <title>My Page</title> -->
@@ -21,9 +23,11 @@ import { Title } from "@mannisto/astro-metadata"
 <Head title="My Page" titleTemplate="%s | My Site" />
 ```
 
+A template without `%s` gives the title unchanged.
+
 ## Props
 
-| Prop       | Type                         | Description                         |
-| ---------- | ---------------------------- | ----------------------------------- |
-| `value`    | `string`                     | Page title. Required.               |
-| `template` | `` `${string}%s${string}` `` | Template string. Must contain `%s`. |
+| Prop       | Type     | Description                                 |
+| ---------- | -------- | ------------------------------------------- |
+| `value`    | `string` | The page title. Required.                   |
+| `template` | `string` | The title template, e.g. `"%s \| My Site"`  |

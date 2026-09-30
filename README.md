@@ -6,9 +6,20 @@
 ![license](https://img.shields.io/badge/license-MIT-green)
 ![astro peer dependency](https://img.shields.io/npm/dependency-version/@mannisto/astro-metadata/peer/astro)
 
-Astro components for managing your page head — metadata, social sharing, favicons, and SEO.
+Astro components for the page head: metadata, social cards, favicons, the web app manifest and structured data.
+
+- **Components:** `Head` renders the full head. The smaller components render one part each.
+- **Site-wide defaults:** Put the site name, the title template and other defaults in `src/metadata.config.ts`. Each text can have one value for each locale.
+- **Favicons:** Give one source image. The integration generates all favicon files.
+- **Web app manifest:** Put the manifest in the config file. The integration serves one manifest for each locale.
+- **Structured data:** Typed JSON-LD builders fill in values from the config.
+- **Absolute URLs:** The canonical URL, the social images and the alternate links use the Astro `site` and `base`.
+- **Checks:** A dev toolbar app shows the metadata, the social card previews and the problems of the current page. The build logs the same problems.
+
+Each feature is optional. The components work without the integration and without a config file.
 
 ## Installation
+
 ```bash
 # pnpm
 pnpm add @mannisto/astro-metadata
@@ -20,103 +31,106 @@ npm install @mannisto/astro-metadata
 yarn add @mannisto/astro-metadata
 ```
 
-## Usage
+## Quick start
 
-There are three ways to use this package. Pick what suits your project, or combine them freely.
+Use `Head` in your layout, and give it the values of the page:
 
-### Head component
-
-The simplest approach — use `Head` in your layout and pass props down from pages. Title, description and image flow into Open Graph and Twitter automatically.
 ```astro
 ---
-import { Head } from "@mannisto/astro-metadata"
+// src/layouts/Layout.astro
+import { Head, type HeadProps } from "@mannisto/astro-metadata"
+
+type Props = HeadProps
 ---
 
-<html>
-  <Head
-    title="Home"
-    titleTemplate="%s | My Site"
-    description="Welcome to my site"
-    image={{ url: "/og.jpg", alt: "My Site", width: 1200, height: 630 }}
-  />
+<html lang="en">
+  <Head {...Astro.props} />
   <body>
     <slot />
   </body>
 </html>
 ```
 
-[Read more →](docs/usage/head.md)
-
-### Metadata API
-
-Set metadata in pages, resolve in layouts — no prop drilling.
 ```astro
 ---
-// pages/about.astro
-import { Metadata } from "@mannisto/astro-metadata"
-
-Metadata.set({
-  title: "About",
-  description: "Learn more about us",
-})
+// src/pages/index.astro
+import Layout from "../layouts/Layout.astro"
 ---
+
+<Layout title="Home" description="Welcome to my site">
+  <h1>Hello</h1>
+</Layout>
 ```
-```astro
----
-// layouts/Layout.astro
-import { Head, Metadata } from "@mannisto/astro-metadata"
 
-const meta = Metadata.resolve({
-  title: "My Site",
+Set `site` in `astro.config.mjs`. The canonical URL and the social images must be absolute URLs, and the package uses `site` to make them.
+
+[Read more about `Head` →](docs/usage/head.md)
+
+## Site-wide defaults
+
+Add the integration to `astro.config.mjs`:
+
+```js
+import metadata from "@mannisto/astro-metadata/integration"
+import { defineConfig } from "astro/config"
+
+export default defineConfig({
+  site: "https://example.com",
+  integrations: [metadata()],
+})
+```
+
+Then add `src/metadata.config.ts`. The props of `Head` override these values:
+
+```ts
+import { defineMetadata } from "@mannisto/astro-metadata"
+
+export default defineMetadata({
+  siteName: "My Site",
   titleTemplate: "%s | My Site",
+  description: "The default description",
+  image: { url: "/og.jpg", width: 1200, height: 630 },
+  twitter: { site: "@mysite" },
 })
----
-
-<html>
-  <Head {...meta} />
-  <body>
-    <slot />
-  </body>
-</html>
 ```
 
-[Read more →](docs/usage/metadata.md)
+[Read more about the config file →](docs/usage/config.md)
 
-### Individual components
+## Favicons
 
-Use components directly in your `<head>` for full control.
-```astro
----
-import { Title, Description, OpenGraph } from "@mannisto/astro-metadata"
----
+Give the integration one square source image. An SVG gives the best result:
 
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <Title value="My Page" template="%s | My Site" />
-    <Description value="Welcome to my site" />
-    <OpenGraph
-      title="My Page"
-      image={{ url: "/og.jpg", alt: "My Site" }}
-    />
-  </head>
-  <body>
-    <slot />
-  </body>
-</html>
+```js
+metadata({
+  favicon: {
+    source: "./src/assets/logo.svg",
+  },
+})
 ```
 
-[Read more →](docs/usage/components.md)
+`Head` then renders the favicon tags automatically.
 
-## Components
+[Read more about favicons →](docs/usage/favicons.md)
 
+## Documentation
+
+**Usage**
+
+- [Head](docs/usage/head.md)
+- [Config file and integration](docs/usage/config.md)
+- [Favicons](docs/usage/favicons.md)
+- [Web app manifest](docs/usage/manifest.md)
+- [Checks and the dev toolbar app](docs/usage/checks.md)
+- [Individual components](docs/usage/components.md)
+- [Migration from 1.x](docs/usage/migration.md)
+
+**Components**
+
+- [Alternates](docs/components/alternates.md)
 - [Canonical](docs/components/canonical.md)
 - [Description](docs/components/description.md)
-- [Favicon](docs/components/favicon.md)
 - [Head](docs/components/head.md)
-- [Keywords](docs/components/keywords.md)
-- [LanguageAlternates](docs/components/language-alternates.md)
+- [Icons](docs/components/icons.md)
 - [OpenGraph](docs/components/open-graph.md)
 - [Robots](docs/components/robots.md)
 - [Schema](docs/components/schema.md)
@@ -125,7 +139,7 @@ import { Title, Description, OpenGraph } from "@mannisto/astro-metadata"
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and contribution guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the setup and the guidelines.
 
 ## License
 

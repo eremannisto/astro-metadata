@@ -1,96 +1,85 @@
-# Favicon
+# Icons
 
-Favicon support with light and dark mode variants, automatic MIME type detection, and automatic sorting.
+Renders the favicon tags. The component detects the MIME type of each file, supports light and dark variants, and sorts the tags in the recommended order.
+
+With the `favicon` option of the integration, `Icons` renders the generated favicons automatically. See [Favicons](../usage/favicons.md).
 
 ## Import
+
 ```astro
 ---
-import { Favicon } from "@mannisto/astro-metadata"
+import { Icons } from "@mannisto/astro-metadata"
 ---
 ```
 
 ## Usage
 
-### Single favicon
+### Generated favicons
+
 ```astro
-<Favicon icons={[{ path: "/favicon.ico" }]} />
+<!-- With the favicon option of the integration -->
+<Icons />
 ```
 
-### Multiple formats
+### Your own files
+
 ```astro
-<Favicon
+<Icons
   icons={[
-    { path: "/favicon.ico" },
-    { path: "/favicon.svg" },
-    { path: "/favicon-32x32.png", size: 32 },
+    { path: "/favicon.ico", size: 32 },
+    { path: "/icon.svg" },
     { path: "/apple-touch-icon.png", size: 180, apple: true },
   ]}
 />
 ```
 
-### Dark and light mode variants
+### Light and dark variants
+
 ```astro
-<Favicon
+<Icons
   icons={[
     { path: "/favicon.ico" },
-    { path: "/favicon-dark.svg", theme: "dark" },
-    { path: "/favicon-light.svg", theme: "light" },
+    { path: "/icon-dark.svg", theme: "dark" },
+    { path: "/icon-light.svg", theme: "light" },
   ]}
 />
 ```
 
-### With manifest
+### Disable the sort
+
+The component sorts the icons in the recommended browser order: `ico`, `png`, `svg`, `apple`, then the light and dark variants. Set `sort={false}` to keep your order:
+
 ```astro
-<Favicon
-  icons={[{ path: "/favicon.ico" }]}
-  manifest="/site.webmanifest"
-/>
+<Icons icons={[{ path: "/icon.svg" }, { path: "/favicon.ico" }]} sort={false} />
 ```
 
-### Disable sorting
+### With the Head component
 
-Icons are automatically sorted in the recommended browser order: `ico` → `png` → `svg` → `apple` → themed variants. Pass `sort={false}` to preserve the original order:
 ```astro
-<Favicon
-  icons={[
-    { path: "/favicon.svg" },
-    { path: "/favicon.ico" },
-  ]}
-  sort={false}
-/>
-```
+<!-- Head renders the generated favicons automatically -->
+<Head title="My Page" />
 
-### With Head component
-```astro
-<Head
-  title="My Page"
-  favicon={{
-    icons: [
-      { path: "/favicon.ico" },
-      { path: "/favicon.svg" },
-      { path: "/apple-touch-icon.png", size: 180, apple: true },
-    ],
-    manifest: "/site.webmanifest",
-  }}
-/>
+<!-- Your own files -->
+<Head title="My Page" icons={{ icons: [{ path: "/favicon.ico" }] }} />
 
 <!-- Disabled -->
-<Head title="My Page" favicon={false} />
+<Head title="My Page" icons={false} />
 ```
 
 ## Props
 
-| Prop       | Type            | Default | Description                             |
-| ---------- | --------------- | ------- | --------------------------------------- |
-| `icons`    | `FaviconFile[]` | —       | List of favicon files                   |
-| `manifest` | `string`        | —       | Path to web app manifest                |
-| `sort`     | `boolean`       | `true`  | Sort icons in recommended browser order |
+| Prop    | Type         | Default                | Description                                  |
+| ------- | ------------ | ---------------------- | -------------------------------------------- |
+| `icons` | `IconFile[]` | The generated favicons | The icon files                               |
+| `sort`  | `boolean`    | `true`                 | Sort the icons in the recommended order      |
 
-## FaviconFile
+## IconFile
 
-| Prop    | Type                | Description                                                 |
-| ------- | ------------------- | ----------------------------------------------------------- |
-| `path`  | `string`            | Path to the file. MIME type is detected automatically.      |
-| `size`  | `number`            | Size in pixels. Rendered as `NxN` in the `sizes` attribute. |
-| `theme` | `"light" \| "dark"` | Adds a `prefers-color-scheme` media query                   |
-| `apple` | `boolean`           | Renders as `<link rel="apple-touch-icon">`                  |
+| Prop    | Type                | Description                                                   |
+| ------- | ------------------- | ------------------------------------------------------------- |
+| `path`  | `string`            | The path of the file. The component detects the MIME type.    |
+| `size`  | `number`            | The size in pixels. The `sizes` attribute becomes `NxN`.      |
+| `theme` | `"light" \| "dark"` | Adds a `prefers-color-scheme` media query                     |
+| `apple` | `boolean`           | Renders `<link rel="apple-touch-icon">`                       |
+
+The paths get the Astro `base`.

@@ -1,98 +1,104 @@
-# LanguageAlternates
+# Alternates
 
-Renders `<link rel="alternate" hreflang>` tags for multilingual sites. Tells search engines which language version to serve for a given region.
+Renders `<link rel="alternate">` tags:
+
+- **Languages:** `hreflang` links tell search engines about the other language versions of the page.
+- **Feeds:** RSS, Atom and JSON feed links let feed readers find your feeds.
 
 ## Import
+
 ```astro
 ---
-import { LanguageAlternates } from "@mannisto/astro-metadata"
+import { Alternates } from "@mannisto/astro-metadata"
 ---
 ```
 
 ## Usage
 
-### Basic
+### Languages
+
 ```astro
-<LanguageAlternates
-  alternates={[
-    { href: "https://example.com/en", hreflang: "en" },
-    { href: "https://example.com/fi", hreflang: "fi" },
-    { href: "https://example.com", hreflang: "x-default" },
+<Alternates
+  languages={[
+    { href: "/en", hreflang: "en" },
+    { href: "/fi", hreflang: "fi" },
+    { href: "/en", hreflang: "x-default" },
   ]}
 />
 ```
+
+The component makes the URLs absolute with the Astro `site`. Search engines require absolute `hreflang` URLs.
 
 ### Regional variants
+
 ```astro
-<LanguageAlternates
-  alternates={[
-    { href: "https://example.com/en-us", hreflang: "en-US" },
-    { href: "https://example.com/en-gb", hreflang: "en-GB" },
-    { href: "https://example.com", hreflang: "x-default" },
+<Alternates
+  languages={[
+    { href: "/en-us", hreflang: "en-US" },
+    { href: "/en-gb", hreflang: "en-GB" },
+    { href: "/en-us", hreflang: "x-default" },
   ]}
 />
 ```
 
-### With Head component
+### Feeds
+
 ```astro
-<Head
-  title="My Page"
-  languageAlternates={[
-    { href: "https://example.com/en", hreflang: "en" },
-    { href: "https://example.com/fi", hreflang: "fi" },
-    { href: "https://example.com", hreflang: "x-default" },
+<Alternates
+  feeds={[
+    { href: "/rss.xml", title: "Blog" },
+    { href: "/atom.xml", title: "Blog", type: "atom" },
+    { href: "/feed.json", type: "json" },
   ]}
 />
+```
+
+The feed paths get the Astro `base`.
+
+### With @mannisto/astro-i18n
+
+`Locale.hreflang()` returns the links for all locales and `x-default`:
+
+```astro
+---
+import { Locale } from "@mannisto/astro-i18n/runtime"
+import { Head } from "@mannisto/astro-metadata"
+
+const languages = Locale.hreflang(Astro.url, Astro.site!)
+---
+
+<Head title="My Page" languages={languages} />
+```
+
+### With the Head component
+
+```astro
+<Head title="My Page" languages={languages} feeds={[{ href: "/rss.xml" }]} />
 
 <!-- Disabled -->
-<Head title="My Page" languageAlternates={false} />
+<Head title="My Page" languages={false} feeds={false} />
 ```
 
-### With Metadata API
-```astro
----
-import { Metadata } from "@mannisto/astro-metadata"
-
-Metadata.set({
-  title: "About",
-  languageAlternates: [
-    { href: "https://example.com/en/about", hreflang: "en" },
-    { href: "https://example.com/fi/about", hreflang: "fi" },
-    { href: "https://example.com/about", hreflang: "x-default" },
-  ],
-})
----
-```
-
-### Dynamic alternates in a layout
-```astro
----
-import { LanguageAlternates } from "@mannisto/astro-metadata"
-
-const currentPath = Astro.url.pathname
-const baseUrl = "https://example.com"
----
-
-<html>
-  <head>
-    <LanguageAlternates
-      alternates={[
-        { href: `${baseUrl}/en${currentPath}`, hreflang: "en" },
-        { href: `${baseUrl}/fi${currentPath}`, hreflang: "fi" },
-        { href: `${baseUrl}${currentPath}`, hreflang: "x-default" },
-      ]}
-    />
-  </head>
-  <body>
-    <slot />
-  </body>
-</html>
-```
+`Head` uses `feeds` from `src/metadata.config.ts` when the prop is missing.
 
 ## Props
 
-| Prop                    | Type                  | Description                                                     |
-| ----------------------- | --------------------- | --------------------------------------------------------------- |
-| `alternates`            | `LanguageAlternate[]` | List of alternate language pages                                |
-| `alternates[].href`     | `string`              | Full URL of the alternate page                                  |
-| `alternates[].hreflang` | `string`              | Language or region code, e.g. `en`, `fi`, `en-US`, `x-default` |
+| Prop        | Type                  | Description                        |
+| ----------- | --------------------- | ---------------------------------- |
+| `languages` | `LanguageAlternate[]` | The other language versions        |
+| `feeds`     | `Feed[]`              | The feeds of the site              |
+
+## LanguageAlternate
+
+| Prop       | Type     | Description                                                     |
+| ---------- | -------- | --------------------------------------------------------------- |
+| `href`     | `string` | The path or URL of the page                                     |
+| `hreflang` | `string` | The language or region code, e.g. `en`, `fi`, `en-US`, `x-default` |
+
+## Feed
+
+| Prop    | Type                         | Default | Description             |
+| ------- | ---------------------------- | ------- | ----------------------- |
+| `href`  | `string`                     | —       | The path of the feed    |
+| `title` | `string`                     | —       | The name of the feed    |
+| `type`  | `"rss" \| "atom" \| "json"`  | `"rss"` | The feed format         |

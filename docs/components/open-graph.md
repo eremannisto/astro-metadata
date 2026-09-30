@@ -1,6 +1,8 @@
 # OpenGraph
 
-Renders Open Graph meta tags for rich previews when pages are shared on social platforms. When used inside `Head`, `title`, `description`, `image` and `url` are inherited from the page automatically.
+Renders Open Graph meta tags for rich previews when pages are shared on social platforms. Inside `Head`, the component gets `title`, `description`, `image` and `url` from the page, and `siteName` from `src/metadata.config.ts`.
+
+The `url`, image, video and audio URLs become absolute with the Astro `site`. Social sites can not load a relative URL.
 
 ## Import
 ```astro
