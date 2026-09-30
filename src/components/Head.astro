@@ -1,6 +1,7 @@
 ---
 import type { ComponentProps } from "astro/types"
 
+import { getConfig, localize } from "../lib/config.ts"
 import { url, withBase } from "../lib/url.ts"
 import Alternates from "./Alternates.astro"
 import type { LanguageAlternate } from "./Alternates.astro"
@@ -30,6 +31,8 @@ export type Props = {
   schema?: SchemaData | SchemaData[] | false
   languages?: LanguageAlternate[] | false
   manifest?: string | false
+  /** The locale for localized config values. Defaults to `Astro.currentLocale`. */
+  locale?: string
 }
 
 const {
@@ -47,11 +50,20 @@ const {
   schema,
   languages,
   manifest,
+  locale = Astro.currentLocale,
 } = Astro.props
 
 const enabled = <T,>(value: T | false | undefined): value is T => {
   return value !== false && value !== undefined
 }
+
+// Site-wide defaults from src/metadata.config.ts. Props override them.
+const config = getConfig()
+const siteName = localize(config.siteName, locale)
+const template = titleTemplate ?? localize(config.titleTemplate, locale)
+const pageDescription = description ?? localize(config.description, locale)
+const pageImage = image ?? config.image
+const pageRobots = robots ?? config.robots
 
 // The canonical URL of the page: the prop, or the absolute URL of the current page
 const canonicalUrl = canonical === false ? undefined : url(canonical ?? Astro.url.pathname)
@@ -59,9 +71,10 @@ const canonicalUrl = canonical === false ? undefined : url(canonical ?? Astro.ur
 const og =
   openGraph !== false
     ? {
-        title,
-        description: enabled(description) ? description : undefined,
-        image: enabled(image) ? image : undefined,
+        title: title ?? siteName,
+        siteName,
+        description: enabled(pageDescription) ? pageDescription : undefined,
+        image: enabled(pageImage) ? pageImage : undefined,
         url: canonicalUrl,
         ...openGraph,
       }
@@ -70,9 +83,10 @@ const og =
 const tw =
   twitter !== false
     ? {
-        title,
-        description: enabled(description) ? description : undefined,
-        image: enabled(image) ? image : undefined,
+        ...config.twitter,
+        title: title ?? siteName,
+        description: enabled(pageDescription) ? pageDescription : undefined,
+        image: enabled(pageImage) ? pageImage : undefined,
         ...twitter,
       }
     : false
@@ -83,11 +97,11 @@ const tw =
   <slot name="top" />
   <meta name="viewport" content={viewport} />
 
-  {title && <Title value={title} template={titleTemplate} />}
+  {title ? <Title value={title} template={template} /> : siteName && <Title value={siteName} />}
 
-  {enabled(description) && <Description value={description} />}
+  {enabled(pageDescription) && <Description value={pageDescription} />}
   {canonicalUrl && <Canonical value={canonicalUrl} />}
-  {enabled(robots) && <Robots {...robots} />}
+  {enabled(pageRobots) && <Robots {...pageRobots} />}
   {enabled(og) && <OpenGraph {...og} />}
   {enabled(tw) && <Twitter {...tw} />}
   {enabled(icons) && <Icons {...icons} />}

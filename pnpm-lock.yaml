@@ -53,6 +53,15 @@ importers:
         specifier: ^6.4.8
         version: 6.4.8(@types/node@25.5.0)(rollup@4.57.1)
 
+  tests/e2e/fixtures/config:
+    dependencies:
+      "@mannisto/astro-metadata":
+        specifier: workspace:*
+        version: link:../../../..
+      astro:
+        specifier: ^6.4.8
+        version: 6.4.8(@types/node@25.5.0)(rollup@4.57.1)
+
 packages:
   "@astrojs/compiler@2.13.1":
     resolution:

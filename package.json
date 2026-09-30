@@ -18,7 +18,13 @@
     "seo",
     "metadata"
   ],
-  "exports": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./integration": {
+      "types": "./src/integration.d.ts",
+      "default": "./src/integration.js"
+    }
+  },
   "files": [
     "src",
     "index.ts"
