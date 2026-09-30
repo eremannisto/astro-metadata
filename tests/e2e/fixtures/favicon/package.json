@@ -1,0 +1,8 @@
+{
+  "name": "astro-metadata-fixtures-favicon",
+  "type": "module",
+  "dependencies": {
+    "@mannisto/astro-metadata": "workspace:*",
+    "astro": "^6.4.8"
+  }
+}

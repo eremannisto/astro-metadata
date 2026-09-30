@@ -1,10 +1,20 @@
+import crypto from "node:crypto"
 import fs from "node:fs"
+import path from "node:path"
 import { fileURLToPath, URL } from "node:url"
 
 const NAME = "@mannisto/astro-metadata"
 const CONFIG_ID = "virtual:@mannisto/astro-metadata/config"
 const RESOLVED_CONFIG_ID = `\0${CONFIG_ID}`
 const CONFIG_FILES = ["src/metadata.config.ts", "src/metadata.config.js", "src/metadata.config.mjs"]
+const FAVICON_FILES = [
+  "favicon.ico",
+  "icon.svg",
+  "apple-touch-icon.png",
+  "icon-192.png",
+  "icon-512.png",
+  "icon-maskable.png",
+]
 
 /**
  * Finds the config file: the `config` option, or the first default file that exists.
@@ -27,6 +37,38 @@ function findConfigFile(root, path) {
 }
 
 /**
+ * Checks the favicon source and returns the data for the generated files.
+ * Warns about a source that gives blurred or cut icons.
+ *
+ * @param {URL} root - The root of the Astro project.
+ * @param {import("./integration").FaviconOptions} options - The `favicon` option.
+ * @param {import("astro").AstroIntegrationLogger} logger - The integration logger.
+ * @returns {Promise<import("./lib/favicon").FaviconInfo>} The favicon data.
+ */
+async function resolveFavicon(root, options, logger) {
+  const source = fileURLToPath(new URL(options.source, root))
+  if (!fs.existsSync(source)) throw new Error(`${NAME} Favicon source not found: ${options.source}`)
+
+  const content = fs.readFileSync(source)
+  const svg = path.extname(source).toLowerCase() === ".svg"
+  const hash = crypto.createHash("sha256").update(content).digest("hex").slice(0, 8)
+
+  const { default: sharp } = await import("sharp")
+  const { width = 0, height = 0 } = await sharp(content).metadata()
+  if (width !== height) {
+    logger.warn(`The favicon source is not square (${width}x${height}). The icons get empty space.`)
+  }
+  if (!svg && Math.min(width, height) < 512) {
+    logger.warn(`The favicon source is smaller than 512 px. The large icons become blurred.`)
+  }
+  if (svg && !/viewBox=/i.test(content.toString("utf-8"))) {
+    logger.warn("The favicon SVG has no viewBox. It can not scale correctly.")
+  }
+
+  return { source, background: options.background ?? "#ffffff", svg, hash }
+}
+
+/**
  * The Astro integration of `@mannisto/astro-metadata`. It loads the site-wide defaults
  * from `src/metadata.config.ts` and gives them to the components.
  *
@@ -37,11 +79,16 @@ export default function metadata(options = {}) {
   return {
     name: NAME,
     hooks: {
-      "astro:config:setup": ({ config, updateConfig, injectScript }) => {
+      "astro:config:setup": async ({ config, updateConfig, injectScript, injectRoute, logger }) => {
         const configFile = findConfigFile(config.root, options.config)
+        const favicon = options.favicon
+          ? await resolveFavicon(config.root, options.favicon, logger)
+          : undefined
 
         updateConfig({
           vite: {
+            // The favicon data is a build-time constant, so pages and endpoints can read it
+            define: favicon ? { __ASTRO_METADATA_FAVICON__: JSON.stringify(favicon) } : {},
             plugins: [
               {
                 name: "astro-metadata-config",
@@ -64,6 +111,17 @@ export default function metadata(options = {}) {
 
         // Runs on the server before each page, so the components can read the config
         injectScript("page-ssr", `import ${JSON.stringify(CONFIG_ID)}`)
+
+        if (favicon) {
+          for (const file of FAVICON_FILES) {
+            if (file === "icon.svg" && !favicon.svg) continue
+            injectRoute({
+              pattern: `/${file}`,
+              entrypoint: new URL(`./routes/${file}.ts`, import.meta.url),
+              prerender: true,
+            })
+          }
+        }
       },
     },
   }

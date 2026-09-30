@@ -1,4 +1,5 @@
 ---
+import { faviconUrl, getFavicon } from "../lib/favicon.ts"
 import { withBase } from "../lib/url.ts"
 
 export type IconFile = {
@@ -9,11 +10,26 @@ export type IconFile = {
 }
 
 export type Props = {
-  icons: IconFile[]
+  /** The icon files. Without this prop, the icons from the `favicon` option of the integration. */
+  icons?: IconFile[]
   sort?: boolean
 }
 
-const { icons, sort = true } = Astro.props
+const { icons = generatedIcons(), sort = true } = Astro.props
+
+/**
+ * Returns the files that the `favicon` option of the integration generates,
+ * or an empty list without the option.
+ */
+function generatedIcons(): IconFile[] {
+  const favicon = getFavicon()
+  if (!favicon) return []
+
+  const files: IconFile[] = [{ path: faviconUrl("favicon.ico", favicon), size: 32 }]
+  if (favicon.svg) files.push({ path: faviconUrl("icon.svg", favicon) })
+  files.push({ path: faviconUrl("apple-touch-icon.png", favicon), size: 180, apple: true })
+  return files
+}
 
 /**
  * Returns the file extension of a favicon path in lowercase, without the

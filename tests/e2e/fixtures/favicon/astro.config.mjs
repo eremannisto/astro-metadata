@@ -3,11 +3,11 @@ import { defineConfig } from "astro/config"
 
 export default defineConfig({
   site: "https://example.com",
+  base: "/docs",
   integrations: [
     metadata({
       favicon: {
-        source: "./src/assets/logo.svg",
-        background: "#1e40af",
+        source: "./src/assets/logo.png",
       },
     }),
   ],

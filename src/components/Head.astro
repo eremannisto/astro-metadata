@@ -138,7 +138,7 @@ const tw =
   {enabled(pageRobots) && <Robots {...pageRobots} />}
   {enabled(og) && <OpenGraph {...og} />}
   {enabled(tw) && <Twitter {...tw} />}
-  {enabled(icons) && <Icons {...icons} />}
+  {icons !== false && <Icons {...icons} />}
   {enabled(manifest) && <link rel="manifest" href={withBase(manifest)} />}
   {enabled(schema) && <Schema data={schema} />}
   <Alternates

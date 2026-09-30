@@ -6,6 +6,10 @@ settings:
 
 importers:
   .:
+    dependencies:
+      sharp:
+        specifier: ^0.34.0
+        version: 0.34.5
     devDependencies:
       "@eslint/js":
         specifier: ^10.0.1
@@ -54,6 +58,15 @@ importers:
         version: 6.4.8(@types/node@25.5.0)(rollup@4.57.1)
 
   tests/e2e/fixtures/config:
+    dependencies:
+      "@mannisto/astro-metadata":
+        specifier: workspace:*
+        version: link:../../../..
+      astro:
+        specifier: ^6.4.8
+        version: 6.4.8(@types/node@25.5.0)(rollup@4.57.1)
+
+  tests/e2e/fixtures/favicon:
     dependencies:
       "@mannisto/astro-metadata":
         specifier: workspace:*
@@ -3680,8 +3693,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  "@img/colour@1.1.0":
-    optional: true
+  "@img/colour@1.1.0": {}
 
   "@img/sharp-darwin-arm64@0.34.5":
     optionalDependencies:
@@ -4406,8 +4418,7 @@ snapshots:
 
   destr@2.0.5: {}
 
-  detect-libc@2.1.2:
-    optional: true
+  detect-libc@2.1.2: {}
 
   devalue@5.9.4: {}
 
@@ -5430,7 +5441,6 @@ snapshots:
       "@img/sharp-win32-arm64": 0.34.5
       "@img/sharp-win32-ia32": 0.34.5
       "@img/sharp-win32-x64": 0.34.5
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:

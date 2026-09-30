@@ -4,6 +4,7 @@ import { defineConfig } from "@playwright/test"
 const fixtures = [
   { name: "basic", testMatch: ["components/**/*.test.ts", "integration.test.ts"] },
   { name: "config", testMatch: ["config/**/*.test.ts"] },
+  { name: "favicon", testMatch: ["favicon/**/*.test.ts"] },
 ]
 
 // Each fixture runs twice: with the dev server and with a production build.

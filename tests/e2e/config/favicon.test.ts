@@ -1,0 +1,55 @@
+import { expect, test } from "@playwright/test"
+
+import { readIco, readPng } from "../lib/image.ts"
+
+// The background color of the Apple and maskable icons in the fixture: #1e40af
+const BACKGROUND = { r: 0x1e, g: 0x40, b: 0xaf, alpha: 255 }
+
+test.describe("generated favicon tags", () => {
+  test("renders the tags with a hash in the URLs", async ({ page }) => {
+    await page.goto("/")
+    const ico = page.locator("link[rel='icon'][sizes='32x32']")
+    await expect(ico).toHaveAttribute("href", /^\/favicon\.ico\?v=[0-9a-f]{8}$/)
+    await expect(page.locator("link[rel='icon'][type='image/svg+xml']")).toHaveAttribute(
+      "href",
+      /^\/icon\.svg\?v=[0-9a-f]{8}$/
+    )
+    await expect(page.locator("link[rel='apple-touch-icon']")).toHaveAttribute(
+      "href",
+      /^\/apple-touch-icon\.png\?v=[0-9a-f]{8}$/
+    )
+  })
+})
+
+test.describe("generated favicon files", () => {
+  test("renders an ICO file with two images", async ({ request }) => {
+    const response = await request.get("/favicon.ico")
+    expect(response.status()).toBe(200)
+    expect(readIco(await response.body())).toBe(2)
+  })
+
+  test("renders the SVG source", async ({ request }) => {
+    const response = await request.get("/icon.svg")
+    expect(response.status()).toBe(200)
+    expect(await response.text()).toContain("<svg")
+  })
+
+  test("renders the Apple icon with the background color", async ({ request }) => {
+    const png = await readPng(await (await request.get("/apple-touch-icon.png")).body())
+    expect(png).toMatchObject({ width: 180, height: 180, format: "png" })
+    expect(png.corner).toEqual(BACKGROUND)
+  })
+
+  test("renders the 192 px and 512 px icons with transparent corners", async ({ request }) => {
+    for (const size of [192, 512]) {
+      const png = await readPng(await (await request.get(`/icon-${size}.png`)).body())
+      expect(png).toMatchObject({ width: size, height: size, format: "png" })
+    }
+  })
+
+  test("renders the maskable icon with the background color", async ({ request }) => {
+    const png = await readPng(await (await request.get("/icon-maskable.png")).body())
+    expect(png).toMatchObject({ width: 512, height: 512, format: "png" })
+    expect(png.corner).toEqual(BACKGROUND)
+  })
+})
