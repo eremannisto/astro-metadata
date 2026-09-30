@@ -53,4 +53,14 @@ test.describe("Alternates", () => {
       ).toHaveAttribute("href", "/feed.json")
     })
   })
+
+  test.describe("relative", () => {
+    test("renders absolute language URLs", async ({ page }) => {
+      await page.goto("/alternates/relative")
+      await expect(page.locator("link[hreflang='fi']")).toHaveAttribute(
+        "href",
+        "https://example.com/fi"
+      )
+    })
+  })
 })

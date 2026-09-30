@@ -1,5 +1,5 @@
 ---
-import { withBase } from "../lib/url.ts"
+import { url, withBase } from "../lib/url.ts"
 
 export type LanguageAlternate = {
   href: string
@@ -29,7 +29,7 @@ const FEED_TYPES = {
 
 {
   languages.map((language) => (
-    <link rel="alternate" href={language.href} hreflang={language.hreflang} />
+    <link rel="alternate" href={url(language.href)} hreflang={language.hreflang} />
   ))
 }
 {
