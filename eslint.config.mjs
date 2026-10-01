@@ -21,6 +21,6 @@ export default [
   },
   prettier,
   {
-    ignores: ["dist/**", "node_modules/**", "tests/e2e/fixtures/**/.astro/**"],
+    ignores: ["dist/**", "node_modules/**", "**/.astro/**"],
   },
 ]
