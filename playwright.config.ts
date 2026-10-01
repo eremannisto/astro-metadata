@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test"
 
 // Each fixture and the tests that use it
 const fixtures = [
-  { name: "basic", testMatch: ["components/**/*.test.ts", "integration.test.ts"] },
+  { name: "basic", testMatch: ["basic/**/*.test.ts"] },
   { name: "config", testMatch: ["config/**/*.test.ts"] },
   { name: "favicon", testMatch: ["favicon/**/*.test.ts"] },
 ]

@@ -1,11 +1,11 @@
-import { localize } from "./config.ts"
-import type { Localized, MetadataConfig } from "./config.ts"
-import { icons } from "./favicon.ts"
+import { getConfig, localize } from "./config.ts"
+import type { Localized } from "./config.ts"
+import { Favicon } from "./favicon.ts"
 import { withBase } from "./url.ts"
 
 /**
- * The web app manifest in `src/metadata.config.ts`. Text values can have one
- * value for each locale: then each locale gets its own manifest file.
+ * The web app manifest to generate. Text values can have one value for each locale:
+ * then each locale gets its own manifest file.
  */
 export type ManifestConfig = {
   name: Localized
@@ -15,7 +15,7 @@ export type ManifestConfig = {
   display?: "standalone" | "fullscreen" | "minimal-ui" | "browser"
   /** The page that the installed app opens. Defaults to the site root. */
   startUrl?: Localized
-  /** Defaults to `themeColor` in the config, or its light color. */
+  /** Defaults to the `themeColor` of the config, or its light color. */
   themeColor?: string
   backgroundColor?: string
   /** Other manifest fields, e.g. `shortcuts`, copied into the file unchanged. */
@@ -23,78 +23,104 @@ export type ManifestConfig = {
 }
 
 /**
- * Returns the locales of the manifest: the keys of the first localized text,
- * or an empty list for a manifest with one language.
+ * A generated manifest file: its locale, and its folder when it is not at the root.
  */
-function manifestLocales(manifest: ManifestConfig): string[] {
-  const texts = [manifest.name, manifest.shortName, manifest.description, manifest.startUrl]
-  const localized = texts.find((text) => {
-    return typeof text === "object"
-  })
-  return localized ? Object.keys(localized) : []
+export type ManifestPath = {
+  /** The folder of the file, e.g. "fi" for /fi/manifest.webmanifest. */
+  lang?: string
+  /** The locale of the texts in the file. */
+  locale?: string
 }
 
 /**
- * Returns the paths of the manifest files: `undefined` for `/manifest.webmanifest`,
- * and a locale for `/<locale>/manifest.webmanifest`. The first locale uses the root.
- *
- * @param config - The site config.
- * @returns One entry for each manifest file, or an empty list without a manifest.
+ * Returns the manifest to generate, or undefined for no manifest or your own manifest.
  */
-export function manifestPaths(config: MetadataConfig): { lang?: string; locale?: string }[] {
-  if (!config.manifest) return []
-
-  const locales = manifestLocales(config.manifest)
-  if (locales.length === 0) return [{}]
-
-  return locales.map((locale, index) => {
-    return { lang: index === 0 ? undefined : locale, locale }
-  })
+function generated(): ManifestConfig | undefined {
+  const manifest = getConfig().manifest
+  return typeof manifest === "object" ? manifest : undefined
 }
 
 /**
- * Returns the URL of the manifest for a locale, or undefined without a manifest.
+ * The web app manifest of the `manifest` option: an object generates the manifest,
+ * and a string is the path of your own manifest.
  */
-export function manifestUrl(config: MetadataConfig, locale?: string): string | undefined {
-  if (!config.manifest) return undefined
+export const Manifest = {
+  /**
+   * Returns the `manifest` option, or undefined without it.
+   */
+  get config(): ManifestConfig | string | undefined {
+    return getConfig().manifest
+  },
 
-  const path = manifestPaths(config).find((entry) => {
-    return entry.locale === locale
-  })
-  return withBase(path?.lang ? `/${path.lang}/manifest.webmanifest` : "/manifest.webmanifest")
-}
+  /**
+   * Returns the generated manifest files. The first locale of the texts uses
+   * /manifest.webmanifest, the other locales use /<locale>/manifest.webmanifest.
+   * Returns an empty list for no manifest or your own manifest.
+   */
+  paths(): ManifestPath[] {
+    const manifest = generated()
+    if (!manifest) return []
 
-/**
- * Builds the web app manifest for a locale.
- *
- * @param config - The site config.
- * @param locale - The locale of the manifest, or undefined for one language.
- * @returns The manifest as a JSON object.
- */
-export function buildManifest(config: MetadataConfig, locale?: string): Record<string, unknown> {
-  const manifest = config.manifest ?? { name: "" }
-  const themeColor =
-    manifest.themeColor ??
-    (typeof config.themeColor === "string" ? config.themeColor : config.themeColor?.light)
-  const favicons = icons()
+    // The locales are the keys of the first localized text
+    const texts = [manifest.name, manifest.shortName, manifest.description, manifest.startUrl]
+    const localized = texts.find((text) => {
+      return typeof text === "object"
+    })
+    if (!localized) return [{}]
 
-  const json: Record<string, unknown> = {
-    name: localize(manifest.name, locale),
-    short_name: localize(manifest.shortName, locale),
-    description: localize(manifest.description, locale),
-    lang: locale,
-    start_url: withBase(localize(manifest.startUrl, locale) ?? "/"),
-    scope: withBase("/"),
-    display: manifest.display ?? "standalone",
-    theme_color: themeColor,
-    background_color: manifest.backgroundColor,
-    icons: favicons.length > 0 ? favicons : undefined,
-    ...manifest.extra,
-  }
+    return Object.keys(localized).map((locale, index) => {
+      return { lang: index === 0 ? undefined : locale, locale }
+    })
+  },
 
-  // Remove empty fields, so the file has only the values that the config gives
-  for (const key of Object.keys(json)) {
-    if (json[key] === undefined) delete json[key]
-  }
-  return json
+  /**
+   * Returns the URL of the manifest for a locale, with the base.
+   * An unknown locale gets the manifest at the root.
+   *
+   * @example Manifest.url("fi") // "/fi/manifest.webmanifest"
+   */
+  url(locale?: string): string | undefined {
+    const manifest = getConfig().manifest
+    if (!manifest) return undefined
+    if (typeof manifest === "string") return withBase(manifest)
+
+    const path = Manifest.paths().find((entry) => {
+      return entry.locale === locale
+    })
+    return withBase(path?.lang ? `/${path.lang}/manifest.webmanifest` : "/manifest.webmanifest")
+  },
+
+  /**
+   * Builds the manifest for a locale, with the generated favicons as its icons.
+   * Returns undefined for no manifest or your own manifest.
+   */
+  build(locale?: string): Record<string, unknown> | undefined {
+    const manifest = generated()
+    if (!manifest) return undefined
+
+    const siteColor = getConfig().themeColor
+    const themeColor =
+      manifest.themeColor ?? (typeof siteColor === "string" ? siteColor : siteColor?.light)
+    const icons = Favicon.icons()
+
+    const json: Record<string, unknown> = {
+      name: localize(manifest.name, locale),
+      short_name: localize(manifest.shortName, locale),
+      description: localize(manifest.description, locale),
+      lang: locale,
+      start_url: withBase(localize(manifest.startUrl, locale) ?? "/"),
+      scope: withBase("/"),
+      display: manifest.display ?? "standalone",
+      theme_color: themeColor,
+      background_color: manifest.backgroundColor,
+      icons: icons.length > 0 ? icons : undefined,
+      ...manifest.extra,
+    }
+
+    // Remove empty fields, so the file has only the values that the config gives
+    for (const key of Object.keys(json)) {
+      if (json[key] === undefined) delete json[key]
+    }
+    return json
+  },
 }

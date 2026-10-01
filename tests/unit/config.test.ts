@@ -1,11 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest"
 
-import { defineMetadata, getConfig, localize } from "../../src/lib/config.ts"
-
-const KEY = Symbol.for("@mannisto/astro-metadata/config")
+import { getConfig, localize } from "../../src/lib/config.ts"
+import { clearConfig, setConfig } from "./lib/config.ts"
 
 afterEach(() => {
-  delete (globalThis as Record<symbol, unknown>)[KEY]
+  clearConfig()
 })
 
 describe("localize", () => {
@@ -32,15 +31,8 @@ describe("getConfig", () => {
     expect(getConfig()).toEqual({})
   })
 
-  it("returns the config that the integration stores", () => {
-    ;(globalThis as Record<symbol, unknown>)[KEY] = { siteName: "My Site" }
+  it("returns the config of the integration", () => {
+    setConfig({ siteName: "My Site" })
     expect(getConfig()).toEqual({ siteName: "My Site" })
-  })
-})
-
-describe("defineMetadata", () => {
-  it("returns the config unchanged", () => {
-    const config = { siteName: "My Site" }
-    expect(defineMetadata(config)).toBe(config)
   })
 })

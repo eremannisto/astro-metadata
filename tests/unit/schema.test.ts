@@ -1,25 +1,24 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { schema } from "../../src/lib/schema.ts"
-
-const KEY = Symbol.for("@mannisto/astro-metadata/config")
+import { Schema } from "../../src/lib/schema.ts"
+import { clearConfig, setConfig } from "./lib/config.ts"
 
 beforeEach(() => {
   vi.stubEnv("SITE", "https://example.com")
-  ;(globalThis as Record<symbol, unknown>)[KEY] = {
+  setConfig({
     siteName: { en: "My Site", fi: "Sivustoni" },
     description: "The description",
-  }
+  })
 })
 
 afterEach(() => {
   vi.unstubAllEnvs()
-  delete (globalThis as Record<symbol, unknown>)[KEY]
+  clearConfig()
 })
 
-describe("schema.website", () => {
+describe("Schema.website", () => {
   it("uses the name, the description and the URL of the site", () => {
-    expect(schema.website()).toEqual({
+    expect(Schema.website()).toEqual({
       "@context": "https://schema.org",
       "@type": "WebSite",
       name: "My Site",
@@ -29,19 +28,19 @@ describe("schema.website", () => {
   })
 
   it("uses the name of the locale", () => {
-    expect(schema.website({ locale: "fi" })).toMatchObject({ name: "Sivustoni", inLanguage: "fi" })
+    expect(Schema.website({ locale: "fi" })).toMatchObject({ name: "Sivustoni", inLanguage: "fi" })
   })
 
   it("uses the options before the config", () => {
-    expect(schema.website({ name: "Other", url: "/fi" })).toMatchObject({
+    expect(Schema.website({ name: "Other", url: "/fi" })).toMatchObject({
       name: "Other",
       url: "https://example.com/fi",
     })
   })
 
   it("works without the integration", () => {
-    delete (globalThis as Record<symbol, unknown>)[KEY]
-    expect(JSON.parse(JSON.stringify(schema.website()))).toEqual({
+    clearConfig()
+    expect(JSON.parse(JSON.stringify(Schema.website()))).toEqual({
       "@context": "https://schema.org",
       "@type": "WebSite",
       url: "https://example.com/",
@@ -49,9 +48,9 @@ describe("schema.website", () => {
   })
 })
 
-describe("schema.organization", () => {
+describe("Schema.organization", () => {
   it("makes the logo URL absolute", () => {
-    expect(schema.organization({ logo: "/logo.png", sameAs: ["https://x.com/me"] })).toEqual({
+    expect(Schema.organization({ logo: "/logo.png", sameAs: ["https://x.com/me"] })).toEqual({
       "@context": "https://schema.org",
       "@type": "Organization",
       name: "My Site",
@@ -62,9 +61,9 @@ describe("schema.organization", () => {
   })
 })
 
-describe("schema.article", () => {
+describe("Schema.article", () => {
   it("builds the article with the site as the publisher", () => {
-    const article = schema.article({
+    const article = Schema.article({
       title: "Hello",
       image: "/hello.jpg",
       published: new Date("2026-01-02T03:04:05Z"),
@@ -89,7 +88,7 @@ describe("schema.article", () => {
   })
 
   it("uses the type and the locale", () => {
-    const article = schema.article({
+    const article = Schema.article({
       type: "BlogPosting",
       title: "Hei",
       author: "Ere",
@@ -104,10 +103,10 @@ describe("schema.article", () => {
   })
 })
 
-describe("schema.breadcrumbs", () => {
+describe("Schema.breadcrumbs", () => {
   it("numbers the items and makes the URLs absolute", () => {
     expect(
-      schema.breadcrumbs([
+      Schema.breadcrumbs([
         { name: "Home", url: "/" },
         { name: "Blog", url: "/blog" },
       ])
@@ -119,5 +118,13 @@ describe("schema.breadcrumbs", () => {
         { "@type": "ListItem", position: 2, name: "Blog", item: "https://example.com/blog" },
       ],
     })
+  })
+})
+
+describe("Schema.stringify", () => {
+  it("escapes the characters that can end the script tag", () => {
+    const json = Schema.stringify({ name: "</script><b>&" })
+    expect(json).not.toContain("</script>")
+    expect(JSON.parse(json)).toEqual({ name: "</script><b>&" })
   })
 })

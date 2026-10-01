@@ -1,7 +1,7 @@
 {
   "name": "@mannisto/astro-metadata",
   "version": "2.0.0-alpha.1",
-  "description": "Astro components for the page head: metadata, social cards, favicons, the web app manifest and structured data.",
+  "description": "Metadata for Astro: page tags, social cards, favicons, the web app manifest and structured data.",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/eremannisto/astro-metadata#readme",
@@ -19,15 +19,15 @@
     "metadata"
   ],
   "exports": {
-    ".": "./index.ts",
-    "./integration": {
+    ".": {
       "types": "./src/integration.d.ts",
       "default": "./src/integration.js"
-    }
+    },
+    "./runtime": "./src/runtime.ts",
+    "./components": "./src/components/index.ts"
   },
   "files": [
-    "src",
-    "index.ts"
+    "src"
   ],
   "scripts": {
     "lint": "eslint . --fix",
@@ -51,13 +51,13 @@
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
+    "sharp": "^0.34.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.0",
     "vitest": "^4.1.0"
   },
   "packageManager": "pnpm@10.32.1",
   "dependencies": {
-    "schema-dts": "^2.0.0",
-    "sharp": "^0.34.0"
+    "schema-dts": "^2.0.0"
   }
 }

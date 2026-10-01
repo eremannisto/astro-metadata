@@ -1,54 +1,65 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { buildManifest, manifestPaths, manifestUrl } from "../../src/lib/manifest.ts"
+import { Manifest } from "../../src/lib/manifest.ts"
+import { clearConfig, setConfig } from "./lib/config.ts"
 
 afterEach(() => {
+  clearConfig()
   vi.unstubAllEnvs()
 })
 
-describe("manifestPaths", () => {
-  it("returns no paths without a manifest", () => {
-    expect(manifestPaths({})).toEqual([])
+describe("Manifest.paths", () => {
+  it("returns no paths without a manifest or with your own manifest", () => {
+    expect(Manifest.paths()).toEqual([])
+    setConfig({ manifest: "/site.webmanifest" })
+    expect(Manifest.paths()).toEqual([])
   })
 
   it("returns one root path for a manifest with one language", () => {
-    expect(manifestPaths({ manifest: { name: "My Site" } })).toEqual([{}])
+    setConfig({ manifest: { name: "My Site" } })
+    expect(Manifest.paths()).toEqual([{}])
   })
 
-  it("returns the root for the first locale and a prefix for the others", () => {
-    const config = { manifest: { name: { en: "My Site", fi: "Sivustoni" } } }
-    expect(manifestPaths(config)).toEqual([
+  it("returns the root for the first locale and a folder for the others", () => {
+    setConfig({ manifest: { name: { en: "My Site", fi: "Sivustoni" } } })
+    expect(Manifest.paths()).toEqual([
       { lang: undefined, locale: "en" },
       { lang: "fi", locale: "fi" },
     ])
   })
 })
 
-describe("manifestUrl", () => {
+describe("Manifest.url", () => {
   it("returns undefined without a manifest", () => {
-    expect(manifestUrl({}, "fi")).toBeUndefined()
+    expect(Manifest.url("fi")).toBeUndefined()
   })
 
   it("returns the URL of the locale, and the root for other locales", () => {
-    const config = { manifest: { name: { en: "My Site", fi: "Sivustoni" } } }
-    expect(manifestUrl(config, "en")).toBe("/manifest.webmanifest")
-    expect(manifestUrl(config, "fi")).toBe("/fi/manifest.webmanifest")
-    expect(manifestUrl(config, "de")).toBe("/manifest.webmanifest")
+    setConfig({ manifest: { name: { en: "My Site", fi: "Sivustoni" } } })
+    expect(Manifest.url("en")).toBe("/manifest.webmanifest")
+    expect(Manifest.url("fi")).toBe("/fi/manifest.webmanifest")
+    expect(Manifest.url("de")).toBe("/manifest.webmanifest")
   })
 
-  it("adds the base", () => {
+  it("returns the path of your own manifest with the base", () => {
     vi.stubEnv("BASE_URL", "/docs/")
-    expect(manifestUrl({ manifest: { name: "My Site" } })).toBe("/docs/manifest.webmanifest")
+    setConfig({ manifest: "/site.webmanifest" })
+    expect(Manifest.url()).toBe("/docs/site.webmanifest")
   })
 })
 
-describe("buildManifest", () => {
+describe("Manifest.build", () => {
+  it("returns undefined for your own manifest", () => {
+    setConfig({ manifest: "/site.webmanifest" })
+    expect(Manifest.build()).toBeUndefined()
+  })
+
   it("uses the light theme color and removes empty fields", () => {
-    const config = {
+    setConfig({
       themeColor: { light: "#ffffff", dark: "#000000" },
       manifest: { name: "My Site" },
-    }
-    expect(buildManifest(config)).toEqual({
+    })
+    expect(Manifest.build()).toEqual({
       name: "My Site",
       start_url: "/",
       scope: "/",
@@ -57,8 +68,19 @@ describe("buildManifest", () => {
     })
   })
 
-  it("copies the extra fields unchanged", () => {
-    const config = { manifest: { name: "My Site", extra: { shortcuts: [{ name: "Blog" }] } } }
-    expect(buildManifest(config).shortcuts).toEqual([{ name: "Blog" }])
+  it("uses the texts of the locale and copies the extra fields", () => {
+    setConfig({
+      manifest: {
+        name: { en: "My Site", fi: "Sivustoni" },
+        startUrl: { en: "/", fi: "/fi/" },
+        extra: { shortcuts: [{ name: "Blog" }] },
+      },
+    })
+    expect(Manifest.build("fi")).toMatchObject({
+      name: "Sivustoni",
+      lang: "fi",
+      start_url: "/fi/",
+      shortcuts: [{ name: "Blog" }],
+    })
   })
 })

@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test"
 
-test.describe("config defaults", () => {
-  test("applies the title template from the config", async ({ page }) => {
+test.describe("site values of the integration", () => {
+  test("applies the title template", async ({ page }) => {
     await page.goto("/")
     expect(await page.title()).toBe("Home | Config Site")
   })
@@ -9,42 +9,59 @@ test.describe("config defaults", () => {
   test("uses the site name as the title of a page without a title", async ({ page }) => {
     await page.goto("/without-title")
     expect(await page.title()).toBe("Config Site")
-  })
-
-  test("renders the default description", async ({ page }) => {
-    await page.goto("/")
-    await expect(page.locator("meta[name='description']")).toHaveAttribute(
-      "content",
-      "The default description"
-    )
-  })
-
-  test("renders the default image as an absolute URL", async ({ page }) => {
-    await page.goto("/")
-    await expect(page.locator("meta[property='og:image']")).toHaveAttribute(
-      "content",
-      "https://example.com/og.jpg"
-    )
-    await expect(page.locator("meta[property='og:image:width']")).toHaveAttribute("content", "1200")
-  })
-
-  test("renders the site name in og:site_name", async ({ page }) => {
-    await page.goto("/")
-    await expect(page.locator("meta[property='og:site_name']")).toHaveAttribute(
+    await expect(page.locator("meta[property='og:title']")).toHaveAttribute(
       "content",
       "Config Site"
     )
   })
 
-  test("renders the default robots and twitter values", async ({ page }) => {
+  test("renders the default description, image and site name", async ({ page }) => {
     await page.goto("/")
-    await expect(page.locator("meta[name='robots']")).toHaveAttribute(
-      "content",
-      "index, follow, noarchive"
-    )
+    const content = async (selector: string) => {
+      return page.locator(selector).getAttribute("content")
+    }
+    expect(await content("meta[name='description']")).toBe("The default description")
+    expect(await content("meta[property='og:image']")).toBe("https://example.com/og.jpg")
+    expect(await content("meta[property='og:image:alt']")).toBe("Config Site")
+    expect(await content("meta[property='og:image:width']")).toBe("1200")
+    expect(await content("meta[property='og:site_name']")).toBe("Config Site")
+    expect(await content("meta[property='og:title']")).toBe("Home")
+  })
+
+  test("renders the X site handle and the large card for pages with an image", async ({ page }) => {
+    await page.goto("/")
     await expect(page.locator("meta[name='twitter:site']")).toHaveAttribute(
       "content",
       "@configsite"
+    )
+    await expect(page.locator("meta[name='twitter:card']")).toHaveAttribute(
+      "content",
+      "summary_large_image"
+    )
+  })
+
+  test("renders the extra robots directives of the site", async ({ page }) => {
+    await page.goto("/")
+    await expect(page.locator("meta[name='robots']")).toHaveAttribute(
+      "content",
+      "max-image-preview:large"
+    )
+  })
+
+  test("renders the theme color and the feed", async ({ page }) => {
+    await page.goto("/")
+    await expect(page.locator("meta[name='theme-color']")).toHaveAttribute("content", "#123456")
+    await expect(page.locator("meta[name='color-scheme']")).not.toBeAttached()
+    await expect(page.locator("link[type='application/rss+xml']")).toHaveAttribute("title", "Blog")
+  })
+
+  test("follows the trailing slash of Astro in the canonical URL", async ({ page }) => {
+    // The default trailingSlash "ignore" with build.format "directory" gives the slash,
+    // in dev and in the build
+    await page.goto("/finnish")
+    await expect(page.locator("link[rel='canonical']")).toHaveAttribute(
+      "href",
+      "https://example.com/finnish/"
     )
   })
 })
@@ -53,14 +70,13 @@ test.describe("locales", () => {
   test("uses the values of the locale prop", async ({ page }) => {
     await page.goto("/finnish")
     expect(await page.title()).toBe("Koti | Config-sivusto")
-    await expect(page.locator("meta[name='description']")).toHaveAttribute(
-      "content",
-      "Oletuskuvaus"
-    )
-    await expect(page.locator("meta[property='og:site_name']")).toHaveAttribute(
-      "content",
-      "Config-sivusto"
-    )
+    const content = async (selector: string) => {
+      return page.locator(selector).getAttribute("content")
+    }
+    expect(await content("meta[name='description']")).toBe("Oletuskuvaus")
+    expect(await content("meta[property='og:site_name']")).toBe("Config-sivusto")
+    expect(await content("meta[property='og:image:alt']")).toBe("Config-sivusto")
+    await expect(page.locator("link[type='application/rss+xml']")).toHaveAttribute("title", "Blogi")
   })
 
   test("uses the first value for an unknown locale", async ({ page }) => {
@@ -69,38 +85,22 @@ test.describe("locales", () => {
   })
 })
 
-test.describe("props override the config", () => {
+test.describe("page props override the site values", () => {
   test("uses the props of the page", async ({ page }) => {
     await page.goto("/overrides")
-    expect(await page.title()).toBe("Own — Override")
+    expect(await page.title()).toBe("Own | Config Site")
     await expect(page.locator("meta[name='description']")).toHaveAttribute(
       "content",
       "Own description"
     )
-    await expect(page.locator("meta[name='robots']")).toHaveAttribute("content", "index, nofollow")
-    await expect(page.locator("meta[name='twitter:site']")).toHaveAttribute("content", "@own")
-  })
-
-  test("removes config values with false", async ({ page }) => {
-    await page.goto("/disabled")
-    await expect(page.locator("meta[name='description']")).not.toBeAttached()
-    await expect(page.locator("meta[name='robots']")).not.toBeAttached()
-    await expect(page.locator("meta[property='og:image']")).not.toBeAttached()
-  })
-})
-
-test.describe("colors and feeds", () => {
-  test("renders the theme color and color scheme from the config", async ({ page }) => {
-    await page.goto("/")
-    await expect(page.locator("meta[name='theme-color']")).toHaveAttribute("content", "#123456")
-    await expect(page.locator("meta[name='color-scheme']")).toHaveAttribute("content", "light dark")
-  })
-
-  test("renders the feed with the title of the locale", async ({ page }) => {
-    await page.goto("/")
-    const feed = page.locator("link[type='application/rss+xml']")
-    await expect(feed).toHaveAttribute("title", "Blog")
-    await page.goto("/finnish")
-    await expect(feed).toHaveAttribute("title", "Blogi")
+    await expect(page.locator("meta[property='og:image']")).toHaveAttribute(
+      "content",
+      "https://cdn.example.org/own.jpg"
+    )
+    await expect(page.locator("meta[property='og:image:width']")).not.toBeAttached()
+    await expect(page.locator("meta[name='robots']")).toHaveAttribute(
+      "content",
+      "nofollow, max-image-preview:large"
+    )
   })
 })

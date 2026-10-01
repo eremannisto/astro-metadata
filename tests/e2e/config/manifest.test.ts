@@ -19,8 +19,8 @@ test.describe("manifest from the config", () => {
 
   test("adds the generated icons", async ({ request }) => {
     const manifest = await (await request.get("/manifest.webmanifest")).json()
-    expect(manifest.icons).toHaveLength(3)
-    expect(manifest.icons[1].src).toMatch(/^\/icon-512\.png\?v=[0-9a-f]{8}$/)
+    expect(manifest.icons).toHaveLength(2)
+    expect(manifest.icons[1].src).toMatch(/^\/favicon-512\.png\?v=[0-9a-f]{8}$/)
   })
 
   test("serves one manifest for each other locale", async ({ request }) => {

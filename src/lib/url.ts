@@ -1,3 +1,5 @@
+import { getConfig } from "./config.ts"
+
 /**
  * Returns true for a URL with a scheme ("https:", "data:") or a protocol-relative URL ("//").
  */
@@ -35,4 +37,43 @@ export function url(path: string): string {
   const site = import.meta.env.SITE
   const pathname = withBase(path)
   return site ? new URL(pathname, site).href : pathname
+}
+
+/**
+ * Adds or removes the slash at the end of a page path, the same as Astro:
+ * - `trailingSlash: "always"` adds the slash, and `"never"` removes it.
+ * - With `"ignore"`, `build.format` decides: "directory" adds the slash, and "file" removes it.
+ *   With "preserve", the path stays unchanged.
+ * Paths with a file extension, a query or a hash stay unchanged.
+ * Without the integration, the path stays unchanged.
+ *
+ * @param path - A page path, e.g. "/blog".
+ * @returns The path with or without the slash at the end.
+ */
+export function pagePath(path: string): string {
+  const { trailingSlash, buildFormat } = getConfig()
+  if (!trailingSlash || path === "/" || /[?#]/.test(path)) return path
+
+  const last = path.split("/").pop() ?? ""
+  if (last.includes(".")) return path
+
+  let slash = trailingSlash === "always"
+  if (trailingSlash === "ignore") {
+    if (buildFormat === "preserve") return path
+    slash = buildFormat !== "file"
+  }
+  const clean = path.replace(/\/+$/, "")
+  return slash ? `${clean}/` : clean || "/"
+}
+
+/**
+ * Returns the absolute URL of a page, with the slash at the end that Astro uses.
+ * Absolute URLs stay unchanged.
+ *
+ * @param path - A page path, e.g. "/blog".
+ * @returns The absolute URL, e.g. "https://example.com/blog/".
+ */
+export function pageUrl(path: string): string {
+  if (isAbsolute(path)) return path
+  return url(pagePath(path))
 }

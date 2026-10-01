@@ -1,0 +1,141 @@
+---
+import { localize } from "../lib/config.ts"
+import type { MetadataImage } from "../lib/config.ts"
+import { Favicon } from "../lib/favicon.ts"
+import { Manifest } from "../lib/manifest.ts"
+import { Schema } from "../lib/schema.ts"
+import type { SchemaData } from "../lib/schema.ts"
+import { Site } from "../lib/site.ts"
+import { withBase } from "../lib/url.ts"
+
+export type LanguageAlternate = {
+  /** The language or region code, e.g. "en", "fi", "en-US" or "x-default". */
+  hreflang: string
+  /** The path or URL of the page in that language. */
+  href: string
+}
+
+export type Props = {
+  /** The page title. The title template of the config adds the site name. */
+  title?: string
+  /** Defaults to the description of the config. */
+  description?: string
+  /** The social image. Defaults to the image of the config. */
+  image?: MetadataImage
+  /** The Open Graph type, e.g. "article". Defaults to "website". */
+  type?: string
+  /** The X handle of the author, e.g. "@annavirtanen". */
+  author?: string
+  /** The canonical path or URL. Defaults to the current page. */
+  canonical?: string
+  /** Set to false to keep the page out of search results. Defaults to true. */
+  index?: boolean
+  /** Set to false to tell search engines not to follow the links. Defaults to true. */
+  follow?: boolean
+  /** The other language versions of the page. */
+  languages?: LanguageAlternate[]
+  /** JSON-LD structured data, e.g. from the `Schema` builders. */
+  schema?: SchemaData | SchemaData[]
+  /** The locale of the localized config values. Defaults to `Astro.currentLocale`. */
+  locale?: string
+}
+
+const props = Astro.props
+const config = Site.config
+const locale = props.locale ?? Astro.currentLocale
+
+const siteName = Site.name(locale)
+const title = Site.title(props.title, locale)
+const description = props.description ?? localize(config.description, locale)
+const image =
+  props.image ??
+  (config.image ? { ...config.image, alt: localize(config.image.alt, locale) } : undefined)
+
+// Social cards show the page title without the template: og:site_name has the site name
+const socialTitle = props.title ?? siteName
+
+const canonical = Site.pageUrl(props.canonical ?? Astro.url.pathname)
+
+// Search engines index and follow by default, so the tag is only necessary for other values
+const index = props.index ?? config.robots?.index ?? true
+const follow = props.follow ?? config.robots?.follow ?? true
+const robots = [!index && "noindex", !follow && "nofollow", config.robots?.extra]
+  .filter(Boolean)
+  .join(", ")
+
+// X uses the Open Graph title, description and image, so only the X-specific tags are necessary
+const card = image ? (config.twitter?.card ?? "summary_large_image") : "summary"
+
+const themeColor = config.themeColor
+const manifest = Manifest.url(locale)
+
+const FEED_TYPES = {
+  rss: "application/rss+xml",
+  atom: "application/atom+xml",
+  json: "application/feed+json",
+}
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+{title && <title>{title}</title>}
+{description && <meta name="description" content={description} />}
+<link rel="canonical" href={canonical} />
+{robots && <meta name="robots" content={robots} />}
+{typeof themeColor === "string" && <meta name="theme-color" content={themeColor} />}
+{
+  typeof themeColor === "object" && (
+    <>
+      <meta name="theme-color" content={themeColor.light} media="(prefers-color-scheme: light)" />
+      <meta name="theme-color" content={themeColor.dark} media="(prefers-color-scheme: dark)" />
+    </>
+  )
+}
+
+{socialTitle && <meta property="og:title" content={socialTitle} />}
+{description && <meta property="og:description" content={description} />}
+<meta property="og:url" content={canonical} />
+<meta property="og:type" content={props.type ?? "website"} />
+{siteName && <meta property="og:site_name" content={siteName} />}
+{
+  image && (
+    <>
+      <meta property="og:image" content={Site.url(image.url)} />
+      {image.alt && <meta property="og:image:alt" content={image.alt} />}
+      {image.width && <meta property="og:image:width" content={String(image.width)} />}
+      {image.height && <meta property="og:image:height" content={String(image.height)} />}
+    </>
+  )
+}
+<meta name="twitter:card" content={card} />
+{config.twitter?.site && <meta name="twitter:site" content={config.twitter.site} />}
+{props.author && <meta name="twitter:creator" content={props.author} />}
+
+{
+  Favicon.links().map((link) => {
+    return <link rel={link.rel} type={link.type} href={link.href} sizes={link.sizes} />
+  })
+}
+{manifest && <link rel="manifest" href={manifest} />}
+{
+  config.feeds?.map((feed) => {
+    return (
+      <link
+        rel="alternate"
+        type={FEED_TYPES[feed.type ?? "rss"]}
+        title={localize(feed.title, locale)}
+        href={withBase(feed.href)}
+      />
+    )
+  })
+}
+{
+  props.languages?.map((language) => {
+    return <link rel="alternate" hreflang={language.hreflang} href={Site.pageUrl(language.href)} />
+  })
+}
+{
+  props.schema && (
+    <script is:inline type="application/ld+json" set:html={Schema.stringify(props.schema)} />
+  )
+}

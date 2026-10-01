@@ -91,7 +91,7 @@ function person(author: SchemaAuthor): Person {
 /**
  * Returns the `WebSite` schema, with the name and the URL of the site.
  *
- * @example schema.website({ locale: Astro.currentLocale })
+ * @example Schema.website({ locale: Astro.currentLocale })
  */
 function website(options: SchemaWebsite = {}): WithContext<WebSite> {
   const config = getConfig()
@@ -108,7 +108,7 @@ function website(options: SchemaWebsite = {}): WithContext<WebSite> {
 /**
  * Returns the `Organization` schema of the site owner.
  *
- * @example schema.organization({ logo: "/logo.png" })
+ * @example Schema.organization({ logo: "/logo.png" })
  */
 function organization(options: SchemaOrganization = {}): WithContext<Organization> {
   const config = getConfig()
@@ -125,7 +125,7 @@ function organization(options: SchemaOrganization = {}): WithContext<Organizatio
 /**
  * Returns the `Article` schema of a page. The publisher is the site from the config.
  *
- * @example schema.article({ title, published: post.date, author: "Ere Männistö" })
+ * @example Schema.article({ title, published: post.date, author: "Ere Männistö" })
  */
 function article(options: SchemaArticle): WithContext<Article> {
   const config = getConfig()
@@ -163,7 +163,7 @@ function article(options: SchemaArticle): WithContext<Article> {
 /**
  * Returns the `BreadcrumbList` schema: the path from the home page to the current page.
  *
- * @example schema.breadcrumbs([{ name: "Home", url: "/" }, { name: "Blog", url: "/blog" }])
+ * @example Schema.breadcrumbs([{ name: "Home", url: "/" }, { name: "Blog", url: "/blog" }])
  */
 function breadcrumbs(items: SchemaBreadcrumb[]): WithContext<BreadcrumbList> {
   return {
@@ -181,12 +181,28 @@ function breadcrumbs(items: SchemaBreadcrumb[]): WithContext<BreadcrumbList> {
 }
 
 /**
- * Builders for common JSON-LD schemas. They fill in values from `src/metadata.config.ts`
- * and make all URLs absolute. Give the result to `<Schema data>` or `<Head schema>`.
+ * Builders for common JSON-LD schemas. They fill in values from the config of the
+ * integration and make all URLs absolute. Give the result to `<Metadata schema>`.
  */
-export const schema = {
+export const Schema = {
   website,
   organization,
   article,
   breadcrumbs,
+
+  /**
+   * Returns the data as JSON that is safe inside a script tag.
+   *
+   * @example <script type="application/ld+json" set:html={Schema.stringify(data)} />
+   */
+  stringify(data: SchemaData | SchemaData[]): string {
+    // Escape the characters that can end the script tag or break the JavaScript parser.
+    // A value such as "</script>" in the schema then stays inside the JSON.
+    return JSON.stringify(data)
+      .replace(/</g, "\\u003c")
+      .replace(/>/g, "\\u003e")
+      .replace(/&/g, "\\u0026")
+      .replace(/\u2028/g, "\\u2028")
+      .replace(/\u2029/g, "\\u2029")
+  },
 }
