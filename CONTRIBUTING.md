@@ -33,19 +33,20 @@ All PRs must pass `pnpm check` — enforced via GitHub Actions.
 ```
 astro-metadata/
   src/
-    components/     # The Astro components
-    lib/            # The config, URL, favicon, manifest, schema and check functions
-    routes/         # The injected favicon and manifest endpoints
-    toolbar/        # The dev toolbar app
-    integration.js  # The Astro integration (plain JavaScript)
+    assets/icons/     # The icons of the dev toolbar app
+    components/       # The Metadata component (@mannisto/astro-metadata/components)
+    lib/              # The Site, Favicon, Manifest and Schema namespaces, and the checks
+    routes/           # The injected favicon and manifest endpoints
+    toolbar/          # The dev toolbar app
+    integration.js    # The integration (plain JavaScript, the default export)
+    runtime.ts        # The namespaces (@mannisto/astro-metadata/runtime)
   tests/
     e2e/
-      components/   # Tests for the basic fixture
-      config/       # Tests for the config fixture
-      favicon/      # Tests for the favicon fixture
+      basic/          # Tests for the basic fixture: no integration
+      config/         # Tests for the config fixture: the site values and an SVG favicon
+      favicon/        # Tests for the favicon fixture: a PNG source, a base and custom files
       fixtures/
     unit/
-  index.ts
   playwright.config.ts
   vitest.config.ts
   prettier.config.mjs
@@ -65,4 +66,4 @@ The e2e tests run each fixture with `astro dev` and with `astro preview`. Astro 
 - TypeScript for all source files
 - Follow existing patterns
 - Write tests for new features
-- Keep components focused and composable
+- Put new functions into the namespace of their feature
