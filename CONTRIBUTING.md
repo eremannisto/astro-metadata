@@ -63,7 +63,8 @@ The e2e tests run each fixture with `astro dev` and with `astro preview`. Astro 
 
 ## Code style
 
-- TypeScript for all source files
+- TypeScript for the source files. The integration loads some files in Node, which does not strip types in `node_modules`: these files are plain JavaScript with JSDoc, and a `.d.ts` file next to them.
+- Add a check rule to `src/lib/rules.js`: `RULES` for the head of a page, `ASSET_RULES` for its files, and `SITE_RULES` for all pages together.
 - Follow existing patterns
 - Write tests for new features
 - Put new functions into the namespace of their feature
