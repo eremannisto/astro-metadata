@@ -1,0 +1,101 @@
+* {
+  box-sizing: border-box;
+}
+
+.panel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: var(--panel-width, 480px);
+  max-width: 100vw;
+  background: var(--zinc-950);
+  border-left: 1px solid var(--zinc-800);
+  box-shadow: var(--shadow);
+  animation: slide-in 160ms ease-out;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+/* The handle on the left edge: drag it to change the width */
+.resize {
+  position: absolute;
+  inset: 0 auto 0 -3px;
+  width: 6px;
+  cursor: ew-resize;
+
+  &:hover,
+  &.active {
+    background: var(--zinc-700);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-300);
+  padding: var(--space-300) var(--space-400);
+  border-bottom: 1px solid var(--zinc-800);
+}
+
+.heading {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The title and the Beta badge */
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+}
+
+h1 {
+  margin: 0;
+  font-size: var(--font-size-body);
+  font-weight: 600;
+}
+
+.path {
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--font-size-small);
+  color: var(--zinc-400);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-small);
+
+  &:hover {
+    background: var(--zinc-800);
+  }
+}
+
+astro-metadata-tab-group {
+  flex: 1;
+}
+
+.loading {
+  padding: var(--space-400);
+  color: var(--zinc-400);
+}

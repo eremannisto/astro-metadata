@@ -1,0 +1,89 @@
+/* Twitter (X): a link card in a post, 506 px wide */
+.twitter {
+  width: 100%;
+  max-width: 506px;
+  padding: 12px;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  border-radius: 8px;
+  background: #000000;
+
+  .from {
+    margin-top: 4px;
+    font-size: 13px;
+    line-height: 16px;
+    color: #71767b;
+  }
+}
+
+.twitter .large {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #2f3336;
+  border-radius: 16px;
+
+  .image {
+    width: 100%;
+    aspect-ratio: 1.91 / 1;
+  }
+
+  /* The title on the image: one line */
+  .overlay {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    max-width: calc(100% - 24px);
+    overflow: hidden;
+    padding: 0 4px;
+    font-size: 13px;
+    line-height: 20px;
+    color: #ffffff;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.77);
+  }
+}
+
+.twitter .small {
+  display: flex;
+  overflow: hidden;
+  border: 1px solid #2f3336;
+  border-radius: 16px;
+
+  .image {
+    flex: none;
+    width: 130px;
+    height: 130px;
+    border-right: 1px solid #2f3336;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+    padding: 12px;
+    font-size: 15px;
+    line-height: 20px;
+  }
+
+  .host {
+    color: #71767b;
+  }
+
+  .title {
+    overflow: hidden;
+    color: #e7e9ea;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .text {
+    display: -webkit-box;
+    overflow: hidden;
+    color: #71767b;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}

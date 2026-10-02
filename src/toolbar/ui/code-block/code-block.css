@@ -1,0 +1,90 @@
+:host {
+  display: block;
+}
+
+.block {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--zinc-800);
+  border-radius: var(--radius);
+  background: var(--zinc-950);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-100) var(--space-100) var(--space-100) var(--space-300);
+  font-size: var(--font-size-small);
+  color: var(--zinc-400);
+  border-bottom: 1px solid var(--zinc-800);
+}
+
+button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-small);
+
+  &:hover {
+    color: var(--zinc-100);
+    background: var(--zinc-800);
+  }
+}
+
+pre {
+  margin: 0;
+  padding: var(--space-300);
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-small);
+  line-height: 1.6;
+  counter-reset: line;
+}
+
+/* One block for each line: CSS counters number the lines, so a copy has no numbers */
+.line {
+  display: block;
+  min-height: 1lh;
+
+  &::before {
+    display: inline-block;
+    width: 2.5em;
+    margin-right: var(--space-300);
+    color: var(--zinc-400);
+    text-align: right;
+    content: counter(line);
+    counter-increment: line;
+    user-select: none;
+  }
+}
+
+.token {
+  &.key,
+  &.attribute {
+    color: var(--blue-300);
+  }
+
+  &.string,
+  &.value {
+    color: var(--green-300);
+  }
+
+  &.number,
+  &.keyword {
+    color: var(--red-300);
+  }
+
+  &.tag {
+    color: var(--orange-300);
+  }
+
+  &.punctuation {
+    color: var(--zinc-400);
+  }
+}

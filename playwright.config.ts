@@ -21,6 +21,8 @@ const servers = fixtures.flatMap((fixture, index) => {
     {
       ...fixture,
       name: `${fixture.name} (build)`,
+      // The dev toolbar runs only in dev
+      testIgnore: ["**/toolbar.test.ts"],
       cwd: `./tests/e2e/fixtures/${fixture.name}`,
       port: 4421 + index,
       command: `pnpm astro preview --port ${4421 + index}`,
@@ -35,6 +37,7 @@ export default defineConfig({
     return {
       name: server.name,
       testMatch: server.testMatch,
+      testIgnore: "testIgnore" in server ? server.testIgnore : undefined,
       use: { baseURL: `http://localhost:${server.port}` },
     }
   }),

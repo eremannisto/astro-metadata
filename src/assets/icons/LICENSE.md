@@ -1,8 +1,16 @@
-The icons in this folder are from [Phosphor Icons](https://phosphoricons.com), in the Bold weight.
+The icons in this folder are from [Phosphor Icons](https://phosphoricons.com).
 
-| File             | Phosphor icon |
-| ---------------- | ------------- |
-| `binoculars.svg` | `binoculars`  |
+| File                         | Phosphor icon    | Weight  |
+| ---------------------------- | ---------------- | ------- |
+| `binoculars.svg`             | `binoculars`     | Bold    |
+| `caret-right.svg`            | `caret-right`    | Bold    |
+| `check.svg`                  | `check`          | Bold    |
+| `copy.svg`                   | `copy`           | Bold    |
+| `x.svg`                      | `x`              | Bold    |
+| `seal-check-duotone.svg`     | `seal-check`     | Duotone |
+| `seal-question-duotone.svg`  | `seal-question`  | Duotone |
+| `warning-circle-duotone.svg` | `warning-circle` | Duotone |
+| `warning-duotone.svg`        | `warning`        | Duotone |
 
 MIT License
 

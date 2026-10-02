@@ -1,0 +1,37 @@
+/*
+ * The previews copy the dark mode of each platform: their own fonts, sizes and colors.
+ * These are the only colors outside the Tailwind scales, because the previews must
+ * look like the platform, not like the panel.
+ */
+
+/* The preview at the center of a dotted background */
+.stage {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-600) var(--space-400);
+  border: 1px solid var(--zinc-800);
+  border-radius: var(--radius);
+  background-color: var(--zinc-950);
+  background-image: radial-gradient(var(--zinc-700) 1px, transparent 1px);
+  background-size: 12px 12px;
+
+  /* A preview has its own box-sizing, the same as the platform */
+  * {
+    box-sizing: border-box;
+  }
+}
+
+/* A missing image, or an image that does not load */
+.stage .image[missing],
+.stage .thumbnail[missing] {
+  font-size: 13px;
+  color: #71767b;
+  background: #16181c;
+}
+
+/* A message instead of the preview, e.g. without twitter:card */
+.notice {
+  margin: 0;
+  color: var(--zinc-400);
+  text-align: center;
+}
