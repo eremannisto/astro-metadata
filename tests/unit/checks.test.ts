@@ -334,6 +334,17 @@ describe("checkSite", () => {
     ).toEqual(["description-not-unique"])
   })
 
+  it("does not count the versions of a page in other locales as the same title", () => {
+    const links = { en: "https://example.com/en/david", fi: "https://example.com/fi/david" }
+    const problems = checkSite(
+      [page("/en/david", "David", links), page("/fi/david", "David", links)],
+      {
+        ignore: ["description-not-unique"],
+      }
+    )
+    expect(problems.size).toBe(0)
+  })
+
   it("finds hreflang links that do not link back", () => {
     const problems = checkSite(
       [

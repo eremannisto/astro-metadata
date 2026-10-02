@@ -713,7 +713,36 @@ function indexedPages(pages) {
 }
 
 /**
+ * Returns true for a page with an hreflang link to the canonical URL of another page.
+ *
+ * @param {import("./rules").SitePage} page
+ * @param {import("./rules").SitePage} other
+ * @returns {boolean}
+ */
+function linksTo(page, other) {
+  const url = findLink(other.head, "canonical")
+  if (!url) return false
+  return hreflangLinks(page.head).some((link) => {
+    return link.href === url
+  })
+}
+
+/**
+ * Returns true for two pages that are versions of one page in other locales:
+ * one of the pages has an hreflang link to the other.
+ *
+ * @param {import("./rules").SitePage} a
+ * @param {import("./rules").SitePage} b
+ * @returns {boolean}
+ */
+function isLocaleVersion(a, b) {
+  return linksTo(a, b) || linksTo(b, a)
+}
+
+/**
  * Returns a problem for each page with a value that other pages also have.
+ * The versions of a page in other locales can have the same value, e.g. the name of
+ * an artwork in its title, so they do not count.
  *
  * @param {import("./rules").SitePage[]} pages
  * @param {(page: import("./rules").SitePage) => string | undefined} valueOf
@@ -721,29 +750,27 @@ function indexedPages(pages) {
  * @returns {import("./rules").SiteProblem[]}
  */
 function duplicates(pages, valueOf, name) {
-  /** @type {Map<string, string[]>} */
+  /** @type {Map<string, import("./rules").SitePage[]>} */
   const groups = new Map()
   for (const page of indexedPages(pages)) {
     const value = valueOf(page)
-    if (value) groups.set(value, [...(groups.get(value) ?? []), page.path])
+    if (value) groups.set(value, [...(groups.get(value) ?? []), page])
   }
 
-  return [...groups.values()]
-    .filter((paths) => {
-      return paths.length > 1
-    })
-    .flatMap((paths) => {
-      return paths.map((path) => {
-        const others = paths.filter((other) => {
-          return other !== path
-        })
-        const list =
-          others.length === 1
-            ? others[0]
-            : `${others[0]} and ${count(others.length - 1, "other page")}`
-        return { path, message: `The ${name} is the same as on ${list}.` }
+  return [...groups.values()].flatMap((group) => {
+    return group.flatMap((page) => {
+      const others = group.filter((other) => {
+        return other !== page && !isLocaleVersion(page, other)
       })
+      if (others.length === 0) return []
+
+      const list =
+        others.length === 1
+          ? others[0].path
+          : `${others[0].path} and ${count(others.length - 1, "other page")}`
+      return [{ path: page.path, message: `The ${name} is the same as on ${list}.` }]
     })
+  })
 }
 
 /**
