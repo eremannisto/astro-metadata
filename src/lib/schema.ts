@@ -125,7 +125,7 @@ function organization(options: SchemaOrganization = {}): WithContext<Organizatio
 /**
  * Returns the `Article` schema of a page. The publisher is the site from the config.
  *
- * @example Schema.article({ title, published: post.date, author: "Ere Männistö" })
+ * @example Schema.article({ title, published: post.date, author: "Acme Writer" })
  */
 function article(options: SchemaArticle): WithContext<Article> {
   const config = getConfig()

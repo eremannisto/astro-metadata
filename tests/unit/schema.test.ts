@@ -68,7 +68,7 @@ describe("Schema.article", () => {
       image: "/hello.jpg",
       published: new Date("2026-01-02T03:04:05Z"),
       modified: "2026-02-01",
-      author: ["Ere", { name: "Anna", url: "/anna" }],
+      author: ["Acme Writer", { name: "Acme Editor", url: "/editor" }],
       url: "/blog/hello",
     })
     expect(JSON.parse(JSON.stringify(article))).toEqual({
@@ -79,8 +79,8 @@ describe("Schema.article", () => {
       datePublished: "2026-01-02T03:04:05.000Z",
       dateModified: "2026-02-01",
       author: [
-        { "@type": "Person", name: "Ere" },
-        { "@type": "Person", name: "Anna", url: "https://example.com/anna" },
+        { "@type": "Person", name: "Acme Writer" },
+        { "@type": "Person", name: "Acme Editor", url: "https://example.com/editor" },
       ],
       publisher: { "@type": "Organization", name: "My Site", url: "https://example.com/" },
       mainEntityOfPage: "https://example.com/blog/hello",
@@ -91,12 +91,12 @@ describe("Schema.article", () => {
     const article = Schema.article({
       type: "BlogPosting",
       title: "Hei",
-      author: "Ere",
+      author: "Acme Writer",
       locale: "fi",
     })
     expect(article).toMatchObject({
       "@type": "BlogPosting",
-      author: [{ "@type": "Person", name: "Ere" }],
+      author: [{ "@type": "Person", name: "Acme Writer" }],
       publisher: { name: "Sivustoni" },
       inLanguage: "fi",
     })
