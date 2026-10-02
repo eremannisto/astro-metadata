@@ -8,10 +8,10 @@ import type { SchemaData } from "../lib/schema.ts"
 import { Site } from "../lib/site.ts"
 import { withBase } from "../lib/url.ts"
 
-export type LanguageAlternate = {
-  /** The language or region code, e.g. "en", "fi", "en-US" or "x-default". */
+export type HreflangLink = {
+  /** The locale of the version, e.g. "en", "fi" or "en-US", or "x-default". */
   hreflang: string
-  /** The path or URL of the page in that language. */
+  /** The path or URL of the page in that locale. */
   href: string
 }
 
@@ -24,7 +24,7 @@ export type Props = {
   image?: MetadataImage
   /** The Open Graph type, e.g. "article". Defaults to "website". */
   type?: string
-  /** The X handle of the author, e.g. "@annavirtanen". */
+  /** The Twitter (X) handle of the author, e.g. "@acmewriter". */
   author?: string
   /** The canonical path or URL. Defaults to the current page. */
   canonical?: string
@@ -32,8 +32,11 @@ export type Props = {
   index?: boolean
   /** Set to false to tell search engines not to follow the links. Defaults to true. */
   follow?: boolean
-  /** The other language versions of the page. */
-  languages?: LanguageAlternate[]
+  /**
+   * The hreflang links: the page in each locale, and `x-default`.
+   * The output of `Locale.hreflang()` of @mannisto/astro-i18n fits here.
+   */
+  hreflang?: HreflangLink[]
   /** JSON-LD structured data, e.g. from the `Schema` builders. */
   schema?: SchemaData | SchemaData[]
   /** The locale of the localized config values. Defaults to `Astro.currentLocale`. */
@@ -63,7 +66,8 @@ const robots = [!index && "noindex", !follow && "nofollow", config.robots?.extra
   .filter(Boolean)
   .join(", ")
 
-// X uses the Open Graph title, description and image, so only the X-specific tags are necessary
+// Twitter (X) uses the Open Graph title, description and image, so only the tags that
+// are specific to Twitter (X) are necessary
 const card = image ? (config.twitter?.card ?? "summary_large_image") : "summary"
 
 const themeColor = config.themeColor
@@ -130,8 +134,8 @@ const FEED_TYPES = {
   })
 }
 {
-  props.languages?.map((language) => {
-    return <link rel="alternate" hreflang={language.hreflang} href={Site.pageUrl(language.href)} />
+  props.hreflang?.map((link) => {
+    return <link rel="alternate" hreflang={link.hreflang} href={Site.pageUrl(link.href)} />
   })
 }
 {

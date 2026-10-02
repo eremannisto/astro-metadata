@@ -28,7 +28,9 @@ test.describe("site values of the integration", () => {
     expect(await content("meta[property='og:title']")).toBe("Home")
   })
 
-  test("renders the X site handle and the large card for pages with an image", async ({ page }) => {
+  test("renders the Twitter (X) site handle and the large card for pages with an image", async ({
+    page,
+  }) => {
     await page.goto("/")
     await expect(page.locator("meta[name='twitter:site']")).toHaveAttribute(
       "content",

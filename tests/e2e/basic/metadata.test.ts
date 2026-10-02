@@ -29,9 +29,9 @@ test.describe("Metadata without the integration", () => {
       return page.locator(selector).getAttribute("content")
     }
     expect(await page.title()).toBe("Spring Exhibition")
-    expect(await content("meta[name='description']")).toBe("Paintings by Anna Virtanen.")
+    expect(await content("meta[name='description']")).toBe("Tools by Acme Studio.")
     expect(await content("meta[property='og:title']")).toBe("Spring Exhibition")
-    expect(await content("meta[property='og:description']")).toBe("Paintings by Anna Virtanen.")
+    expect(await content("meta[property='og:description']")).toBe("Tools by Acme Studio.")
     expect(await content("meta[property='og:type']")).toBe("article")
     expect(await content("meta[property='og:url']")).toBe("https://example.com/")
     expect(await content("meta[property='og:image']")).toBe("https://example.com/spring.jpg")
@@ -39,10 +39,10 @@ test.describe("Metadata without the integration", () => {
     expect(await content("meta[property='og:image:width']")).toBe("1600")
     expect(await content("meta[property='og:image:height']")).toBe("900")
     expect(await content("meta[name='twitter:card']")).toBe("summary_large_image")
-    expect(await content("meta[name='twitter:creator']")).toBe("@annavirtanen")
+    expect(await content("meta[name='twitter:creator']")).toBe("@acmewriter")
   })
 
-  test("renders only the X tags that Open Graph does not give", async ({ page }) => {
+  test("renders only the Twitter (X) tags that Open Graph does not give", async ({ page }) => {
     await page.goto("/")
     for (const name of ["twitter:title", "twitter:description", "twitter:image", "twitter:url"]) {
       await expect(page.locator(`meta[name='${name}']`)).not.toBeAttached()
