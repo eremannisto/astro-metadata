@@ -27,6 +27,20 @@ export default defineConfig({
         source: "./src/assets/logo.svg",
         background: "#1e40af",
       },
+      pages: { ignore: ["/unknown-locale"] },
+      rules: {
+        ignore: ["description-short"],
+        custom: [
+          {
+            id: "own-title",
+            level: "warning",
+            message: "The page has its own title.",
+            check(head) {
+              return head.titles[0]?.startsWith("Own") ?? false
+            },
+          },
+        ],
+      },
     }),
   ],
 })

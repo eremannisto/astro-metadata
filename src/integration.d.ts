@@ -1,9 +1,13 @@
 import type { AstroIntegration } from "astro"
 
+import type { CheckOptions, CustomRule, HeadData } from "./lib/checks"
 import type { MetadataConfig } from "./lib/config.ts"
 import type { FaviconFile } from "./lib/favicon-files"
 
-export type { FaviconFile, MetadataConfig }
+export type { FaviconFile, HeadData, MetadataConfig }
+
+/** A check rule of your own, for the `rules.custom` option. */
+export type MetadataRule = CustomRule
 
 export type FaviconOptions = {
   /**
@@ -49,14 +53,55 @@ export type MetadataOptions = MetadataConfig & {
    */
   favicon?: FaviconOptions
   /**
-   * Checks the metadata of the built pages and logs the problems, e.g. a missing
-   * description or a title that is too long. Defaults to true.
+   * The debug features: the Metadata app in the Astro dev toolbar (`client`), and the
+   * checks of the built pages in the build log (`build`). Set to false to turn off both.
+   *
+   * @default true
+   * @example { client: true, build: false }
    */
-  checks?: boolean
+  debug?: boolean | { client?: boolean; build?: boolean }
   /**
-   * Adds the Metadata app to the Astro dev toolbar. Defaults to true.
+   * The pages to check.
    */
-  debug?: boolean
+  pages?: {
+    /**
+     * The pages without checks, as path patterns without the base. `*` matches one part
+     * of the path, and `**` matches any number of parts. The dev toolbar app shows the
+     * other values of these pages, without problems.
+     *
+     * @example ["/404", "/drafts/**"]
+     */
+    ignore?: string[]
+  }
+  /**
+   * The check rules: turn off rules of the package, and add your own rules.
+   * The rules run in the dev toolbar app and in the build.
+   */
+  rules?: {
+    /**
+     * The ids of the rules to turn off. The ids are in `src/lib/rules.js`.
+     *
+     * @example ["description-short", "og-image-alt-missing"]
+     */
+    ignore?: string[]
+    /** Your own rules. */
+    custom?: MetadataRule[]
+  }
+}
+
+/** The values that the build checks need. */
+export type BuildContext = {
+  /** The output directory of the build. */
+  dir: string
+  root?: URL
+  site?: string
+  base: string
+  /** The path patterns of the pages without checks. */
+  pages?: string[]
+  /** The rules to turn off, and the custom rules. */
+  checks: CheckOptions
+  /** sharp, for the size of the images. Without sharp, the checks skip the size. */
+  sharp?: (file: string) => { metadata(): Promise<{ width?: number; height?: number }> }
 }
 
 /**

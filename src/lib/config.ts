@@ -4,8 +4,8 @@ import type { ManifestConfig } from "./manifest.ts"
 /**
  * A text value: one string for all locales, or one string for each locale.
  *
- * @example "Tischenko Gallery"
- * @example { en: "Tischenko Gallery", fi: "Tischenkon galleria" }
+ * @example "Acme Studio"
+ * @example { en: "Acme Studio", fi: "Acme Studio Suomi" }
  */
 export type Localized = string | Record<string, string>
 
@@ -52,7 +52,7 @@ export type MetadataConfig = {
   twitter?: {
     /** The card type for pages with an image. Defaults to "summary_large_image". */
     card?: "summary" | "summary_large_image"
-    /** The X handle of the site, e.g. "@mysite". */
+    /** The Twitter (X) handle of the site, e.g. "@mysite". */
     site?: string
   }
   /** The color of the browser interface, e.g. the address bar on Android. */
@@ -81,6 +81,10 @@ export type RuntimeConfig = MetadataConfig & {
   trailingSlash?: "always" | "never" | "ignore"
   /** The `build.format` setting of the Astro config. */
   buildFormat?: "directory" | "file" | "preserve"
+  /** The `base` of the Astro config. */
+  base?: string
+  /** The `site` of the Astro config. The dev toolbar app loads its files from the dev server. */
+  site?: string
 }
 
 // The integration replaces this name with the config, with Vite's `define`

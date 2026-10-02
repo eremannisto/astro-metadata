@@ -1,218 +1,193 @@
 // Plain JavaScript: the integration runs in Node, which does not strip types in node_modules.
 // The dev toolbar app uses the same functions, so the build and the toolbar give the same results.
 
-/** The approximate lengths that search results show. */
-export const LIMITS = {
-  title: 60,
-  description: 160,
-}
+import { ASSET_RULES, RULES, SITE_RULES } from "./rules.js"
 
-const ENTITIES = {
-  amp: "&",
-  lt: "<",
-  gt: ">",
-  quot: '"',
-  apos: "'",
-  nbsp: " ",
-}
+export { findLink, parseHead } from "./head.js"
+export { LIMITS } from "./rules.js"
 
-// A tag with its attributes. Quoted values can contain ">".
-const TAG = /<(meta|link)\b((?:[^>"']|"[^"]*"|'[^']*')*)>/gi
-const ATTRIBUTE = /([^\s=/>"']+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g
-const SCRIPT = /<script\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/script>/gi
+const ORDER = ["error", "warning", "info"]
+
+const LEVELS = ["error", "warning", "info"]
 
 /**
- * Replaces the HTML entities in a text with their characters.
+ * Returns true for a rule that the `rules.ignore` option does not turn off.
  *
- * @param {string} text
- * @returns {string}
- */
-function decode(text) {
-  return text.replace(/&(#x[\da-f]+|#\d+|[a-z]+);/gi, (match, code) => {
-    if (code[0] !== "#") return ENTITIES[code.toLowerCase()] ?? match
-
-    const hex = code[1].toLowerCase() === "x"
-    const point = hex ? parseInt(code.slice(2), 16) : parseInt(code.slice(1), 10)
-    return point <= 0x10ffff ? String.fromCodePoint(point) : match
-  })
-}
-
-/**
- * Returns the attributes of a tag. The names are in lowercase, the values are decoded.
- *
- * @param {string} source - The text between the tag name and ">".
- * @returns {Record<string, string>}
- */
-function parseAttributes(source) {
-  /** @type {Record<string, string>} */
-  const attributes = {}
-  for (const match of source.matchAll(ATTRIBUTE)) {
-    const value = match[2] ?? match[3] ?? match[4] ?? ""
-    attributes[match[1].toLowerCase()] = decode(value)
-  }
-  return attributes
-}
-
-/**
- * Reads the metadata of a page from its HTML.
- *
- * @param {string} html - The HTML of the page.
- * @returns {import("./checks").HeadData}
- */
-export function parseHead(html) {
-  const end = html.search(/<\/head>/i)
-  const head = end === -1 ? html : html.slice(0, end)
-
-  /** @type {Record<string, string>} */
-  const meta = {}
-  /** @type {Record<string, string>[]} */
-  const links = []
-  for (const match of head.matchAll(TAG)) {
-    const attributes = parseAttributes(match[2])
-    if (match[1].toLowerCase() === "link") {
-      links.push(attributes)
-      continue
-    }
-
-    // Keep the first value, as crawlers do
-    const key = (attributes.name ?? attributes.property ?? attributes["http-equiv"])?.toLowerCase()
-    if (key && attributes.content !== undefined && !(key in meta)) {
-      meta[key] = attributes.content
-    }
-  }
-
-  const titles = [...head.matchAll(/<title\b[^>]*>([\s\S]*?)<\/title>/gi)].map((match) => {
-    return decode(match[1]).trim()
-  })
-
-  // JSON-LD can also be in the body
-  const schemas = [...html.matchAll(SCRIPT)]
-    .filter((match) => {
-      return /application\/ld\+json/i.test(parseAttributes(match[1]).type ?? "")
-    })
-    .map((match) => {
-      return match[2]
-    })
-
-  const lang = /<html\b(?:[^>"']|"[^"]*"|'[^']*')*>/i.exec(html)
-  return {
-    lang: lang ? parseAttributes(lang[0].slice(5, -1)).lang : undefined,
-    titles,
-    meta,
-    links,
-    schemas,
-  }
-}
-
-/**
- * Returns the `href` of the first link with a `rel` value.
- *
- * @param {import("./checks").HeadData} head
- * @param {string} rel - e.g. "canonical".
- * @returns {string | undefined}
- */
-export function findLink(head, rel) {
-  const link = head.links.find((attributes) => {
-    return (attributes.rel ?? "").toLowerCase().split(/\s+/).includes(rel)
-  })
-  return link?.href
-}
-
-/**
- * Returns true for a URL with "http:" or "https:".
- *
- * @param {string} value
+ * @param {{ id: string }} rule
+ * @param {import("./checks").CheckOptions} options
  * @returns {boolean}
  */
-function isAbsolute(value) {
-  return /^https?:\/\//i.test(value)
+function isOn(rule, options) {
+  return !options.ignore?.includes(rule.id)
 }
 
 /**
- * Checks the metadata of a page. A page with `noindex` gets no search and sharing checks.
+ * Checks the custom rules of the `rules.custom` option.
  *
- * @param {import("./checks").HeadData} head - The metadata from `parseHead`.
- * @returns {import("./checks").Check[]} The problems, errors first.
+ * @param {import("./checks").CustomRule[] | undefined} custom
+ * @throws {Error} For a rule without an id, a message, a valid level or a check function,
+ * and for an id that another rule already has.
  */
-export function checkHead(head) {
-  /** @type {import("./checks").Check[]} */
-  const checks = []
-
-  /**
-   * @param {import("./checks").Check["level"]} level
-   * @param {string} message
-   */
-  function add(level, message) {
-    checks.push({ level, message })
-  }
-
-  const title = head.titles[0]
-  if (title === undefined || title === "") {
-    add("error", "The page has no title.")
-  } else if (head.titles.length > 1) {
-    add("error", `The page has ${head.titles.length} title tags. Keep only one.`)
-  } else if (title.length > LIMITS.title) {
-    add(
-      "warning",
-      `The title has ${title.length} characters. Search results show about ${LIMITS.title}.`
-    )
-  }
-
-  for (const schema of head.schemas) {
-    try {
-      JSON.parse(schema)
-    } catch {
-      add("error", "A JSON-LD script does not contain valid JSON.")
+export function validateCustomRules(custom) {
+  const ids = new Set(
+    [...RULES, ...ASSET_RULES, ...SITE_RULES].map((rule) => {
+      return rule.id
+    })
+  )
+  for (const rule of custom ?? []) {
+    const name = rule?.id ? `The custom rule "${rule.id}"` : "A custom rule"
+    if (!rule?.id || typeof rule.id !== "string") throw new Error(`${name} has no \`id\`.`)
+    if (ids.has(rule.id)) throw new Error(`${name} has the id of another rule.`)
+    if (!LEVELS.includes(rule.level)) {
+      throw new Error(`${name} needs a \`level\`: "error", "warning" or "info".`)
     }
+    if (typeof rule.message !== "string" && typeof rule.message !== "function") {
+      throw new Error(`${name} has no \`message\`.`)
+    }
+    if (typeof rule.check !== "function") throw new Error(`${name} has no \`check\` function.`)
+    ids.add(rule.id)
   }
-
-  if (!head.lang) {
-    add("warning", "The html tag has no lang attribute.")
-  }
-
-  if (/noindex/i.test(head.meta.robots ?? "")) {
-    add("info", "The robots tag contains noindex: search engines do not show the page.")
-    return sortChecks(checks)
-  }
-
-  const description = head.meta.description
-  if (!description) {
-    add("warning", "The page has no description.")
-  } else if (description.length > LIMITS.description) {
-    add(
-      "warning",
-      `The description has ${description.length} characters. Search results show about ${LIMITS.description}.`
-    )
-  }
-
-  const canonical = findLink(head, "canonical")
-  if (!canonical) {
-    add("warning", "The page has no canonical URL.")
-  } else if (!isAbsolute(canonical)) {
-    add("warning", "The canonical URL is not absolute. Set `site` in the Astro config.")
-  }
-
-  const image = head.meta["og:image"]
-  if (!image) {
-    add("warning", "The page has no og:image. Social cards show no image.")
-  } else if (!isAbsolute(image)) {
-    add("warning", "The og:image URL is not absolute. Social sites can not load it.")
-  } else if (!head.meta["og:image:width"] || !head.meta["og:image:height"]) {
-    add("warning", "The og:image has no width and height. The first share can show no image.")
-  }
-
-  return sortChecks(checks)
 }
 
 /**
- * Sorts the checks: errors first, then warnings, then information.
+ * Changes a custom rule into a rule of the same form as the rules in `rules.js`.
+ *
+ * @param {import("./checks").CustomRule} rule
+ * @returns {import("./rules").Rule}
+ */
+function toRule(rule) {
+  return {
+    id: rule.id,
+    field: rule.field ?? "custom",
+    level: rule.level,
+    indexed: rule.indexed,
+    check(head) {
+      try {
+        if (!rule.check(head)) return undefined
+        return typeof rule.message === "function" ? rule.message(head) : rule.message
+      } catch (error) {
+        // An error in a custom rule shows as its problem, and the other rules still run
+        return `The custom rule \`${rule.id}\` failed: ${error instanceof Error ? error.message : error}`
+      }
+    },
+  }
+}
+
+/**
+ * Returns the checks with the errors first, then the warnings, then the information.
  *
  * @param {import("./checks").Check[]} checks
  * @returns {import("./checks").Check[]}
  */
-function sortChecks(checks) {
-  const order = ["error", "warning", "info"]
+export function sortChecks(checks) {
   return checks.sort((a, b) => {
-    return order.indexOf(a.level) - order.indexOf(b.level)
+    return ORDER.indexOf(a.level) - ORDER.indexOf(b.level)
   })
+}
+
+/**
+ * Returns true for a page with `noindex`. Such a page gets no search and sharing checks.
+ *
+ * @param {import("./head").HeadData} head
+ * @returns {boolean}
+ */
+export function isNoindex(head) {
+  return /noindex/i.test(head.meta.robots ?? "")
+}
+
+/**
+ * Returns a path without the slash at the end, e.g. "/blog" for "/blog/". The root stays "/".
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+function trimSlash(path) {
+  return path.length > 1 ? path.replace(/\/+$/, "") : path
+}
+
+/**
+ * Returns true for a page path that matches a pattern of the `ignore` option.
+ * In a pattern, `*` matches one part of the path and `**` matches any number of parts.
+ *
+ * @example isIgnored("/drafts/hello/", ["/drafts/**"]) // true
+ *
+ * @param {string} path - The path of the page without the base, e.g. "/drafts/hello/".
+ * @param {string[] | undefined} patterns - e.g. ["/404", "/drafts/**"].
+ * @returns {boolean}
+ */
+export function isIgnored(path, patterns) {
+  return (patterns ?? []).some((pattern) => {
+    const source = trimSlash(pattern)
+      .split(/(\*\*|\*)/)
+      .map((part) => {
+        if (part === "**") return ".*"
+        if (part === "*") return "[^/]*"
+        return part.replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+      })
+      .join("")
+    return new RegExp(`^${source}$`).test(trimSlash(path))
+  })
+}
+
+/**
+ * Checks the head of a page with the rules in `rules.js`.
+ *
+ * @param {import("./head").HeadData} head - The metadata from `parseHead`.
+ * @param {import("./checks").CheckOptions} [options]
+ * @returns {import("./checks").Check[]} The problems, errors first.
+ */
+export function checkHead(head, options = {}) {
+  const noindex = isNoindex(head)
+
+  /** @type {import("./checks").Check[]} */
+  const checks = []
+  const custom = (options.custom ?? []).map(toRule)
+  for (const rule of [...RULES, ...custom]) {
+    if ((noindex && rule.indexed) || !isOn(rule, options)) continue
+
+    const message = rule.check(head)
+    if (message) checks.push({ id: rule.id, field: rule.field, level: rule.level, message })
+  }
+  return sortChecks(checks)
+}
+
+/**
+ * Checks the loaded files of a page: the `og:image` and the favicons.
+ *
+ * @param {import("./head").HeadData} head
+ * @param {import("./rules").PageAssets} assets
+ * @param {import("./checks").CheckOptions} [options]
+ * @returns {import("./checks").Check[]}
+ */
+export function checkAssets(head, assets, options = {}) {
+  /** @type {import("./checks").Check[]} */
+  const checks = []
+  for (const rule of ASSET_RULES) {
+    if (!isOn(rule, options)) continue
+
+    const message = rule.check(head, assets)
+    if (message) checks.push({ id: rule.id, field: rule.field, level: rule.level, message })
+  }
+  return sortChecks(checks)
+}
+
+/**
+ * Compares the pages of the site, e.g. two pages with the same title.
+ *
+ * @param {import("./rules").SitePage[]} pages
+ * @param {import("./checks").CheckOptions} [options]
+ * @returns {Map<string, import("./checks").Check[]>} The problems of each page path.
+ */
+export function checkSite(pages, options = {}) {
+  /** @type {Map<string, import("./checks").Check[]>} */
+  const result = new Map()
+  for (const rule of SITE_RULES) {
+    if (!isOn(rule, options)) continue
+
+    for (const problem of rule.check(pages)) {
+      const check = { id: rule.id, field: rule.field, level: rule.level, message: problem.message }
+      result.set(problem.path, [...(result.get(problem.path) ?? []), check])
+    }
+  }
+  return result
 }
