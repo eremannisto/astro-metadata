@@ -40,15 +40,15 @@ export default defineConfig({
   site: "https://example.com",
   integrations: [
     metadata({
-      siteName: "Tischenko Gallery",
-      titleTemplate: "%s | Tischenko Gallery",
-      description: "Contemporary art in Helsinki.",
-      image: { url: "/og.jpg", alt: "Tischenko Gallery", width: 1200, height: 630 },
-      twitter: { site: "@tischenko" },
+      siteName: "Acme Studio",
+      titleTemplate: "%s | Acme Studio",
+      description: "Tools for small teams.",
+      image: { url: "/og.jpg", alt: "Acme Studio", width: 1200, height: 630 },
+      twitter: { site: "@acmestudio" },
       themeColor: "#111111",
       feeds: [{ href: "/rss.xml", title: "News" }],
       favicon: { source: "./src/assets/logo.svg" },
-      manifest: { name: "Tischenko Gallery" },
+      manifest: { name: "Acme Studio" },
     }),
   ],
 })
@@ -62,14 +62,15 @@ Set `site` in the Astro config. The canonical URL and the social images must be 
 | `titleTemplate` | — | The title template, for example `"%s \| My Site"`. `%s` is the page title. |
 | `description` | — | The description of a page without a description. |
 | `image` | — | The social image of a page without an image: `url`, `alt`, `width` and `height`. |
-| `twitter` | — | `site`: the X handle of the site. `card`: `"summary"` or `"summary_large_image"` (default) for pages with an image. |
+| `twitter` | — | `site`: the Twitter (X) handle of the site. `card`: `"summary"` or `"summary_large_image"` (default) for pages with an image. |
 | `themeColor` | — | The color of the browser interface. Give one color, or `{ light, dark }`. |
 | `feeds` | — | The RSS, Atom or JSON feeds: `href`, `title` and `type` (`"rss"` by default). |
 | `robots` | — | `index: false` or `follow: false` for all pages, for example on a staging site. `extra`: other directives, for example `"max-image-preview:large"`. |
 | `favicon` | — | Generates the favicons from one image. See [Favicons](#favicons). |
 | `manifest` | — | Generates the web app manifest, or links your own. See [Web app manifest](#web-app-manifest). |
-| `checks` | `true` | Logs the metadata problems of the built pages. See [Checks](#checks). |
-| `debug` | `true` | Adds the Metadata app to the Astro dev toolbar. |
+| `debug` | `true` | The Metadata app in the dev toolbar (`client`) and the checks in the build log (`build`). Set `false` to turn off both, or `{ client: false }` or `{ build: false }` to turn off one. See [Checks](#checks). |
+| `rules` | — | `ignore`: the ids of the check rules to turn off. `custom`: your own rules. See [Checks](#checks). |
+| `pages` | — | `ignore`: the pages without checks, as path patterns, for example `["/404", "/drafts/**"]`. See [Checks](#checks). |
 
 ### Translations
 
@@ -77,8 +78,8 @@ Each text can be one string, or an object with one string for each locale:
 
 ```typescript
 metadata({
-  siteName: { en: "Tischenko Gallery", fi: "Tischenkon galleria" },
-  titleTemplate: { en: "%s | Tischenko Gallery", fi: "%s | Tischenkon galleria" },
+  siteName: { en: "Acme Studio", fi: "Acme Studio Suomi" },
+  titleTemplate: { en: "%s | Acme Studio", fi: "%s | Acme Studio Suomi" },
 })
 ```
 
@@ -112,7 +113,7 @@ type Props = MetadataProps
 import Layout from "../layouts/Layout.astro"
 ---
 
-<Layout title="About" description="The story of the gallery.">
+<Layout title="About" description="The story of Acme Studio.">
   <h1>About</h1>
 </Layout>
 ```
@@ -122,17 +123,17 @@ The page values override the site values. For example, `title="About"` gives:
 ```html
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>About | Tischenko Gallery</title>
-<meta name="description" content="The story of the gallery.">
+<title>About | Acme Studio</title>
+<meta name="description" content="The story of Acme Studio.">
 <link rel="canonical" href="https://example.com/about/">
 <meta property="og:title" content="About">
-<meta property="og:description" content="The story of the gallery.">
+<meta property="og:description" content="The story of Acme Studio.">
 <meta property="og:url" content="https://example.com/about/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Tischenko Gallery">
+<meta property="og:site_name" content="Acme Studio">
 <meta property="og:image" content="https://example.com/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@tischenko">
+<meta name="twitter:site" content="@acmestudio">
 ...
 ```
 
@@ -142,11 +143,11 @@ The page values override the site values. For example, `title="About"` gives:
 | `description` | `description` | The page description. |
 | `image` | `image` | The social image: `url`, `alt`, `width` and `height`. |
 | `type` | `"website"` | The Open Graph type, for example `"article"`. |
-| `author` | — | The X handle of the author, for example `"@annavirtanen"`. |
+| `author` | — | The Twitter (X) handle of the author, for example `"@acmewriter"`. |
 | `canonical` | The current page | The canonical path or URL. |
 | `index` | `true` | `false` keeps the page out of search results. |
 | `follow` | `true` | `false` tells search engines not to follow the links. |
-| `languages` | — | The other language versions of the page: `{ hreflang, href }[]`. |
+| `hreflang` | — | The hreflang links: the page in each locale, and `x-default`: `{ hreflang, href }[]`. |
 | `schema` | — | Structured data. See [Structured data](#structured-data). |
 | `locale` | `Astro.currentLocale` | The locale of the translated site values. |
 
@@ -207,8 +208,8 @@ Give the manifest as an object, and the integration serves it at `/manifest.webm
 ```typescript
 metadata({
   manifest: {
-    name: "Tischenko Gallery",
-    shortName: "Tischenko",
+    name: "Acme Studio",
+    shortName: "Acme",
     backgroundColor: "#ffffff",
   },
 })
@@ -254,7 +255,7 @@ import { Schema } from "@mannisto/astro-metadata/runtime"
     Schema.article({
       title: "Hello",
       published: new Date("2026-09-01"),
-      author: { name: "Ere Männistö", url: "/about" },
+      author: { name: "Acme Writer", url: "/about" },
       url: "/blog/hello",
     }),
     Schema.breadcrumbs([
@@ -269,23 +270,96 @@ The `schema` prop also takes your own objects. The types come from [`schema-dts`
 
 ## Checks
 
-The integration checks the metadata of each page, for example:
-- a missing title or description
-- a title longer than 60 characters
-- an image without a width and a height
-- invalid JSON-LD
+The integration checks the metadata of each page. Each problem has a level:
+
+| Level | Meaning | Examples |
+| --- | --- | --- |
+| Error | The metadata is broken. | No title, placeholder text such as `undefined`, two canonical links, invalid JSON-LD, an `og:image` that does not load |
+| Warning | Fix it for better results. | A long title, the same title on two pages, no `twitter:card`, an `og:image` over 600 KB, an hreflang page that does not link back |
+| Info | Good to know. | `noindex`, a short description, no `og:image:alt` |
+
+The checks look at three things:
+
+- **The head of each page:** the tags, the structured data and the hreflang links. A page with `noindex` gets no search and sharing checks.
+- **The files of each page:** the `og:image` and the favicons. The checks load them, and compare the real image size, format and file size with the tags. Files on other sites are not checked.
+- **All pages together:** the same title or description on two pages, and hreflang links that do not link back. Only the build can compare the pages.
 
 The results show in two places:
 
-- **In dev:** Open the Metadata app in the Astro dev toolbar. It shows the problems of the current page, the page as a Google result and as social cards, and all metadata tags.
-- **In the build:** The integration logs the problems of the prerendered pages:
+- **In dev:** Open the Metadata app in the Astro dev toolbar. It shows the problems of the current page. Click a problem to open the row of its tag. The app also shows the link previews of Google, Twitter (X), Facebook, LinkedIn, WhatsApp, Discord and Slack, and all metadata tags.
+- **In the build:** The integration logs the errors and the warnings of the prerendered pages:
 
 ```
 [WARN] [@mannisto/astro-metadata] /about/index.html
   - The page has no description.
 ```
 
-Set `checks: false` to hide the build warnings, and `debug: false` to remove the dev toolbar app.
+### Turn off rules
+
+All rules and their ids are in [`src/lib/rules.js`](./src/lib/rules.js). Give the ids of the rules to turn off in `rules.ignore`. This applies to the dev toolbar app and to the build:
+
+```typescript
+metadata({
+  rules: {
+    ignore: ["description-short", "og-image-alt-missing"],
+  },
+})
+```
+
+### Custom rules
+
+Add your own rules in `rules.custom`. A rule has an `id`, a `level` (`"error"`, `"warning"` or `"info"`), a `message`, and a `check` function that returns `true` when the page has the problem:
+
+```typescript
+metadata({
+  rules: {
+    custom: [
+      {
+        id: "title-brand",
+        level: "warning",
+        message: "The title must contain the brand name.",
+        check(head) {
+          return !head.titles[0]?.includes("Acme Studio")
+        },
+      },
+    ],
+  },
+})
+```
+
+The `head` has the metadata of the page:
+
+| Value | Description |
+|---|---|
+| `titles` | The texts of all title tags. |
+| `meta` | The first `content` of each meta tag, by its `name` or `property`, for example `head.meta["og:image"]`. |
+| `metaCount` | The number of meta tags with each name. |
+| `links` | The attributes of all link tags, for example `{ rel: "canonical", href: "…" }`. |
+| `schemas` | The texts of the JSON-LD scripts. |
+| `lang`, `charset` | The `lang` attribute of the html tag, and the charset. |
+
+The rule can also have:
+- `message` as a function, `(head) => string`, for a message with values of the page.
+- `field`, the tag of the problem, for example `"og:title"`. A click on the problem in the dev toolbar app opens its row.
+- `indexed: true`, to skip the rule on a noindex page.
+
+The custom rules run in the build and in the dev toolbar app. In dev, the dev server runs them, because they are functions in the Astro config. Text between backticks in a message shows as code in the dev toolbar app. The `MetadataRule` type gives your editor completion.
+
+### Ignore pages
+
+Some pages do not need checks, for example a 404 page or the drafts. Give their paths in `pages.ignore`, without the base. In a pattern, `*` matches one part of the path, and `**` matches any number of parts:
+
+```typescript
+metadata({
+  pages: {
+    ignore: ["/404", "/drafts/**"],
+  },
+})
+```
+
+The build does not check these pages, and does not compare them with the other pages. The dev toolbar app shows all values of these pages, but no problems.
+
+Set `debug: { build: false }` to hide the build warnings, `debug: { client: false }` to remove the dev toolbar app, and `debug: false` to turn off both.
 
 ## API
 
@@ -338,7 +412,7 @@ Import the types from `@mannisto/astro-metadata/runtime`, for example `import ty
   const { code } = Locale.use(Astro)
   ---
 
-  <Metadata locale={code} languages={Locale.hreflang(Astro.url, Astro.site!)} />
+  <Metadata locale={code} hreflang={Locale.hreflang(Astro.url, Astro.site!)} />
   ```
 
 ## Migrate from v1
@@ -371,9 +445,9 @@ Version 2 is a new API. The main changes:
 `Title`, `Description`, `Canonical`, `Robots`, `OpenGraph`, `Twitter`, `Favicon`, `LanguageAlternates`, `Keywords` and `Schema` are removed. `<Metadata>` renders their tags.
 
 ```diff
-- <LanguageAlternates alternates={languages} />
+- <LanguageAlternates alternates={links} />
 - <Schema schema={data} />
-+ <Metadata languages={languages} schema={data} />
++ <Metadata hreflang={links} schema={data} />
 ```
 
 ### Replace the `Metadata` store
