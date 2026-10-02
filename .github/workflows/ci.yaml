@@ -53,5 +53,5 @@ jobs:
       # The dev dependency is Astro 7. The Astro 6 job installs the oldest supported version.
       - if: matrix.astro == 6
         run: pnpm -r update astro@^6.4.8
-      - run: pnpm exec playwright install --with-deps
+      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
