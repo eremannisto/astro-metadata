@@ -2,10 +2,14 @@
   box-sizing: border-box;
 }
 
+/*
+ * The z-index of the Audit app window of Astro: above the site, e.g. a fixed navigation,
+ * and under the toolbar bar (2000000010). The toolbar element has no stacking context.
+ */
 .panel {
   position: fixed;
   inset: 0 0 0 auto;
-  z-index: 1;
+  z-index: 2000000009;
   display: flex;
   flex-direction: column;
   width: var(--panel-width, 480px);
