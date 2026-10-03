@@ -31,11 +31,6 @@ tr {
     background: var(--zinc-800);
   }
 
-  /* The row of a problem after a click on the problem */
-  &.highlight :is(th, td) {
-    animation: highlight 1.6s ease-out;
-  }
-
   /* The child rows are indented under their row */
   &.child th {
     padding-left: calc(var(--space-400) + var(--space-400));
@@ -114,11 +109,5 @@ td {
 
   &.open astro-metadata-icon {
     transform: rotate(90deg);
-  }
-}
-
-@keyframes highlight {
-  from {
-    background: var(--blue-900);
   }
 }

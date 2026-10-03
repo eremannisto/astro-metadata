@@ -34,42 +34,42 @@ export class Table extends LitElement {
   static properties = {
     rows: { attribute: false },
     opened: { state: true },
-    highlighted: { state: true },
   }
   static styles = unsafeCSS(styles)
 
   declare rows: TableRow[]
   /** The indexes of the open rows. */
   declare opened: Set<number>
-  /** The key of the marked row. */
-  declare highlighted: string | undefined
 
   constructor() {
     super()
     this.rows = []
     this.opened = new Set()
-    this.highlighted = undefined
   }
 
   /**
-   * Scrolls to the row with a key and marks it for a moment.
+   * Scrolls to the row with a key and marks it for a moment. Each call starts the mark again,
+   * also while the mark of an earlier call still shows.
    *
    * @returns False when the table has no row with the key.
    */
   async highlight(key: string): Promise<boolean> {
-    const found = this.rows.some((row) => {
-      return row.key === key
-    })
-    if (!found) return false
+    await this.updateComplete
+    const row = [...this.renderRoot.querySelectorAll<HTMLElement>("tr[data-key]")].find(
+      (element) => {
+        return element.dataset.key === key
+      }
+    )
+    if (!row) return false
 
-    // A new value restarts the animation of a row that is already marked
-    this.highlighted = undefined
-    await this.updateComplete
-    this.highlighted = key
-    await this.updateComplete
-    this.renderRoot
-      .querySelector("tr.highlight")
-      ?.scrollIntoView({ block: "center", behavior: "smooth" })
+    row.scrollIntoView({ block: "center", behavior: "smooth" })
+    const color = getComputedStyle(this).getPropertyValue("--blue-900")
+    for (const cell of row.querySelectorAll("th, td")) {
+      cell.animate([{ background: color }, { background: "transparent" }], {
+        duration: 1600,
+        easing: "ease-out",
+      })
+    }
     return true
   }
 
@@ -108,9 +108,7 @@ export class Table extends LitElement {
 
   renderRow(row: TableRow, label: unknown, notes: boolean, child: boolean) {
     return html`
-      <tr
-        class="${child ? "child" : ""} ${row.key && row.key === this.highlighted ? "highlight" : ""}"
-      >
+      <tr class=${child ? "child" : ""} data-key=${row.key ?? nothing}>
         <th>${label}</th>
         <td>${this.renderValue(row)}</td>
         ${
