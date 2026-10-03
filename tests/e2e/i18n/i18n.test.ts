@@ -50,4 +50,13 @@ test.describe("locale values with @mannisto/astro-i18n", () => {
       "x-default": "https://example.com/",
     })
   })
+
+  test("does not change a page outside the [locale] folder", async ({ page }) => {
+    await page.goto("/privacy")
+    await expect(page.locator("link[rel='canonical']")).toHaveAttribute(
+      "href",
+      "https://example.com/privacy/"
+    )
+    expect(await hreflang(page)).toEqual({})
+  })
 })

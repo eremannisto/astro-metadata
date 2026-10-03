@@ -64,19 +64,35 @@ const I18N_FILE = fileURLToPath(new URL("./lib/i18n.ts", import.meta.url))
  * the project by its path, because with pnpm this package can not see it by its name.
  *
  * @param {string} runtime - The absolute path of `@mannisto/astro-i18n/runtime`.
+ * @param {string} base - The `base` of the Astro config.
  * @returns {string}
  */
-function astroI18nAdapter(runtime) {
+function astroI18nAdapter(runtime, base) {
   return `import { Locale } from ${JSON.stringify(runtime)}
+
+const BASE = ${JSON.stringify(base.replace(/\/$/, ""))}
+
+// Returns the locale prefix of the URL, e.g. "fi" for "/fi/about". A page in the [locale]
+// folder always has the prefix in Astro.url, also after the rewrite of the default locale.
+// A page outside the folder, e.g. the 404 page, has none.
+function prefix(page) {
+  let path = page.url.pathname
+  if (BASE && path.startsWith(BASE)) path = path.slice(BASE.length)
+  const first = path.split("/")[1]
+  return Locale.supported.includes(first) ? first : undefined
+}
 
 export const i18n = {
   locale(page) {
-    return Locale.fromURL(page.url)
+    return prefix(page) ?? Locale.defaultLocale
   },
   path(page) {
-    return Locale.url(Locale.fromURL(page.url), page.url.pathname)
+    const code = prefix(page)
+    return code ? Locale.url(code, page.url.pathname) : page.url.pathname
   },
   alternates(page) {
+    if (!prefix(page)) return []
+
     const path = page.url.pathname
     const links = Locale.supported.map((code) => {
       return { hreflang: code, href: Locale.url(code, path) }
@@ -151,7 +167,7 @@ function i18nAdapter(config, logger) {
   if (astroI18n) {
     try {
       const fromProject = createRequire(fileURLToPath(new URL("./package.json", config.root)))
-      return astroI18nAdapter(fromProject.resolve("@mannisto/astro-i18n/runtime"))
+      return astroI18nAdapter(fromProject.resolve("@mannisto/astro-i18n/runtime"), config.base)
     } catch {
       logger.warn("@mannisto/astro-i18n is in the config, but its runtime was not found.")
       return undefined
