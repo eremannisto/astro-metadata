@@ -1,0 +1,182 @@
+/* The design values of the toolbar app. All components inherit them. */
+:host {
+  all: initial;
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --line-height: 1.5;
+
+  /*
+   * The spacing and font size tokens of the other projects. They use rem with a root
+   * size of 62.5 % (1 rem = 10 px). In the toolbar, rem uses the root size of the user's
+   * site, so the values here are in px: 1.6rem is 16px.
+   */
+  --space-0: 0;
+  --space-25: 1px;
+  --space-50: 2px;
+  --space-100: 4px;
+  --space-150: 6px;
+  --space-200: 8px;
+  --space-300: 12px;
+  --space-400: 16px;
+  --space-500: 20px;
+  --space-600: 24px;
+  --space-700: 28px;
+  --space-800: 32px;
+  --space-900: 36px;
+  --space-1000: 40px;
+  --space-1200: 48px;
+  --space-1600: 64px;
+  --space-2000: 80px;
+  --space-2400: 96px;
+  --space-2800: 112px;
+  --space-3200: 128px;
+
+  --font-size-tiny: 10.24px;
+  --font-size-small: 12.8px;
+  --font-size-body: 16px;
+  --font-size-h6: 20px;
+  --font-size-h5: 25px;
+  --font-size-h4: 31.25px;
+  --font-size-h3: 39.06px;
+  --font-size-h2: 48.83px;
+  --font-size-h1: 61.04px;
+  --font-size-display: 94px;
+
+  /*
+   * The color scales: zinc, red, orange, yellow, green and blue, in steps of 50 from
+   * 50 to 950. The values are the same as in the color tokens of the other projects.
+   * All colors of the toolbar app come from these scales.
+   */
+  --zinc-50: oklch(98.51% 0 0deg);
+  --zinc-100: oklch(96.74% 0.0013 286.4deg);
+  --zinc-150: oklch(94.37% 0.0027 286.3deg);
+  --zinc-200: oklch(91.97% 0.004 286.3deg);
+  --zinc-250: oklch(89.56% 0.0054 286.3deg);
+  --zinc-300: oklch(87.11% 0.0055 286.3deg);
+  --zinc-350: oklch(79.39% 0.0084 286.2deg);
+  --zinc-400: oklch(71.18% 0.0129 286.1deg);
+  --zinc-450: oklch(63.3% 0.0133 286deg);
+  --zinc-500: oklch(55.17% 0.0138 285.9deg);
+  --zinc-550: oklch(49.93% 0.0142 285.9deg);
+  --zinc-600: oklch(44.19% 0.0146 285.8deg);
+  --zinc-650: oklch(40.83% 0.0133 285.8deg);
+  --zinc-700: oklch(37.03% 0.0119 285.8deg);
+  --zinc-750: oklch(32.3% 0.0088 285.9deg);
+  --zinc-800: oklch(27.39% 0.0055 286deg);
+  --zinc-850: oklch(24.48% 0.0056 286deg);
+  --zinc-900: oklch(21.03% 0.0059 285.9deg);
+  --zinc-950: oklch(14.08% 0.0044 285.8deg);
+
+  --red-50: oklch(97.05% 0.0129 17.4deg);
+  --red-100: oklch(93.56% 0.0309 17.7deg);
+  --red-150: oklch(90.99% 0.0449 18deg);
+  --red-200: oklch(88.45% 0.0593 18.3deg);
+  --red-250: oklch(84.65% 0.0804 18.9deg);
+  --red-300: oklch(80.77% 0.1035 19.6deg);
+  --red-350: oklch(75.69% 0.135 20.7deg);
+  --red-400: oklch(71.06% 0.1661 22.2deg);
+  --red-450: oklch(67.27% 0.1884 23.7deg);
+  --red-500: oklch(63.68% 0.2078 25.3deg);
+  --red-550: oklch(60.68% 0.2129 26.3deg);
+  --red-600: oklch(57.71% 0.2152 27.3deg);
+  --red-650: oklch(54.25% 0.2034 27.4deg);
+  --red-700: oklch(50.54% 0.1905 27.5deg);
+  --red-750: oklch(47.51% 0.1758 27.2deg);
+  --red-800: oklch(44.37% 0.1613 26.9deg);
+  --red-850: oklch(41.96% 0.1476 26.4deg);
+  --red-900: oklch(39.58% 0.1331 25.7deg);
+  --red-950: oklch(25.75% 0.0886 26deg);
+
+  --orange-50: oklch(97.96% 0.0158 73.7deg);
+  --orange-100: oklch(95.42% 0.0372 75.2deg);
+  --orange-150: oklch(92.81% 0.0549 71.5deg);
+  --orange-200: oklch(90.15% 0.0729 70.7deg);
+  --orange-250: oklch(86.98% 0.0955 68.6deg);
+  --orange-300: oklch(83.66% 0.1165 66.3deg);
+  --orange-350: oklch(79.58% 0.1381 60.8deg);
+  --orange-400: oklch(75.76% 0.159 55.9deg);
+  --orange-450: oklch(73.1% 0.1729 52deg);
+  --orange-500: oklch(70.49% 0.1867 47.6deg);
+  --orange-550: oklch(67.65% 0.1905 44.3deg);
+  --orange-600: oklch(64.61% 0.1943 41.1deg);
+  --orange-650: oklch(60.07% 0.1838 40deg);
+  --orange-700: oklch(55.34% 0.1739 38.4deg);
+  --orange-750: oklch(51.26% 0.1583 38.2deg);
+  --orange-800: oklch(46.98% 0.143 37.3deg);
+  --orange-850: oklch(43.99% 0.1295 38deg);
+  --orange-900: oklch(40.84% 0.1165 38.2deg);
+  --orange-950: oklch(26.59% 0.0762 36.3deg);
+
+  --yellow-50: oklch(98.73% 0.0262 102.2deg);
+  --yellow-100: oklch(97.29% 0.0693 103.2deg);
+  --yellow-150: oklch(95.96% 0.0981 102.4deg);
+  --yellow-200: oklch(94.51% 0.1243 101.5deg);
+  --yellow-250: oklch(92.5% 0.1477 99.6deg);
+  --yellow-300: oklch(90.52% 0.1657 98.1deg);
+  --yellow-350: oklch(88.3% 0.1714 95deg);
+  --yellow-400: oklch(86.06% 0.1731 91.9deg);
+  --yellow-450: oklch(82.89% 0.1674 89.4deg);
+  --yellow-500: oklch(79.52% 0.1617 86deg);
+  --yellow-550: oklch(73.92% 0.1515 81.7deg);
+  --yellow-600: oklch(68.06% 0.1423 75.8deg);
+  --yellow-650: oklch(61.85% 0.1314 71.4deg);
+  --yellow-700: oklch(55.38% 0.1207 66.4deg);
+  --yellow-750: oklch(51.63% 0.1119 64.9deg);
+  --yellow-800: oklch(47.62% 0.1034 61.9deg);
+  --yellow-850: oklch(44.88% 0.0967 60.1deg);
+  --yellow-900: oklch(42.1% 0.0897 57.7deg);
+  --yellow-950: oklch(28.57% 0.0639 53.8deg);
+
+  --green-50: oklch(98.19% 0.0181 155.8deg);
+  --green-100: oklch(96.24% 0.0434 156.7deg);
+  --green-150: oklch(94.49% 0.062 156.4deg);
+  --green-200: oklch(92.5% 0.0806 156deg);
+  --green-250: oklch(89.74% 0.1088 155.2deg);
+  --green-300: oklch(87.12% 0.1363 154.4deg);
+  --green-350: oklch(83.57% 0.1613 153.1deg);
+  --green-400: oklch(80.03% 0.1821 151.7deg);
+  --green-450: oklch(76.25% 0.1884 150.7deg);
+  --green-500: oklch(72.27% 0.192 149.6deg);
+  --green-550: oklch(67.53% 0.1811 149.4deg);
+  --green-600: oklch(62.71% 0.1699 149.2deg);
+  --green-650: oklch(57.92% 0.1539 149.6deg);
+  --green-700: oklch(52.73% 0.1371 150.1deg);
+  --green-750: oklch(48.96% 0.1231 150.7deg);
+  --green-800: oklch(44.79% 0.1083 151.3deg);
+  --green-850: oklch(42.05% 0.0986 152.1deg);
+  --green-900: oklch(39.25% 0.0896 152.5deg);
+  --green-950: oklch(26.64% 0.0628 152.9deg);
+
+  --blue-50: oklch(97.05% 0.0142 254.6deg);
+  --blue-100: oklch(93.19% 0.0316 255.6deg);
+  --blue-150: oklch(90.81% 0.0439 253.6deg);
+  --blue-200: oklch(88.23% 0.0571 254.1deg);
+  --blue-250: oklch(84.56% 0.0769 252.9deg);
+  --blue-300: oklch(80.91% 0.0956 251.8deg);
+  --blue-350: oklch(76.12% 0.1198 253.8deg);
+  --blue-400: oklch(71.37% 0.1434 254.6deg);
+  --blue-450: oklch(66.89% 0.1648 257.6deg);
+  --blue-500: oklch(62.31% 0.188 259.8deg);
+  --blue-550: oklch(58.54% 0.2017 261.5deg);
+  --blue-600: oklch(54.61% 0.2152 262.9deg);
+  --blue-650: oklch(51.85% 0.2163 263.6deg);
+  --blue-700: oklch(48.82% 0.2172 264.4deg);
+  --blue-750: oklch(45.71% 0.1998 265deg);
+  --blue-800: oklch(42.44% 0.1809 265.6deg);
+  --blue-850: oklch(40.21% 0.1604 265.7deg);
+  --blue-900: oklch(37.91% 0.1378 265.5deg);
+  --blue-950: oklch(28.23% 0.0874 267.9deg);
+
+  --radius: 8px;
+  --radius-medium: 6px;
+  --radius-small: 4px;
+
+  --icon-size: 16px;
+  --shadow: 0 0 40px var(--zinc-950);
+
+  font-family: var(--font-sans);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height);
+  color: var(--zinc-100);
+}

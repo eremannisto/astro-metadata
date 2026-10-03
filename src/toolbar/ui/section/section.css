@@ -1,0 +1,88 @@
+/* A box around the section, so its content belongs together */
+:host {
+  display: block;
+  padding: var(--space-300);
+  border: 1px solid var(--zinc-800);
+  border-radius: var(--radius);
+  background: var(--zinc-900);
+}
+
+/* A closed or empty section shows only its heading */
+:host([closed]),
+:host([empty]) {
+  h2 {
+    margin-bottom: 0;
+  }
+}
+
+/* An empty section has no caret */
+:host([empty]) astro-metadata-icon {
+  visibility: hidden;
+}
+
+/* The caret turns down when the section is open */
+:host(:not([closed])) astro-metadata-icon {
+  transform: rotate(90deg);
+}
+
+/* The heading: small, monospace, uppercase, wide letter spacing */
+h2 {
+  margin: 0 0 var(--space-200);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--zinc-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* The heading is a button that closes or opens the section */
+button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-100);
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+
+  &:hover:not(:disabled) {
+    color: var(--zinc-100);
+  }
+
+  /* An empty section: a dim heading and "None" at the right */
+  &:disabled {
+    color: var(--zinc-600);
+    cursor: default;
+  }
+
+  astro-metadata-icon {
+    transition: transform 120ms;
+
+    --icon-size: 12px;
+  }
+}
+
+.none {
+  margin-left: auto;
+  font-size: var(--font-size-tiny);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* minmax(0, 1fr): a long line, e.g. in a code block, scrolls inside its block */
+.content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-200);
+
+  &[hidden] {
+    display: none;
+  }
+}

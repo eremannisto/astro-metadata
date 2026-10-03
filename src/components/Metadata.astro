@@ -1,0 +1,206 @@
+---
+import { localize } from "../lib/config.ts"
+import type { MetadataImage } from "../lib/config.ts"
+import { Favicon } from "../lib/favicon.ts"
+import { i18n } from "../lib/i18n.ts"
+import { Manifest } from "../lib/manifest.ts"
+import { Schema } from "../lib/schema.ts"
+import type { SchemaAuthor, SchemaBreadcrumb, SchemaData } from "../lib/schema.ts"
+import { Site } from "../lib/site.ts"
+import { withBase } from "../lib/url.ts"
+
+export type HreflangLink = {
+  /** The locale of the version, e.g. "en", "fi" or "en-US", or "x-default". */
+  hreflang: string
+  /** The path or URL of the page in that locale. */
+  href: string
+}
+
+export type Props = {
+  /** The page title. The title template of the config adds the site name. */
+  title?: string
+  /** Defaults to the description of the config. */
+  description?: string
+  /** The social image. Defaults to the image of the config. */
+  image?: MetadataImage
+  /**
+   * The Open Graph type. Defaults to "website". "article" also adds the `Article`
+   * structured data, with the title, the description, the image and the dates.
+   */
+  type?: string
+  /**
+   * The author of an article: a name, or `{ name, url, twitter }`. The Twitter (X) handle
+   * gives `twitter:creator`.
+   */
+  author?: SchemaAuthor | SchemaAuthor[]
+  /** The publication date of an article. */
+  published?: Date | string
+  /** The date of the last change of an article. */
+  modified?: Date | string
+  /**
+   * The canonical path or URL. Defaults to the current page. With `@mannisto/astro-i18n`,
+   * the default is the public URL of the page.
+   */
+  canonical?: string
+  /** Set to false to keep the page out of search results. Defaults to true. */
+  index?: boolean
+  /** Set to false to tell search engines not to follow the links. Defaults to true. */
+  follow?: boolean
+  /**
+   * The hreflang links: the page in each locale, and `x-default`. With `@mannisto/astro-i18n`
+   * or the `i18n` option of Astro, the links are made for you. `[]` turns them off.
+   */
+  hreflang?: HreflangLink[]
+  /** The path from the home page to this page. It adds the `BreadcrumbList` structured data. */
+  breadcrumbs?: SchemaBreadcrumb[]
+  /**
+   * Structured data items of your own, e.g. a `Product`. They go into the structured data
+   * of the page, with the site from the config.
+   */
+  schema?: SchemaData | SchemaData[]
+  /**
+   * The locale of the page. Defaults to `Astro.currentLocale`, or the locale of
+   * `@mannisto/astro-i18n`.
+   */
+  locale?: string
+}
+
+const props = Astro.props
+const config = Site.config
+const locale = props.locale ?? Astro.currentLocale ?? i18n?.locale(Astro)
+
+const siteName = Site.name(locale)
+const title = Site.title(props.title, locale)
+const description = props.description ?? localize(config.description, locale)
+const image =
+  props.image ??
+  (config.image ? { ...config.image, alt: localize(config.image.alt, locale) } : undefined)
+
+// Social cards show the page title without the template: og:site_name has the site name
+const socialTitle = props.title ?? siteName
+
+const canonical = Site.pageUrl(props.canonical ?? i18n?.path(Astro) ?? Astro.url.pathname)
+
+// The page in each locale: from the props, or from the i18n setup of the project
+const hreflang = props.hreflang ?? i18n?.alternates(Astro) ?? []
+
+// Search engines index and follow by default, so the tag is only necessary for other values
+const index = props.index ?? config.robots?.index ?? true
+const follow = props.follow ?? config.robots?.follow ?? true
+const robots = [!index && "noindex", !follow && "nofollow", config.robots?.extra]
+  .filter(Boolean)
+  .join(", ")
+
+// Twitter (X) uses the Open Graph title, description and image, so only the tags that
+// are specific to Twitter (X) are necessary
+const card = image ? (config.twitter?.card ?? "summary_large_image") : "summary"
+
+// The authors as a list, for the Twitter (X) handles and the article tags
+const authors = props.author === undefined ? [] : [props.author].flat()
+const creator = authors
+  .map((author) => {
+    return typeof author === "string" ? undefined : author.twitter
+  })
+  .find(Boolean)
+const article = props.type === "article"
+
+const schema = Schema.graph({
+  url: canonical,
+  title: props.title ?? siteName,
+  description,
+  image: image ? Site.url(image.url) : undefined,
+  locale,
+  type: props.type,
+  published: props.published,
+  modified: props.modified,
+  author: props.author,
+  breadcrumbs: props.breadcrumbs,
+  items: props.schema === undefined ? undefined : [props.schema].flat(),
+})
+
+const themeColor = config.themeColor
+const manifest = Manifest.url(locale)
+
+/**
+ * Returns a date as an ISO 8601 text. A text stays unchanged.
+ */
+function isoDate(value: Date | string): string {
+  return typeof value === "string" ? value : value.toISOString()
+}
+
+const FEED_TYPES = {
+  rss: "application/rss+xml",
+  atom: "application/atom+xml",
+  json: "application/feed+json",
+}
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+{title && <title>{title}</title>}
+{description && <meta name="description" content={description} />}
+<link rel="canonical" href={canonical} />
+{robots && <meta name="robots" content={robots} />}
+{typeof themeColor === "string" && <meta name="theme-color" content={themeColor} />}
+{
+  typeof themeColor === "object" && (
+    <>
+      <meta name="theme-color" content={themeColor.light} media="(prefers-color-scheme: light)" />
+      <meta name="theme-color" content={themeColor.dark} media="(prefers-color-scheme: dark)" />
+    </>
+  )
+}
+
+{socialTitle && <meta property="og:title" content={socialTitle} />}
+{description && <meta property="og:description" content={description} />}
+<meta property="og:url" content={canonical} />
+<meta property="og:type" content={props.type ?? "website"} />
+{siteName && <meta property="og:site_name" content={siteName} />}
+{
+  image && (
+    <>
+      <meta property="og:image" content={Site.url(image.url)} />
+      {image.alt && <meta property="og:image:alt" content={image.alt} />}
+      {image.width && <meta property="og:image:width" content={String(image.width)} />}
+      {image.height && <meta property="og:image:height" content={String(image.height)} />}
+    </>
+  )
+}
+{
+  article && props.published && (
+    <meta property="article:published_time" content={isoDate(props.published)} />
+  )
+}
+{
+  article && props.modified && (
+    <meta property="article:modified_time" content={isoDate(props.modified)} />
+  )
+}
+<meta name="twitter:card" content={card} />
+{config.twitter?.site && <meta name="twitter:site" content={config.twitter.site} />}
+{creator && <meta name="twitter:creator" content={creator} />}
+
+{
+  Favicon.links().map((link) => {
+    return <link rel={link.rel} type={link.type} href={link.href} sizes={link.sizes} />
+  })
+}
+{manifest && <link rel="manifest" href={manifest} />}
+{
+  config.feeds?.map((feed) => {
+    return (
+      <link
+        rel="alternate"
+        type={FEED_TYPES[feed.type ?? "rss"]}
+        title={localize(feed.title, locale)}
+        href={withBase(feed.href)}
+      />
+    )
+  })
+}
+{
+  hreflang.map((link) => {
+    return <link rel="alternate" hreflang={link.hreflang} href={Site.pageUrl(link.href)} />
+  })
+}
+{schema && <script is:inline type="application/ld+json" set:html={Schema.stringify(schema)} />}

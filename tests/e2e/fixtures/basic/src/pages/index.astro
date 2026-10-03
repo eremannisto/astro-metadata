@@ -1,52 +1,23 @@
 ---
-import { Head, Metadata } from "@mannisto/astro-metadata"
-
-Metadata.set({
-  title: "Home",
-  description: "Integration test page",
-  openGraph: {
-    image: {
-      url: "/og.jpg",
-      alt: "My Site",
-      width: 1200,
-      height: 630,
-    },
-  },
-})
-
-const meta = Metadata.resolve({
-  title: "My Site",
-  titleTemplate: "%s | My Site",
-  description: "Default description",
-})
+import { Metadata } from "@mannisto/astro-metadata/components"
 ---
 
-<html>
-  <Head
-    {...meta}
-    favicon={{
-      icons: [
-        { path: "/favicon.ico" },
-        { path: "/favicon.svg" },
-        { path: "/favicon-96x96.png", size: 96 },
-        { path: "/apple-touch-icon.png", size: 180, apple: true },
-        { path: "/favicon-dark.svg", theme: "dark" },
-        { path: "/favicon-light.svg", theme: "light" },
-      ],
-    }}
-    languageAlternates={[
-      { href: "https://example.com/en", hreflang: "en" },
-      { href: "https://example.com/fi", hreflang: "fi" },
-    ]}
-    schema={{
-      schema: {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        name: "My Site",
-      },
-    }}
-  />
-  <body>
-    <h1>Integration Test</h1>
-  </body>
+<html lang="en">
+  <head>
+    <Metadata
+      title="Spring Exhibition"
+      description="Tools by Acme Studio."
+      image={{ url: "/spring.jpg", alt: "A painting", width: 1600, height: 900 }}
+      type="article"
+      author={{ name: "Acme Writer", twitter: "@acmewriter" }}
+      published="2026-03-01"
+      hreflang={[
+        { hreflang: "en", href: "/" },
+        { hreflang: "fi", href: "/fi" },
+        { hreflang: "x-default", href: "/" },
+      ]}
+      schema={{ "@context": "https://schema.org", "@type": "WebSite", name: "My Site" }}
+    />
+  </head>
+  <body></body>
 </html>

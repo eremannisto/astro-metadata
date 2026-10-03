@@ -1,3 +1,7 @@
 {
-  "extends": "astro/tsconfigs/strict"
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    // The types of `import.meta.env` and of the `.astro` files
+    "types": ["astro/client"]
+  }
 }

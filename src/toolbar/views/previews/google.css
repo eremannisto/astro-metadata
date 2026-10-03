@@ -1,0 +1,75 @@
+/* Google: a desktop search result, 600 px wide */
+.google {
+  width: 100%;
+  max-width: 600px;
+  padding: 16px;
+  font-family: Arial, sans-serif;
+  border-radius: 8px;
+  background: #1f1f1f;
+
+  .site {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .favicon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid #3c4043;
+    border-radius: 50%;
+    background: #303134;
+
+    img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+  }
+
+  .source {
+    min-width: 0;
+  }
+
+  .name {
+    font-size: 14px;
+    line-height: 20px;
+    color: #dadce0;
+  }
+
+  .url {
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 18px;
+    color: #bdc1c6;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* One line: the title is already cut at 600 px */
+  .title {
+    overflow: hidden;
+    padding-top: 5px;
+    margin-bottom: 3px;
+    font-size: 20px;
+    line-height: 26px;
+    color: #99c3ff;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Two lines */
+  .text {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 22px;
+    color: #bdc1c6;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}

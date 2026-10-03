@@ -1,0 +1,126 @@
+/*
+ * The style of the Supabase alert: a dark tinted background and border, and the icon
+ * in a filled square of the level color. The text keeps the normal text colors.
+ */
+
+:host {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: flex-start;
+  gap: var(--space-200);
+  background: var(--background);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  font-size: var(--font-size-small);
+  color: var(--color);
+  padding: var(--space-300) var(--space-200);
+}
+
+:host([level="success"]) {
+  --background: color-mix(in srgb, var(--green-350) 15%, transparent);
+  --icon: var(--green-250);
+  --text: var(--green-50);
+  --border: var(--green-350);
+}
+
+:host([level="info"]) {
+  --background: color-mix(in srgb, var(--blue-350) 15%, transparent);
+  --icon: var(--blue-250);
+  --text: var(--blue-50);
+  --border: var(--blue-350);
+}
+
+:host([level="warning"]) {
+  --background: color-mix(in srgb, var(--yellow-350) 10%, transparent);
+  --icon: var(--yellow-250);
+  --text: var(--yellow-150);
+  --border: var(--yellow-500);
+}
+
+:host([level="error"]) {
+  --background: var(--red-950);
+  --icon: var(--red-250);
+  --text: var(--red-150);
+  --border: var(--red-500);
+}
+
+.icon {
+  --icon-size: 18px;
+  color: var(--icon);
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--text);
+  font-size: var(--font-size-small);
+  font-weight: 400;
+  height: 100%;
+
+  /* Inline code in the alert uses the colors of the level */
+  --code-color: var(--text);
+  --code-border: color-mix(in srgb, var(--border) 40%, transparent);
+  --code-background: color-mix(in srgb, var(--border) 20%, transparent);
+
+  .heading {
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+  }
+}
+
+/* The list of items, each with a dot in the color of its level */
+.items {
+  display: grid;
+  gap: var(--space-50);
+  margin: 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  gap: var(--space-200);
+
+  &::before {
+    flex: none;
+    width: 6px;
+    height: 6px;
+    margin-top: 0.6em;
+    content: "";
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &.error::before {
+    background: var(--red-400);
+  }
+
+  &.warning::before {
+    background: var(--yellow-400);
+  }
+
+  &.info::before {
+    background: var(--blue-400);
+  }
+}
+
+/* An item with a target: a click shows the row of the problem */
+.target {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  border: 0;
+  background: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}

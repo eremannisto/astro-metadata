@@ -1,0 +1,27 @@
+/* The alerts of the page: one for each level */
+.alerts {
+  display: grid;
+  gap: var(--space-200);
+}
+
+/* The Open Graph image at the full width of the panel */
+.image {
+  width: 100%;
+  aspect-ratio: 1.91 / 1;
+  border-radius: var(--radius);
+  background: var(--zinc-900);
+
+  &[missing] {
+    font-size: var(--font-size-small);
+    color: var(--zinc-400);
+    border: 1px dashed var(--zinc-800);
+  }
+}
+
+/* The name of a table in a section, e.g. "Open Graph" in the Social section */
+.subheading {
+  margin: var(--space-200) 0 0;
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--zinc-300);
+}

@@ -1,0 +1,41 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 20px;
+  min-width: 20px;
+  padding: 0 var(--space-150);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-tiny);
+  line-height: 1;
+  color: var(--zinc-300);
+  border: 1px solid var(--zinc-800);
+  border-radius: 999px;
+  background: var(--zinc-900);
+}
+
+/* The levels use the same colors as the alert */
+:host([level="error"]) {
+  color: var(--red-150);
+  border-color: var(--red-500);
+  background: var(--red-950);
+}
+
+:host([level="info"]) {
+  color: var(--blue-50);
+  border-color: var(--blue-350);
+  background: color-mix(in srgb, var(--blue-350) 15%, transparent);
+}
+
+:host([level="warning"]) {
+  color: var(--yellow-150);
+  border-color: var(--yellow-500);
+  background: color-mix(in srgb, var(--yellow-350) 10%, transparent);
+}
+
+:host([level="success"]) {
+  color: var(--green-50);
+  border-color: var(--green-350);
+  background: color-mix(in srgb, var(--green-350) 15%, transparent);
+}

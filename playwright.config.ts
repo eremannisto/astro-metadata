@@ -1,11 +1,36 @@
 import { defineConfig } from "@playwright/test"
 
-// The fixture runs twice: with the dev server and with a production build.
-// `pnpm test:fixtures` builds the fixture before the tests start.
-const servers = [
-  { name: "dev", port: 4321, command: "pnpm astro dev --port 4321" },
-  { name: "build", port: 4322, command: "pnpm astro preview --port 4322" },
+// Each fixture and the tests that use it
+const fixtures = [
+  { name: "basic", testMatch: ["basic/**/*.test.ts"] },
+  { name: "config", testMatch: ["config/**/*.test.ts"] },
+  { name: "favicon", testMatch: ["favicon/**/*.test.ts"] },
+  { name: "i18n", testMatch: ["i18n/**/*.test.ts"] },
+  { name: "native", testMatch: ["native/**/*.test.ts"] },
 ]
+
+// Each fixture runs twice: with the dev server and with a production build.
+// `pnpm test:fixtures` builds the fixtures before the tests start.
+const servers = fixtures.flatMap((fixture, index) => {
+  return [
+    {
+      ...fixture,
+      name: `${fixture.name} (dev)`,
+      cwd: `./tests/e2e/fixtures/${fixture.name}`,
+      port: 4321 + index,
+      command: `pnpm astro dev --port ${4321 + index}`,
+    },
+    {
+      ...fixture,
+      name: `${fixture.name} (build)`,
+      // The dev toolbar runs only in dev
+      testIgnore: ["**/toolbar.test.ts"],
+      cwd: `./tests/e2e/fixtures/${fixture.name}`,
+      port: 4421 + index,
+      command: `pnpm astro preview --port ${4421 + index}`,
+    },
+  ]
+})
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -13,13 +38,15 @@ export default defineConfig({
   projects: servers.map((server) => {
     return {
       name: server.name,
+      testMatch: server.testMatch,
+      testIgnore: "testIgnore" in server ? server.testIgnore : undefined,
       use: { baseURL: `http://localhost:${server.port}` },
     }
   }),
   webServer: servers.map((server) => {
     return {
       command: server.command,
-      cwd: "./tests/e2e/fixtures/basic",
+      cwd: server.cwd,
       port: server.port,
       reuseExistingServer: !process.env.CI,
     }

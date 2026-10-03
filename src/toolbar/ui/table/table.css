@@ -1,0 +1,113 @@
+/* A framed container, a hairline between the rows, and a hover color */
+:host {
+  display: block;
+}
+
+table {
+  width: 100%;
+  overflow: hidden;
+  font-size: var(--font-size-small);
+  border-spacing: 0;
+  border: 1px solid var(--zinc-800);
+  border-radius: var(--radius-medium);
+  background: var(--zinc-950);
+}
+
+th,
+td {
+  padding: var(--space-200) var(--space-400);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--zinc-800);
+  transition: background-color 120ms;
+}
+
+tr {
+  &:last-child :is(th, td) {
+    border-bottom: 0;
+  }
+
+  &:hover :is(th, td) {
+    background: var(--zinc-800);
+  }
+
+  /* The child rows are indented under their row */
+  &.child th {
+    padding-left: calc(var(--space-400) + var(--space-400));
+  }
+}
+
+th {
+  width: 25%;
+  font-weight: 400;
+  color: var(--zinc-400);
+}
+
+td {
+  color: var(--zinc-100);
+  overflow-wrap: anywhere;
+
+  /* The third column: a short note, e.g. the length of a text */
+  &.note {
+    width: 1%;
+    padding-left: 0;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-tiny);
+    color: var(--zinc-500);
+    text-align: right;
+    white-space: nowrap;
+    word-spacing: -0.2em;
+
+    &.near {
+      color: var(--yellow-400);
+    }
+
+    &.over {
+      color: var(--orange-400);
+    }
+  }
+}
+
+/* A value with a small image before it, e.g. the favicon */
+.favicon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-200);
+
+  img {
+    flex: none;
+    object-fit: contain;
+  }
+}
+
+.empty {
+  color: var(--zinc-400);
+}
+
+/* A row with child rows: its label opens and closes them */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-100);
+  margin-left: calc(var(--space-100) * -1);
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+
+  --icon-size: 12px;
+
+  &:hover {
+    color: var(--zinc-100);
+  }
+
+  astro-metadata-icon {
+    transition: transform 120ms;
+  }
+
+  &.open astro-metadata-icon {
+    transform: rotate(90deg);
+  }
+}
