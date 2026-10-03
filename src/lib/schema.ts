@@ -1,4 +1,4 @@
-import type { Graph, Thing, WithContext } from "schema-dts"
+import type { Graph, Thing } from "schema-dts"
 
 import { getConfig, localize } from "./config.ts"
 import type { Localized } from "./config.ts"
@@ -8,8 +8,11 @@ import { url } from "./url.ts"
  * A structured data item of your own, e.g. a `Product` or an `Event`. The schema.org types
  * give the editor completion, and other objects are also accepted. `@context` is not
  * necessary: the items go into one graph with the context.
+ *
+ * `@context` is an optional property, not `WithContext<Thing>`: that type makes the union of
+ * schema-dts too large for TypeScript when a layout spreads its props into `<Metadata>`.
  */
-export type SchemaData = Thing | WithContext<Thing> | Record<string, unknown>
+export type SchemaData = (Thing & { "@context"?: string }) | Record<string, unknown>
 
 /**
  * The organization or the person behind the site. It is the publisher of the site and of
