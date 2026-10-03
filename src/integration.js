@@ -55,6 +55,129 @@ function findSharp(root) {
   }
 }
 
+// The module that `<Metadata>` reads the locale values from. Without an i18n setup,
+// it has no adapter.
+const I18N_FILE = fileURLToPath(new URL("./lib/i18n.ts", import.meta.url))
+
+/**
+ * Returns the adapter module for `@mannisto/astro-i18n`. The module imports the runtime of
+ * the project by its path, because with pnpm this package can not see it by its name.
+ *
+ * @param {string} runtime - The absolute path of `@mannisto/astro-i18n/runtime`.
+ * @returns {string}
+ */
+function astroI18nAdapter(runtime) {
+  return `import { Locale } from ${JSON.stringify(runtime)}
+
+export const i18n = {
+  locale(page) {
+    return Locale.fromURL(page.url)
+  },
+  path(page) {
+    return Locale.url(Locale.fromURL(page.url), page.url.pathname)
+  },
+  alternates(page) {
+    const path = page.url.pathname
+    const links = Locale.supported.map((code) => {
+      return { hreflang: code, href: Locale.url(code, path) }
+    })
+    return [...links, { hreflang: "x-default", href: Locale.url(Locale.defaultLocale, path) }]
+  },
+}
+`
+}
+
+/**
+ * Returns the adapter module for the `i18n` option of Astro.
+ *
+ * @param {NonNullable<import("astro").AstroConfig["i18n"]>} i18n
+ * @param {string} base - The `base` of the Astro config.
+ * @returns {string}
+ */
+function nativeI18nAdapter(i18n, base) {
+  // A locale is a code, or a path with codes, e.g. { path: "spanish", codes: ["es"] }
+  const locales = i18n.locales.map((entry) => {
+    return typeof entry === "string"
+      ? { path: entry, code: entry }
+      : { path: entry.path, code: entry.codes[0] }
+  })
+
+  return `import { getRelativeLocaleUrl } from "astro:i18n"
+
+const LOCALES = ${JSON.stringify(locales)}
+const DEFAULT_LOCALE = ${JSON.stringify(i18n.defaultLocale)}
+const BASE = ${JSON.stringify(base.replace(/\/$/, ""))}
+
+// Returns the path of the page without the base and the locale prefix, e.g. "about/"
+function pagePath(page) {
+  let path = page.url.pathname
+  if (BASE && path.startsWith(BASE)) path = path.slice(BASE.length) || "/"
+  const parts = path.split("/")
+  const prefixed = LOCALES.some((locale) => {
+    return locale.path === parts[1]
+  })
+  return (prefixed ? parts.slice(2) : parts.slice(1)).join("/")
+}
+
+export const i18n = {
+  locale(page) {
+    return page.currentLocale
+  },
+  path(page) {
+    return page.url.pathname
+  },
+  alternates(page) {
+    const path = pagePath(page)
+    const links = LOCALES.map((locale) => {
+      return { hreflang: locale.code, href: getRelativeLocaleUrl(locale.code, path) }
+    })
+    return [...links, { hreflang: "x-default", href: getRelativeLocaleUrl(DEFAULT_LOCALE, path) }]
+  },
+}
+`
+}
+
+/**
+ * Returns the adapter module for the i18n setup of the project, or undefined without one.
+ *
+ * @param {import("astro").AstroConfig} config
+ * @param {import("astro").AstroIntegrationLogger} logger
+ * @returns {string | undefined}
+ */
+function i18nAdapter(config, logger) {
+  const astroI18n = config.integrations.some((integration) => {
+    return integration.name === "@mannisto/astro-i18n"
+  })
+  if (astroI18n) {
+    try {
+      const fromProject = createRequire(fileURLToPath(new URL("./package.json", config.root)))
+      return astroI18nAdapter(fromProject.resolve("@mannisto/astro-i18n/runtime"))
+    } catch {
+      logger.warn("@mannisto/astro-i18n is in the config, but its runtime was not found.")
+      return undefined
+    }
+  }
+  if (config.i18n) return nativeI18nAdapter(config.i18n, config.base)
+  return undefined
+}
+
+/**
+ * Returns a Vite plugin that replaces the i18n module of `<Metadata>` with an adapter.
+ *
+ * @param {string} adapter - The code of the adapter module.
+ * @returns {import("vite").Plugin}
+ */
+function i18nPlugin(adapter) {
+  return {
+    name: "astro-metadata:i18n",
+    enforce: "pre",
+    load(id) {
+      if (id.split("?")[0] === I18N_FILE) return adapter
+      return undefined
+    },
+  }
+}
+
 /**
  * Loads sharp for the image sizes of the build checks, or undefined without sharp.
  *
@@ -429,9 +552,13 @@ export default function metadata(options = {}) {
           if (options[key] !== undefined) runtime[key] = options[key]
         }
 
+        // <Metadata> reads the locale, the page URL and the hreflang links from the i18n setup
+        const adapter = i18nAdapter(config, logger)
+
         // The config is plain data, so it goes to the components as a build-time constant
         updateConfig({
           vite: {
+            plugins: adapter ? [i18nPlugin(adapter)] : [],
             define: { __ASTRO_METADATA__: JSON.stringify(runtime) },
             // The dev toolbar app uses Lit. Without this list, Vite finds Lit only when the
             // app loads, and the page reloads one time.

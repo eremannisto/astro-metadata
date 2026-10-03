@@ -84,7 +84,16 @@ metadata({
 })
 ```
 
-`<Metadata>` uses the text of `Astro.currentLocale`, or of its `locale` prop. A locale without a text uses the first text.
+`<Metadata>` uses the text of the locale of the page, or of its `locale` prop. A locale without a text uses the first text.
+
+### Locales
+
+`<Metadata>` reads the locales from your i18n setup. You do not need extra code:
+
+- **[`@mannisto/astro-i18n`](https://github.com/eremannisto/astro-i18n):** the locale, the public URL of the page (`/about` and not `/en/about`) and the hreflang links.
+- **The `i18n` option of Astro:** the locale and the hreflang links.
+
+The hreflang links contain the page in each locale, and `x-default` for the default locale. To give your own links, use the `hreflang` prop. `hreflang={[]}` turns the links off, for example on a 404 page.
 
 ## Metadata component
 
@@ -147,13 +156,13 @@ The page values override the site values. For example, `title="About"` gives:
 | `author` | — | The author of an article: a name, or `{ name, url, twitter }`. `twitter` gives `twitter:creator`. |
 | `published` | — | The publication date of an article. |
 | `modified` | — | The date of the last change of an article. |
-| `canonical` | The current page | The canonical path or URL. |
+| `canonical` | The current page | The canonical path or URL. With `@mannisto/astro-i18n`, the default is the public URL of the page. |
 | `index` | `true` | `false` keeps the page out of search results. |
 | `follow` | `true` | `false` tells search engines not to follow the links. |
-| `hreflang` | — | The hreflang links: the page in each locale, and `x-default`: `{ hreflang, href }[]`. |
+| `hreflang` | From the i18n setup | The hreflang links: the page in each locale, and `x-default`: `{ hreflang, href }[]`. See [Locales](#locales). |
 | `breadcrumbs` | — | The path from the home page to the page: `{ name, url }[]`. See [Structured data](#structured-data). |
 | `schema` | — | Structured data items of your own, for example a `Product`. See [Structured data](#structured-data). |
-| `locale` | `Astro.currentLocale` | The locale of the translated site values. |
+| `locale` | The locale of the page | The locale of the translated site values. See [Locales](#locales). |
 
 A tag is rendered only when it has a value. For example, the robots tag is necessary only with `index` or `follow` set to `false`.
 
@@ -423,18 +432,6 @@ Import the types from `@mannisto/astro-metadata/runtime`, for example `import ty
 - **Trailing slash.** The canonical URL and the `hreflang` links follow the `trailingSlash` setting of Astro. With `"ignore"`, `build.format` decides.
 - **`sharp`.** The favicons use the `sharp` package that Astro installs. If you install Astro without its optional dependencies, install `sharp` yourself.
 - **Files in `public/`.** A file in `public/` with the same path as a generated favicon replaces the generated file. The integration shows a warning.
-- **With @mannisto/astro-i18n.** Give the locale and the hreflang links to `<Metadata>`:
-
-  ```astro
-  ---
-  import { Locale } from "@mannisto/astro-i18n/runtime"
-  import { Metadata } from "@mannisto/astro-metadata/components"
-
-  const { code } = Locale.use(Astro)
-  ---
-
-  <Metadata locale={code} hreflang={Locale.hreflang(Astro.url, Astro.site!)} />
-  ```
 
 ## Migrate from v1
 

@@ -5,6 +5,8 @@ const fixtures = [
   { name: "basic", testMatch: ["basic/**/*.test.ts"] },
   { name: "config", testMatch: ["config/**/*.test.ts"] },
   { name: "favicon", testMatch: ["favicon/**/*.test.ts"] },
+  { name: "i18n", testMatch: ["i18n/**/*.test.ts"] },
+  { name: "native", testMatch: ["native/**/*.test.ts"] },
 ]
 
 // Each fixture runs twice: with the dev server and with a production build.

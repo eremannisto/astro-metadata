@@ -2,6 +2,7 @@
 import { localize } from "../lib/config.ts"
 import type { MetadataImage } from "../lib/config.ts"
 import { Favicon } from "../lib/favicon.ts"
+import { i18n } from "../lib/i18n.ts"
 import { Manifest } from "../lib/manifest.ts"
 import { Schema } from "../lib/schema.ts"
 import type { SchemaAuthor, SchemaBreadcrumb, SchemaData } from "../lib/schema.ts"
@@ -36,15 +37,18 @@ export type Props = {
   published?: Date | string
   /** The date of the last change of an article. */
   modified?: Date | string
-  /** The canonical path or URL. Defaults to the current page. */
+  /**
+   * The canonical path or URL. Defaults to the current page. With `@mannisto/astro-i18n`,
+   * the default is the public URL of the page.
+   */
   canonical?: string
   /** Set to false to keep the page out of search results. Defaults to true. */
   index?: boolean
   /** Set to false to tell search engines not to follow the links. Defaults to true. */
   follow?: boolean
   /**
-   * The hreflang links: the page in each locale, and `x-default`.
-   * The output of `Locale.hreflang()` of @mannisto/astro-i18n fits here.
+   * The hreflang links: the page in each locale, and `x-default`. With `@mannisto/astro-i18n`
+   * or the `i18n` option of Astro, the links are made for you. `[]` turns them off.
    */
   hreflang?: HreflangLink[]
   /** The path from the home page to this page. It adds the `BreadcrumbList` structured data. */
@@ -54,13 +58,16 @@ export type Props = {
    * of the page, with the site from the config.
    */
   schema?: SchemaData | SchemaData[]
-  /** The locale of the localized config values. Defaults to `Astro.currentLocale`. */
+  /**
+   * The locale of the page. Defaults to `Astro.currentLocale`, or the locale of
+   * `@mannisto/astro-i18n`.
+   */
   locale?: string
 }
 
 const props = Astro.props
 const config = Site.config
-const locale = props.locale ?? Astro.currentLocale
+const locale = props.locale ?? Astro.currentLocale ?? i18n?.locale(Astro)
 
 const siteName = Site.name(locale)
 const title = Site.title(props.title, locale)
@@ -72,7 +79,10 @@ const image =
 // Social cards show the page title without the template: og:site_name has the site name
 const socialTitle = props.title ?? siteName
 
-const canonical = Site.pageUrl(props.canonical ?? Astro.url.pathname)
+const canonical = Site.pageUrl(props.canonical ?? i18n?.path(Astro) ?? Astro.url.pathname)
+
+// The page in each locale: from the props, or from the i18n setup of the project
+const hreflang = props.hreflang ?? i18n?.alternates(Astro) ?? []
 
 // Search engines index and follow by default, so the tag is only necessary for other values
 const index = props.index ?? config.robots?.index ?? true
@@ -189,7 +199,7 @@ const FEED_TYPES = {
   })
 }
 {
-  props.hreflang?.map((link) => {
+  hreflang.map((link) => {
     return <link rel="alternate" hreflang={link.hreflang} href={Site.pageUrl(link.href)} />
   })
 }
