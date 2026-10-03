@@ -1,6 +1,5 @@
 ---
 import { Metadata } from "@mannisto/astro-metadata/components"
-import { Schema } from "@mannisto/astro-metadata/runtime"
 ---
 
 <html lang="fi">
@@ -8,12 +7,9 @@ import { Schema } from "@mannisto/astro-metadata/runtime"
     <Metadata
       title="Rakenne"
       locale="fi"
-      schema={[
-        Schema.website({ locale: "fi" }),
-        Schema.breadcrumbs([
-          { name: "Koti", url: "/fi" },
-          { name: "Rakenne", url: "/fi/schema" },
-        ]),
+      breadcrumbs={[
+        { name: "Koti", url: "/fi" },
+        { name: "Rakenne", url: "/fi/schema" },
       ]}
     />
   </head>

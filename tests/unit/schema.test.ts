@@ -1,13 +1,24 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { Schema } from "../../src/lib/schema.ts"
+import type { SchemaPage } from "../../src/lib/schema.ts"
 import { clearConfig, setConfig } from "./lib/config.ts"
+
+const PAGE: SchemaPage = { url: "https://example.com/blog/hello/" }
+
+/**
+ * Returns the items of the graph of a page.
+ */
+function items(page: Partial<SchemaPage> = {}): Record<string, unknown>[] {
+  const graph = Schema.graph({ ...PAGE, ...page }) as { "@graph": Record<string, unknown>[] }
+  return JSON.parse(JSON.stringify(graph["@graph"]))
+}
 
 beforeEach(() => {
   vi.stubEnv("SITE", "https://example.com")
   setConfig({
-    siteName: { en: "My Site", fi: "Sivustoni" },
-    description: "The description",
+    siteName: { en: "Acme Studio", fi: "Acme Studio Suomi" },
+    description: "Tools for small teams.",
   })
 })
 
@@ -16,65 +27,74 @@ afterEach(() => {
   clearConfig()
 })
 
-describe("Schema.website", () => {
-  it("uses the name, the description and the URL of the site", () => {
-    expect(Schema.website()).toEqual({
+describe("Schema.graph", () => {
+  it("gives each page the website and an organization with the site name", () => {
+    const graph = Schema.graph(PAGE)
+    expect(JSON.parse(JSON.stringify(graph))).toEqual({
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      name: "My Site",
-      description: "The description",
-      url: "https://example.com/",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://example.com/#website",
+          name: "Acme Studio",
+          description: "Tools for small teams.",
+          url: "https://example.com/",
+          publisher: { "@id": "https://example.com/#publisher" },
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://example.com/#publisher",
+          name: "Acme Studio",
+          url: "https://example.com/",
+        },
+      ],
     })
   })
 
-  it("uses the name of the locale", () => {
-    expect(Schema.website({ locale: "fi" })).toMatchObject({ name: "Sivustoni", inLanguage: "fi" })
+  it("uses the values of the locale", () => {
+    const [website, publisher] = items({ locale: "fi" })
+    expect(website).toMatchObject({ name: "Acme Studio Suomi", inLanguage: "fi" })
+    expect(publisher).toMatchObject({ name: "Acme Studio Suomi" })
   })
 
-  it("uses the options before the config", () => {
-    expect(Schema.website({ name: "Other", url: "/fi" })).toMatchObject({
-      name: "Other",
-      url: "https://example.com/fi",
+  it("uses the publisher of the config", () => {
+    setConfig({
+      siteName: "Acme Studio",
+      schema: { publisher: { logo: "/logo.png", sameAs: ["https://github.com/acme"] } },
     })
-  })
-
-  it("works without the integration", () => {
-    clearConfig()
-    expect(JSON.parse(JSON.stringify(Schema.website()))).toEqual({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      url: "https://example.com/",
-    })
-  })
-})
-
-describe("Schema.organization", () => {
-  it("makes the logo URL absolute", () => {
-    expect(Schema.organization({ logo: "/logo.png", sameAs: ["https://x.com/me"] })).toEqual({
-      "@context": "https://schema.org",
+    expect(items()[1]).toMatchObject({
       "@type": "Organization",
-      name: "My Site",
-      url: "https://example.com/",
       logo: "https://example.com/logo.png",
-      sameAs: ["https://x.com/me"],
+      sameAs: ["https://github.com/acme"],
+    })
+
+    setConfig({
+      siteName: "Acme Studio",
+      schema: { publisher: { type: "Person", logo: "/a.png" } },
+    })
+    expect(items()[1]).toEqual({
+      "@type": "Person",
+      "@id": "https://example.com/#publisher",
+      name: "Acme Studio",
+      url: "https://example.com/",
     })
   })
-})
 
-describe("Schema.article", () => {
-  it("builds the article with the site as the publisher", () => {
-    const article = Schema.article({
+  it("builds the article of a page with the type article", () => {
+    const article = items({
+      type: "article",
       title: "Hello",
-      image: "/hello.jpg",
+      description: "The first post.",
+      image: "https://example.com/hello.jpg",
       published: new Date("2026-01-02T03:04:05Z"),
       modified: "2026-02-01",
       author: ["Acme Writer", { name: "Acme Editor", url: "/editor" }],
-      url: "/blog/hello",
-    })
-    expect(JSON.parse(JSON.stringify(article))).toEqual({
-      "@context": "https://schema.org",
+    })[2]
+    expect(article).toEqual({
       "@type": "Article",
+      "@id": "https://example.com/blog/hello/#article",
       headline: "Hello",
+      description: "The first post.",
       image: ["https://example.com/hello.jpg"],
       datePublished: "2026-01-02T03:04:05.000Z",
       dateModified: "2026-02-01",
@@ -82,42 +102,44 @@ describe("Schema.article", () => {
         { "@type": "Person", name: "Acme Writer" },
         { "@type": "Person", name: "Acme Editor", url: "https://example.com/editor" },
       ],
-      publisher: { "@type": "Organization", name: "My Site", url: "https://example.com/" },
-      mainEntityOfPage: "https://example.com/blog/hello",
+      publisher: { "@id": "https://example.com/#publisher" },
+      mainEntityOfPage: "https://example.com/blog/hello/",
     })
   })
 
-  it("uses the type and the locale", () => {
-    const article = Schema.article({
-      type: "BlogPosting",
-      title: "Hei",
-      author: "Acme Writer",
-      locale: "fi",
-    })
-    expect(article).toMatchObject({
-      "@type": "BlogPosting",
-      author: [{ "@type": "Person", name: "Acme Writer" }],
-      publisher: { name: "Sivustoni" },
-      inLanguage: "fi",
-    })
-  })
-})
-
-describe("Schema.breadcrumbs", () => {
-  it("numbers the items and makes the URLs absolute", () => {
-    expect(
-      Schema.breadcrumbs([
+  it("numbers the breadcrumbs and makes the URLs absolute", () => {
+    const breadcrumbs = items({
+      breadcrumbs: [
         { name: "Home", url: "/" },
         { name: "Blog", url: "/blog" },
-      ])
-    ).toEqual({
-      "@context": "https://schema.org",
+      ],
+    })[2]
+    expect(breadcrumbs).toEqual({
       "@type": "BreadcrumbList",
+      "@id": "https://example.com/blog/hello/#breadcrumbs",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: "https://example.com/" },
         { "@type": "ListItem", position: 2, name: "Blog", item: "https://example.com/blog" },
       ],
     })
+  })
+
+  it("adds your own items without their context", () => {
+    const product = items({
+      items: [{ "@context": "https://schema.org", "@type": "Product", name: "Desk" }],
+    })[2]
+    expect(product).toEqual({ "@type": "Product", name: "Desk" })
+  })
+
+  it("turns off the site data with schema: false", () => {
+    setConfig({ siteName: "Acme Studio", schema: false })
+    expect(Schema.graph(PAGE)).toBeUndefined()
+    expect(items({ breadcrumbs: [{ name: "Home", url: "/" }] })).toHaveLength(1)
+  })
+
+  it("has no site data without a site name", () => {
+    clearConfig()
+    expect(Schema.graph(PAGE)).toBeUndefined()
   })
 })
 

@@ -40,6 +40,7 @@ test.describe("Metadata without the integration", () => {
     expect(await content("meta[property='og:image:height']")).toBe("900")
     expect(await content("meta[name='twitter:card']")).toBe("summary_large_image")
     expect(await content("meta[name='twitter:creator']")).toBe("@acmewriter")
+    expect(await content("meta[property='article:published_time']")).toBe("2026-03-01")
   })
 
   test("renders only the Twitter (X) tags that Open Graph does not give", async ({ page }) => {
@@ -84,13 +85,25 @@ test.describe("Metadata without the integration", () => {
     )
   })
 
-  test("renders the schema as JSON-LD", async ({ page }) => {
+  test("renders the article and the own schema as one graph", async ({ page }) => {
     await page.goto("/")
     const json = await page.locator("script[type='application/ld+json']").textContent()
+    // Without the integration, there is no site data: the article and the own item
     expect(JSON.parse(json!)).toEqual({
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      name: "My Site",
+      "@graph": [
+        {
+          "@type": "Article",
+          "@id": "https://example.com/#article",
+          headline: "Spring Exhibition",
+          description: "Tools by Acme Studio.",
+          image: ["https://example.com/spring.jpg"],
+          datePublished: "2026-03-01",
+          author: [{ "@type": "Person", name: "Acme Writer" }],
+          mainEntityOfPage: "https://example.com/",
+        },
+        { "@type": "WebSite", name: "My Site" },
+      ],
     })
   })
 
@@ -98,7 +111,7 @@ test.describe("Metadata without the integration", () => {
     await page.goto("/escaped")
     expect(await page.title()).toBe("Save $& now")
     const script = page.locator("script[type='application/ld+json']")
-    expect(JSON.parse((await script.textContent())!).name).toBe("</script><b>&")
+    expect(JSON.parse((await script.textContent())!)["@graph"][0].name).toBe("</script><b>&")
     await expect(page.locator("b")).not.toBeAttached()
   })
 })

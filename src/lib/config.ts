@@ -1,5 +1,6 @@
 import type { FaviconInfo } from "./favicon.ts"
 import type { ManifestConfig } from "./manifest.ts"
+import type { SchemaConfig } from "./schema.ts"
 
 /**
  * A text value: one string for all locales, or one string for each locale.
@@ -69,6 +70,11 @@ export type MetadataConfig = {
   }
   /** The web app manifest: an object to generate it, or the path of your own manifest. */
   manifest?: ManifestConfig | string
+  /**
+   * The structured data of the site. Each page gets the `WebSite` and its publisher:
+   * by default an organization with the site name. Set to false to turn it off.
+   */
+  schema?: SchemaConfig
 }
 
 /**

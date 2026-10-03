@@ -19,6 +19,7 @@ const SITE_KEYS = [
   "feeds",
   "robots",
   "manifest",
+  "schema",
 ]
 
 // The Lit modules of the dev toolbar app

@@ -21,6 +21,7 @@ export const Site = {
       feeds: config.feeds,
       robots: config.robots,
       manifest: config.manifest,
+      schema: config.schema,
     }
   },
 

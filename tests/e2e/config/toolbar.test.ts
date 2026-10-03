@@ -71,7 +71,9 @@ test.describe("dev toolbar app", () => {
 
     const blocks = panel.locator("astro-metadata-raw astro-metadata-code")
     await expect(blocks).toHaveCount(3)
-    await expect(blocks.nth(1).locator(".toolbar")).toContainText("WebSite, BreadcrumbList")
+    await expect(blocks.nth(1).locator(".toolbar")).toContainText(
+      "WebSite, Organization, BreadcrumbList"
+    )
     await expect(blocks.nth(2).locator(".toolbar")).toContainText("/fi/manifest.webmanifest")
   })
 })

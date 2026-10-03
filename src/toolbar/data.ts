@@ -109,7 +109,11 @@ function jsonLd(): JsonLd[] {
     const source = script.textContent ?? ""
     try {
       const data = JSON.parse(source)
-      const items = Array.isArray(data) ? data : [data]
+      // The items of a list, or of a graph
+      const list = Array.isArray(data) ? data : [data]
+      const items = list.flatMap((item) => {
+        return Array.isArray(item?.["@graph"]) ? item["@graph"] : [item]
+      })
       const types = items.map((item) => {
         return String(item?.["@type"] ?? "?")
       })

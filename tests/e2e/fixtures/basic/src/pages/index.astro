@@ -9,7 +9,8 @@ import { Metadata } from "@mannisto/astro-metadata/components"
       description="Tools by Acme Studio."
       image={{ url: "/spring.jpg", alt: "A painting", width: 1600, height: 900 }}
       type="article"
-      author="@acmewriter"
+      author={{ name: "Acme Writer", twitter: "@acmewriter" }}
+      published="2026-03-01"
       hreflang={[
         { hreflang: "en", href: "/" },
         { hreflang: "fi", href: "/fi" },

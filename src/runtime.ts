@@ -5,12 +5,12 @@ export { Favicon } from "./lib/favicon.ts"
 export type { ManifestConfig, ManifestPath } from "./lib/manifest.ts"
 export { Manifest } from "./lib/manifest.ts"
 export type {
-  SchemaArticle,
   SchemaAuthor,
   SchemaBreadcrumb,
+  SchemaConfig,
   SchemaData,
-  SchemaOrganization,
-  SchemaWebsite,
+  SchemaPage,
+  SchemaPublisher,
 } from "./lib/schema.ts"
 export { Schema } from "./lib/schema.ts"
 export { Site } from "./lib/site.ts"

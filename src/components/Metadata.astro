@@ -4,7 +4,7 @@ import type { MetadataImage } from "../lib/config.ts"
 import { Favicon } from "../lib/favicon.ts"
 import { Manifest } from "../lib/manifest.ts"
 import { Schema } from "../lib/schema.ts"
-import type { SchemaData } from "../lib/schema.ts"
+import type { SchemaAuthor, SchemaBreadcrumb, SchemaData } from "../lib/schema.ts"
 import { Site } from "../lib/site.ts"
 import { withBase } from "../lib/url.ts"
 
@@ -22,10 +22,20 @@ export type Props = {
   description?: string
   /** The social image. Defaults to the image of the config. */
   image?: MetadataImage
-  /** The Open Graph type, e.g. "article". Defaults to "website". */
+  /**
+   * The Open Graph type. Defaults to "website". "article" also adds the `Article`
+   * structured data, with the title, the description, the image and the dates.
+   */
   type?: string
-  /** The Twitter (X) handle of the author, e.g. "@acmewriter". */
-  author?: string
+  /**
+   * The author of an article: a name, or `{ name, url, twitter }`. The Twitter (X) handle
+   * gives `twitter:creator`.
+   */
+  author?: SchemaAuthor | SchemaAuthor[]
+  /** The publication date of an article. */
+  published?: Date | string
+  /** The date of the last change of an article. */
+  modified?: Date | string
   /** The canonical path or URL. Defaults to the current page. */
   canonical?: string
   /** Set to false to keep the page out of search results. Defaults to true. */
@@ -37,7 +47,12 @@ export type Props = {
    * The output of `Locale.hreflang()` of @mannisto/astro-i18n fits here.
    */
   hreflang?: HreflangLink[]
-  /** JSON-LD structured data, e.g. from the `Schema` builders. */
+  /** The path from the home page to this page. It adds the `BreadcrumbList` structured data. */
+  breadcrumbs?: SchemaBreadcrumb[]
+  /**
+   * Structured data items of your own, e.g. a `Product`. They go into the structured data
+   * of the page, with the site from the config.
+   */
   schema?: SchemaData | SchemaData[]
   /** The locale of the localized config values. Defaults to `Astro.currentLocale`. */
   locale?: string
@@ -70,8 +85,38 @@ const robots = [!index && "noindex", !follow && "nofollow", config.robots?.extra
 // are specific to Twitter (X) are necessary
 const card = image ? (config.twitter?.card ?? "summary_large_image") : "summary"
 
+// The authors as a list, for the Twitter (X) handles and the article tags
+const authors = props.author === undefined ? [] : [props.author].flat()
+const creator = authors
+  .map((author) => {
+    return typeof author === "string" ? undefined : author.twitter
+  })
+  .find(Boolean)
+const article = props.type === "article"
+
+const schema = Schema.graph({
+  url: canonical,
+  title: props.title ?? siteName,
+  description,
+  image: image ? Site.url(image.url) : undefined,
+  locale,
+  type: props.type,
+  published: props.published,
+  modified: props.modified,
+  author: props.author,
+  breadcrumbs: props.breadcrumbs,
+  items: props.schema === undefined ? undefined : [props.schema].flat(),
+})
+
 const themeColor = config.themeColor
 const manifest = Manifest.url(locale)
+
+/**
+ * Returns a date as an ISO 8601 text. A text stays unchanged.
+ */
+function isoDate(value: Date | string): string {
+  return typeof value === "string" ? value : value.toISOString()
+}
 
 const FEED_TYPES = {
   rss: "application/rss+xml",
@@ -111,9 +156,19 @@ const FEED_TYPES = {
     </>
   )
 }
+{
+  article && props.published && (
+    <meta property="article:published_time" content={isoDate(props.published)} />
+  )
+}
+{
+  article && props.modified && (
+    <meta property="article:modified_time" content={isoDate(props.modified)} />
+  )
+}
 <meta name="twitter:card" content={card} />
 {config.twitter?.site && <meta name="twitter:site" content={config.twitter.site} />}
-{props.author && <meta name="twitter:creator" content={props.author} />}
+{creator && <meta name="twitter:creator" content={creator} />}
 
 {
   Favicon.links().map((link) => {
@@ -138,8 +193,4 @@ const FEED_TYPES = {
     return <link rel="alternate" hreflang={link.hreflang} href={Site.pageUrl(link.href)} />
   })
 }
-{
-  props.schema && (
-    <script is:inline type="application/ld+json" set:html={Schema.stringify(props.schema)} />
-  )
-}
+{schema && <script is:inline type="application/ld+json" set:html={Schema.stringify(schema)} />}

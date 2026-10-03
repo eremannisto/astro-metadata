@@ -1,69 +1,74 @@
-import type {
-  Article,
-  BreadcrumbList,
-  Graph,
-  Organization,
-  Person,
-  Thing,
-  WebSite,
-  WithContext,
-} from "schema-dts"
+import type { Graph, Thing, WithContext } from "schema-dts"
 
 import { getConfig, localize } from "./config.ts"
+import type { Localized } from "./config.ts"
 import { url } from "./url.ts"
 
 /**
- * The data of a JSON-LD script. The schema.org types give the editor completion,
- * and other objects are also accepted.
+ * A structured data item of your own, e.g. a `Product` or an `Event`. The schema.org types
+ * give the editor completion, and other objects are also accepted. `@context` is not
+ * necessary: the items go into one graph with the context.
  */
-export type SchemaData = WithContext<Thing> | Graph | Record<string, unknown>
+export type SchemaData = Thing | WithContext<Thing> | Record<string, unknown>
 
-export type SchemaWebsite = {
+/**
+ * The organization or the person behind the site. It is the publisher of the site and of
+ * the articles.
+ */
+export type SchemaPublisher = {
+  /** Defaults to "Organization". */
+  type?: "Organization" | "Person"
   /** Defaults to `siteName` in the config. */
-  name?: string
-  /** Defaults to `description` in the config. */
-  description?: string
-  /** Defaults to the site root. */
-  url?: string
-  /** The locale of the localized config values, e.g. `Astro.currentLocale`. */
-  locale?: string
-}
-
-export type SchemaOrganization = {
-  /** Defaults to `siteName` in the config. */
-  name?: string
-  /** Defaults to the site root. */
-  url?: string
-  /** The path or URL of the logo, e.g. "/logo.png". */
+  name?: Localized
+  /** The path or URL of the logo of an organization, e.g. "/logo.png". */
   logo?: string
-  /** The profiles of the organization on other sites. */
+  /** The profiles on other sites, e.g. the GitHub or LinkedIn page. */
   sameAs?: string[]
-  /** The locale of the localized config values, e.g. `Astro.currentLocale`. */
-  locale?: string
 }
 
-export type SchemaAuthor = string | { name: string; url?: string }
+/** The `schema` option: the structured data of the site. Set to false to turn it off. */
+export type SchemaConfig =
+  | false
+  | {
+      publisher?: SchemaPublisher
+    }
 
-export type SchemaArticle = {
-  /** Defaults to "Article". */
-  type?: "Article" | "BlogPosting" | "NewsArticle"
-  title: string
-  description?: string
-  /** The paths or URLs of the images. */
-  image?: string | string[]
-  published?: Date | string
-  modified?: Date | string
-  author?: SchemaAuthor | SchemaAuthor[]
-  /** The URL of the article page, e.g. `Astro.url.pathname`. */
-  url?: string
-  /** The locale of the article. The publisher name uses it too. */
-  locale?: string
-}
+/** The author of an article: a name, or a name with a profile URL and a Twitter (X) handle. */
+export type SchemaAuthor =
+  | string
+  | {
+      name: string
+      /** The path or URL of the profile page of the author, e.g. "/about". */
+      url?: string
+      /** The Twitter (X) handle of the author, e.g. "@acmewriter". */
+      twitter?: string
+    }
 
+/** A step in the breadcrumbs: from the home page to the current page. */
 export type SchemaBreadcrumb = {
   name: string
   /** The path or URL of the page, e.g. "/exhibitions". */
   url: string
+}
+
+/** The values of a page that the structured data uses. `<Metadata>` gives them. */
+export type SchemaPage = {
+  /** The absolute URL of the page. */
+  url: string
+  /** The title of the page without the title template. */
+  title?: string
+  description?: string
+  /** The absolute URL of the social image. */
+  image?: string
+  locale?: string
+  /** The Open Graph type: "article" adds an `Article`. */
+  type?: string
+  published?: Date | string
+  modified?: Date | string
+  author?: SchemaAuthor | SchemaAuthor[]
+  breadcrumbs?: SchemaBreadcrumb[]
+  /** Your own items. */
+  items?: SchemaData[]
 }
 
 /**
@@ -75,12 +80,18 @@ function isoDate(value: Date | string | undefined): string | undefined {
 }
 
 /**
+ * Returns the authors as a list.
+ */
+function authorList(author: SchemaPage["author"]): SchemaAuthor[] {
+  if (author === undefined) return []
+  return Array.isArray(author) ? author : [author]
+}
+
+/**
  * Returns an author as a schema.org person.
  */
-function person(author: SchemaAuthor): Person {
-  if (typeof author === "string") {
-    return { "@type": "Person", name: author }
-  }
+function person(author: SchemaAuthor): Record<string, unknown> {
+  if (typeof author === "string") return { "@type": "Person", name: author }
   return {
     "@type": "Person",
     name: author.name,
@@ -89,113 +100,111 @@ function person(author: SchemaAuthor): Person {
 }
 
 /**
- * Returns the `WebSite` schema, with the name and the URL of the site.
- *
- * @example Schema.website({ locale: Astro.currentLocale })
+ * Returns the publisher of the site, or undefined without a name.
  */
-function website(options: SchemaWebsite = {}): WithContext<WebSite> {
+function publisher(page: SchemaPage, id: string): Record<string, unknown> | undefined {
   const config = getConfig()
-  return {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: options.name ?? localize(config.siteName, options.locale),
-    description: options.description ?? localize(config.description, options.locale),
-    url: url(options.url ?? "/"),
-    inLanguage: options.locale,
-  }
-}
+  const options = (config.schema || undefined)?.publisher ?? {}
+  const name = localize(options.name, page.locale) ?? localize(config.siteName, page.locale)
+  if (!name) return undefined
 
-/**
- * Returns the `Organization` schema of the site owner.
- *
- * @example Schema.organization({ logo: "/logo.png" })
- */
-function organization(options: SchemaOrganization = {}): WithContext<Organization> {
-  const config = getConfig()
+  const type = options.type ?? "Organization"
   return {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: options.name ?? localize(config.siteName, options.locale),
-    url: url(options.url ?? "/"),
-    logo: options.logo ? url(options.logo) : undefined,
+    "@type": type,
+    "@id": id,
+    name,
+    url: url("/"),
+    logo: type === "Organization" && options.logo ? url(options.logo) : undefined,
     sameAs: options.sameAs,
   }
 }
 
 /**
- * Returns the `Article` schema of a page. The publisher is the site from the config.
- *
- * @example Schema.article({ title, published: post.date, author: "Acme Writer" })
+ * Returns an item without `@context`: the graph has the context.
  */
-function article(options: SchemaArticle): WithContext<Article> {
+function withoutContext(item: SchemaData): Record<string, unknown> {
+  const copy = { ...(item as Record<string, unknown>) }
+  delete copy["@context"]
+  return copy
+}
+
+/**
+ * Returns the structured data of a page as one graph:
+ * - the `WebSite` and its publisher, from the config,
+ * - an `Article` for a page with the type "article",
+ * - a `BreadcrumbList` for a page with breadcrumbs,
+ * - and your own items.
+ * The items link to each other with `@id`. Returns undefined without items.
+ */
+function graph(page: SchemaPage): Graph | undefined {
   const config = getConfig()
-  const siteName = localize(config.siteName, options.locale)
-  const images = typeof options.image === "string" ? [options.image] : options.image
-  const authors = Array.isArray(options.author) ? options.author : [options.author]
+  const site = url("/")
+  const items: Record<string, unknown>[] = []
 
-  return {
-    "@context": "https://schema.org",
-    "@type": options.type ?? "Article",
-    headline: options.title,
-    description: options.description,
-    image: images?.map((image) => {
-      return url(image)
-    }),
-    datePublished: isoDate(options.published),
-    dateModified: isoDate(options.modified),
-    author: options.author
-      ? authors.flatMap((author) => {
-          return author ? [person(author)] : []
-        })
-      : undefined,
-    publisher: siteName
-      ? {
-          "@type": "Organization",
-          name: siteName,
-          url: url("/"),
-        }
-      : undefined,
-    mainEntityOfPage: options.url ? url(options.url) : undefined,
-    inLanguage: options.locale,
-  } as WithContext<Article>
-}
+  const owner = config.schema === false ? undefined : publisher(page, `${site}#publisher`)
+  const ownerLink = owner ? { "@id": owner["@id"] } : undefined
 
-/**
- * Returns the `BreadcrumbList` schema: the path from the home page to the current page.
- *
- * @example Schema.breadcrumbs([{ name: "Home", url: "/" }, { name: "Blog", url: "/blog" }])
- */
-function breadcrumbs(items: SchemaBreadcrumb[]): WithContext<BreadcrumbList> {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => {
-      return {
-        "@type": "ListItem",
-        position: index + 1,
-        name: item.name,
-        item: url(item.url),
-      }
-    }),
+  if (config.schema !== false && owner) {
+    items.push({
+      "@type": "WebSite",
+      "@id": `${site}#website`,
+      name: owner.name,
+      description: localize(config.description, page.locale),
+      url: site,
+      inLanguage: page.locale,
+      publisher: ownerLink,
+    })
+    items.push(owner)
   }
+
+  if (page.type === "article") {
+    const authors = authorList(page.author)
+    items.push({
+      "@type": "Article",
+      "@id": `${page.url}#article`,
+      headline: page.title,
+      description: page.description,
+      image: page.image ? [page.image] : undefined,
+      datePublished: isoDate(page.published),
+      dateModified: isoDate(page.modified),
+      author: authors.length > 0 ? authors.map(person) : undefined,
+      publisher: ownerLink,
+      mainEntityOfPage: page.url,
+      inLanguage: page.locale,
+    })
+  }
+
+  if (page.breadcrumbs && page.breadcrumbs.length > 0) {
+    items.push({
+      "@type": "BreadcrumbList",
+      "@id": `${page.url}#breadcrumbs`,
+      itemListElement: page.breadcrumbs.map((step, index) => {
+        return { "@type": "ListItem", position: index + 1, name: step.name, item: url(step.url) }
+      }),
+    })
+  }
+
+  for (const item of page.items ?? []) {
+    items.push(withoutContext(item))
+  }
+
+  if (items.length === 0) return undefined
+  return { "@context": "https://schema.org", "@graph": items } as unknown as Graph
 }
 
 /**
- * Builders for common JSON-LD schemas. They fill in values from the config of the
- * integration and make all URLs absolute. Give the result to `<Metadata schema>`.
+ * The structured data of the pages. `<Metadata>` renders it: the site from the config,
+ * and the article, the breadcrumbs and your own items of a page.
  */
 export const Schema = {
-  website,
-  organization,
-  article,
-  breadcrumbs,
+  graph,
 
   /**
-   * Returns the data as JSON that is safe inside a script tag.
+   * Returns the data as JSON that is safe inside a script tag. Empty values are removed.
    *
    * @example <script type="application/ld+json" set:html={Schema.stringify(data)} />
    */
-  stringify(data: SchemaData | SchemaData[]): string {
+  stringify(data: unknown): string {
     // Escape the characters that can end the script tag or break the JavaScript parser.
     // A value such as "</script>" in the schema then stays inside the JSON.
     return JSON.stringify(data)

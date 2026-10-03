@@ -68,6 +68,7 @@ Set `site` in the Astro config. The canonical URL and the social images must be 
 | `robots` | — | `index: false` or `follow: false` for all pages, for example on a staging site. `extra`: other directives, for example `"max-image-preview:large"`. |
 | `favicon` | — | Generates the favicons from one image. See [Favicons](#favicons). |
 | `manifest` | — | Generates the web app manifest, or links your own. See [Web app manifest](#web-app-manifest). |
+| `schema` | — | The structured data of the site: `publisher` is the organization or the person behind the site. `false` turns it off. See [Structured data](#structured-data). |
 | `debug` | `true` | The Metadata app in the dev toolbar (`client`) and the checks in the build log (`build`). Set `false` to turn off both, or `{ client: false }` or `{ build: false }` to turn off one. See [Checks](#checks). |
 | `rules` | — | `ignore`: the ids of the check rules to turn off. `custom`: your own rules. See [Checks](#checks). |
 | `pages` | — | `ignore`: the pages without checks, as path patterns, for example `["/404", "/drafts/**"]`. See [Checks](#checks). |
@@ -143,12 +144,15 @@ The page values override the site values. For example, `title="About"` gives:
 | `description` | `description` | The page description. |
 | `image` | `image` | The social image: `url`, `alt`, `width` and `height`. |
 | `type` | `"website"` | The Open Graph type, for example `"article"`. |
-| `author` | — | The Twitter (X) handle of the author, for example `"@acmewriter"`. |
+| `author` | — | The author of an article: a name, or `{ name, url, twitter }`. `twitter` gives `twitter:creator`. |
+| `published` | — | The publication date of an article. |
+| `modified` | — | The date of the last change of an article. |
 | `canonical` | The current page | The canonical path or URL. |
 | `index` | `true` | `false` keeps the page out of search results. |
 | `follow` | `true` | `false` tells search engines not to follow the links. |
 | `hreflang` | — | The hreflang links: the page in each locale, and `x-default`: `{ hreflang, href }[]`. |
-| `schema` | — | Structured data. See [Structured data](#structured-data). |
+| `breadcrumbs` | — | The path from the home page to the page: `{ name, url }[]`. See [Structured data](#structured-data). |
+| `schema` | — | Structured data items of your own, for example a `Product`. See [Structured data](#structured-data). |
 | `locale` | `Astro.currentLocale` | The locale of the translated site values. |
 
 A tag is rendered only when it has a value. For example, the robots tag is necessary only with `index` or `follow` set to `false`.
@@ -240,33 +244,53 @@ Your own manifest endpoint can use the generated icons with `Favicon.icons()`.
 
 ## Structured data
 
-The `Schema` builders make the most common JSON-LD types. They fill in the site name and make all URLs absolute.
+`<Metadata>` renders the structured data (JSON-LD) of each page by itself. You only give the values of the page.
+
+**The site.** Each page gets the `WebSite` and its publisher: by default, an organization with the site name. Give the logo and the profiles in the config:
+
+```typescript
+metadata({
+  siteName: "Acme Studio",
+  schema: {
+    publisher: {
+      logo: "/logo.png",
+      sameAs: ["https://github.com/acme-studio"],
+    },
+  },
+})
+```
+
+For a personal site, use `publisher: { type: "Person" }`. Set `schema: false` to turn off the site data.
+
+**An article.** Set `type="article"`. The article uses the title, the description and the image of the page:
 
 ```astro
----
-import { Metadata } from "@mannisto/astro-metadata/components"
-import { Schema } from "@mannisto/astro-metadata/runtime"
----
-
 <Metadata
   title="Hello"
   type="article"
-  schema={[
-    Schema.article({
-      title: "Hello",
-      published: new Date("2026-09-01"),
-      author: { name: "Acme Writer", url: "/about" },
-      url: "/blog/hello",
-    }),
-    Schema.breadcrumbs([
-      { name: "Home", url: "/" },
-      { name: "Blog", url: "/blog" },
-    ]),
+  published={post.date}
+  author={{ name: "Acme Writer", url: "/about", twitter: "@acmewriter" }}
+/>
+```
+
+**Breadcrumbs.** Give the path from the home page to the page:
+
+```astro
+<Metadata
+  breadcrumbs={[
+    { name: "Home", url: "/" },
+    { name: "Blog", url: "/blog" },
   ]}
 />
 ```
 
-The `schema` prop also takes your own objects. The types come from [`schema-dts`](https://github.com/google/schema-dts), so your editor completes the schema.org fields.
+**Your own items.** Give other types, for example a `Product` or an `Event`, in `schema`. The types come from [`schema-dts`](https://github.com/google/schema-dts), so your editor completes the schema.org fields:
+
+```astro
+<Metadata schema={{ "@type": "Event", name: "Opening night", startDate: "2026-11-01" }} />
+```
+
+All items go into one graph. The items link to each other with `@id`, and all URLs are absolute.
 
 ## Checks
 
@@ -384,10 +408,7 @@ import { Favicon, Manifest, Schema, Site } from "@mannisto/astro-metadata/runtim
 | `Manifest.url("fi")` | `string` | The URL of the manifest of a locale |
 | `Manifest.build("fi")` | `object` | The manifest of a locale |
 | `Manifest.paths()` | `ManifestPath[]` | The generated manifest files |
-| `Schema.website()` | `WebSite` | The website, with the site name and URL |
-| `Schema.organization()` | `Organization` | The organization: `name`, `url`, `logo`, `sameAs` |
-| `Schema.article()` | `Article` | An article: `title`, `description`, `image`, `published`, `modified`, `author`, `url`, `type` |
-| `Schema.breadcrumbs()` | `BreadcrumbList` | The path to the current page: `{ name, url }[]` |
+| `Schema.graph(page)` | `Graph` | The structured data that `<Metadata>` renders for a page |
 | `Schema.stringify(data)` | `string` | JSON that is safe inside a script tag |
 
 | Component | Props |
