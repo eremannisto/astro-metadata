@@ -10,8 +10,8 @@ const PAGE: SchemaPage = { url: "https://example.com/blog/hello/" }
  * Returns the items of the graph of a page.
  */
 function items(page: Partial<SchemaPage> = {}): Record<string, unknown>[] {
-  const graph = Schema.graph({ ...PAGE, ...page }) as { "@graph": Record<string, unknown>[] }
-  return JSON.parse(JSON.stringify(graph["@graph"]))
+  const json = Schema.stringify(Schema.graph({ ...PAGE, ...page }))
+  return JSON.parse(json)["@graph"]
 }
 
 beforeEach(() => {
