@@ -4,6 +4,7 @@ import type { MetadataImage } from "../lib/config.ts"
 import { Favicon } from "../lib/favicon.ts"
 import { i18n } from "../lib/i18n.ts"
 import { Manifest } from "../lib/manifest.ts"
+import { openGraphAlternates, openGraphLocale } from "../lib/open-graph.ts"
 import { Schema } from "../lib/schema.ts"
 import type { SchemaAuthor, SchemaBreadcrumb, SchemaData } from "../lib/schema.ts"
 import { Site } from "../lib/site.ts"
@@ -84,6 +85,15 @@ const canonical = Site.pageUrl(props.canonical ?? i18n?.path(Astro) ?? Astro.url
 // The page in each locale: from the props, or from the i18n setup of the project
 const hreflang = props.hreflang ?? i18n?.alternates(Astro) ?? []
 
+// The locale of the page and its other locales, in the format of Open Graph: "fi_FI"
+const ogLocale = openGraphLocale(locale)
+const ogAlternates = openGraphAlternates(
+  locale,
+  hreflang.map((link) => {
+    return link.hreflang
+  })
+)
+
 // Search engines index and follow by default, so the tag is only necessary for other values
 const index = props.index ?? config.robots?.index ?? true
 const follow = props.follow ?? config.robots?.follow ?? true
@@ -156,6 +166,12 @@ const FEED_TYPES = {
 <meta property="og:url" content={canonical} />
 <meta property="og:type" content={props.type ?? "website"} />
 {siteName && <meta property="og:site_name" content={siteName} />}
+{ogLocale && <meta property="og:locale" content={ogLocale} />}
+{
+  ogAlternates.map((alternate) => {
+    return <meta property="og:locale:alternate" content={alternate} />
+  })
+}
 {
   image && (
     <>

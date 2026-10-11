@@ -18,6 +18,7 @@ test.describe("Metadata without the integration", () => {
     await expect(page.locator("meta[name='robots']")).not.toBeAttached()
     await expect(page.locator("meta[name='theme-color']")).not.toBeAttached()
     await expect(page.locator("meta[property='og:image']")).not.toBeAttached()
+    await expect(page.locator("meta[property='og:locale']")).not.toBeAttached()
     await expect(page.locator("link[rel='icon']")).not.toBeAttached()
     await expect(page.locator("link[rel='manifest']")).not.toBeAttached()
     await expect(page.locator("meta[name='twitter:card']")).toHaveAttribute("content", "summary")

@@ -95,6 +95,8 @@ metadata({
 
 The hreflang links contain the page in each locale, and `x-default` for the default locale. To give your own links, use the `hreflang` prop. `hreflang={[]}` turns the links off, for example on a 404 page.
 
+`<Metadata>` also renders the Open Graph locales: `og:locale` for the locale of the page, and `og:locale:alternate` for each other locale of the hreflang links. Open Graph uses the format `language_COUNTRY`: an ISO 639-1 language and an ISO 3166-1 alpha-2 country. A locale without a country gets the most likely country of its language, so `fi` becomes `fi_FI` and `en` becomes `en_US`. A locale with a country, for example `en-GB`, keeps its country. A locale that has no value in this format, for example `fil`, gets no tag.
+
 ## Metadata component
 
 Put `<Metadata>` into the `<head>` of your layout, and give it the values of the page:

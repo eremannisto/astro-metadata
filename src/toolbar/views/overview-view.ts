@@ -327,6 +327,13 @@ export class OverviewView extends LitElement {
     const data = this.data
     const og = data.openGraph
     const image = findMeta(og, "og:image")
+    const alternates = og
+      .filter((tag) => {
+        return tag.key === "og:locale:alternate"
+      })
+      .map((tag) => {
+        return tag.value
+      })
     const width = findMeta(og, "og:image:width")
     const height = findMeta(og, "og:image:height")
 
@@ -366,6 +373,12 @@ export class OverviewView extends LitElement {
             tagRow("Description", findMeta(og, "og:description"), "og:description"),
             tagRow("Type", code(findMeta(og, "og:type")), "og:type"),
             tagRow("Site name", findMeta(og, "og:site_name"), "og:site_name"),
+            tagRow("Locale", code(findMeta(og, "og:locale")), "og:locale"),
+            tagRow(
+              "Other locales",
+              code(alternates.join(", ") || undefined),
+              "og:locale:alternate"
+            ),
             tagRow("Image", image, "og:image"),
             tagRow(
               "Image size",
