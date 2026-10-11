@@ -1,6 +1,6 @@
 # Astro Metadata
 
-![banner](./assets/banner.png)
+![banner](./docs/banner.png)
 
 ![Astro](https://img.shields.io/badge/astro-%232C2052.svg?style=for-the-badge&logo=astro&logoColor=white)
 ![npm version](https://img.shields.io/npm/v/@mannisto/astro-metadata?style=for-the-badge)
@@ -8,12 +8,15 @@
 
 The page metadata for Astro: the title, the description, the canonical URL, social cards, favicons, the web app manifest and structured data. Set the site values one time, and give each page only its own values.
 
+In dev, the Metadata app in the Astro dev toolbar checks each page, and shows its tags and its link previews. See [Dev toolbar app](#dev-toolbar-app).
+
 - [Install](#install)
 - [Configuration](#configuration)
 - [Metadata component](#metadata-component)
 - [Favicons](#favicons)
 - [Web app manifest](#web-app-manifest)
 - [Structured data](#structured-data)
+- [Dev toolbar app](#dev-toolbar-app)
 - [Checks](#checks)
 - [API](#api)
 - [Good to know](#good-to-know)
@@ -302,6 +305,29 @@ For a personal site, use `publisher: { type: "Person" }`. Set `schema: false` to
 ```
 
 All items go into one graph. The items link to each other with `@id`, and all URLs are absolute.
+
+## Dev toolbar app
+
+Run `astro dev` and open the Metadata app in the dev toolbar. You can also add `?metadata` to the URL of a page. The app has three tabs:
+
+- **Overview:** the problems of the page, and its values in sections: General, Social, Locales, Structured data, Web app manifest and Feeds. Click a problem to open the row of its tag.
+- **Previews:** the link previews of Google, Twitter (X), Facebook, LinkedIn, WhatsApp, Discord and Slack.
+- **Raw:** all tags of the head, and the structured data as JSON.
+
+<table>
+  <tr>
+    <td><img src="./docs/screenshots/01.png" alt="The Overview tab with no problems" width="260"></td>
+    <td><img src="./docs/screenshots/02.png" alt="The Overview tab with an error, two warnings and two notes" width="260"></td>
+    <td><img src="./docs/screenshots/03.png" alt="The Social section with the Open Graph tags" width="260"></td>
+  </tr>
+  <tr>
+    <td><img src="./docs/screenshots/04.png" alt="The Previews tab with the Google and Twitter (X) previews" width="260"></td>
+    <td><img src="./docs/screenshots/05.png" alt="The Raw tab with the tags of the head" width="260"></td>
+    <td></td>
+  </tr>
+</table>
+
+To remove the app, set `debug: { client: false }`. See [Checks](#checks) for the rules.
 
 ## Checks
 
