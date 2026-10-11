@@ -65,8 +65,5 @@ export default defineToolbarApp({
     })
 
     updateBadge()
-
-    // ?metadata in the URL opens the panel when the page loads
-    if (new URLSearchParams(location.search).has("metadata")) setOpen(true)
   },
 })

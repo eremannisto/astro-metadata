@@ -306,7 +306,7 @@ All items go into one graph. The items link to each other with `@id`, and all UR
 
 ## Dev toolbar app
 
-Run `astro dev`, and open the Metadata app in the dev toolbar, or add `?metadata` to the URL. The app checks the current page, and shows its tags and its link previews. Click a problem to open the row of its tag.
+Run `astro dev`, and open the Metadata app in the dev toolbar, or press `Alt+M` (`Option+M` on a Mac). The app checks the current page, and shows its tags and its link previews. Click a problem to open the row of its tag.
 
 <table>
   <tr>

@@ -1,10 +1,18 @@
 import { expect, test } from "@playwright/test"
+import type { Page } from "@playwright/test"
+
+/**
+ * Opens a page and the Metadata app from the dev toolbar.
+ */
+async function openApp(page: Page, path: string): Promise<void> {
+  await page.goto(path)
+  await page.locator("astro-dev-toolbar [data-app-id='mannisto-astro-metadata']").first().click()
+}
 
 // The Playwright config runs this file only with the dev server
 test.describe("dev toolbar app", () => {
   test("opens the panel from the toolbar and shows the tabs", async ({ page }) => {
-    await page.goto("/")
-    await page.locator("astro-dev-toolbar [data-app-id='mannisto-astro-metadata']").first().click()
+    await openApp(page, "/")
 
     const panel = page.locator("astro-metadata-panel")
     await expect(panel.locator("h1")).toHaveText("Metadata")
@@ -19,7 +27,7 @@ test.describe("dev toolbar app", () => {
   test("shows the link preview of each platform, with only the first one open", async ({
     page,
   }) => {
-    await page.goto("/?metadata")
+    await openApp(page, "/")
     const panel = page.locator("astro-metadata-panel")
     await panel.locator("astro-metadata-tab-group button", { hasText: "Previews" }).click()
 
@@ -44,28 +52,34 @@ test.describe("dev toolbar app", () => {
   })
 
   test("shows the problems of the custom rules", async ({ page }) => {
-    await page.goto("/overrides?metadata")
+    await openApp(page, "/overrides")
     const alert = page.locator("astro-metadata-overview astro-metadata-alert[level='warning']")
     await expect(alert).toContainText("The page has its own title.")
   })
 
   test("shows no problems on an ignored page", async ({ page }) => {
-    await page.goto("/unknown-locale?metadata")
+    await openApp(page, "/unknown-locale")
     const alerts = page.locator("astro-metadata-overview astro-metadata-alert")
     await expect(alerts).toHaveCount(1)
     await expect(alerts).toHaveAttribute("heading", "Checks are off for this page")
   })
 
-  test("opens the panel with ?metadata and closes it with Escape", async ({ page }) => {
-    await page.goto("/?metadata")
+  test("opens the panel with Alt+M and closes it with Escape", async ({ page }) => {
+    await page.goto("/", { waitUntil: "networkidle" })
+    // The toolbar starts the app after the page loads
+    await page
+      .locator("astro-dev-toolbar [data-app-id='mannisto-astro-metadata']")
+      .first()
+      .waitFor()
     const panel = page.locator("astro-metadata-panel .panel")
+    await page.keyboard.press("Alt+KeyM")
     await expect(panel).toBeVisible()
     await page.keyboard.press("Escape")
     await expect(panel).toBeHidden()
   })
 
   test("shows the head, the structured data and the manifest as raw code", async ({ page }) => {
-    await page.goto("/fi/schema?metadata")
+    await openApp(page, "/fi/schema")
     const panel = page.locator("astro-metadata-panel")
     await panel.locator("astro-metadata-tab-group button", { hasText: "Raw" }).click()
 
