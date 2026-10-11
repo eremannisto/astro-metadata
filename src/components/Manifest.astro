@@ -1,0 +1,11 @@
+---
+import { Manifest } from "../lib/manifest.ts"
+import { pageLocale } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+
+export type Props = Pick<MetadataProps, "locale">
+
+const manifest = Manifest.url(pageLocale(Astro, Astro.props))
+---
+
+{manifest && <link rel="manifest" href={manifest} />}

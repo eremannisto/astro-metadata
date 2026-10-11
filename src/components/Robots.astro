@@ -1,0 +1,10 @@
+---
+import { pageRobots } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+
+export type Props = Pick<MetadataProps, "index" | "follow">
+
+const robots = pageRobots(Astro.props)
+---
+
+{robots && <meta name="robots" content={robots} />}

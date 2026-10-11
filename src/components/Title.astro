@@ -1,0 +1,10 @@
+---
+import { fullTitle, pageLocale } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+
+export type Props = Pick<MetadataProps, "title" | "locale">
+
+const title = fullTitle(Astro.props.title, pageLocale(Astro, Astro.props))
+---
+
+{title && <title>{title}</title>}

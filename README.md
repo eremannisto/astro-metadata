@@ -169,6 +169,35 @@ The page values override the site values. For example, `title="About"` gives:
 
 A tag is rendered only when it has a value. For example, the robots tag is necessary only with `index` or `follow` set to `false`.
 
+### Single components
+
+`<Metadata>` renders all tags. To render only some of them, use the single components. They take the same props as `<Metadata>`, and they use the same site values:
+
+```astro
+---
+import { Canonical, OpenGraph, Title } from "@mannisto/astro-metadata/components"
+---
+
+<Title title="About" />
+<Canonical />
+<OpenGraph title="About" />
+```
+
+| Component | Tags |
+|---|---|
+| `<Title>` | `title` |
+| `<Description>` | `description` |
+| `<Canonical>` | The canonical link |
+| `<Robots>` | `robots` |
+| `<ThemeColor>` | `theme-color` |
+| `<OpenGraph>` | `og:*` and `article:*` |
+| `<Twitter>` | `twitter:*` |
+| `<Favicon>` | The favicon links |
+| `<Manifest>` | The manifest link |
+| `<Feeds>` | The feed links |
+| `<LanguageAlternates>` | The hreflang links |
+| `<Schema>` | The structured data |
+
 ## Favicons
 
 Give one square source image. An SVG gives the best result. Use a PNG, WebP or JPEG of at least 512 × 512 px, or the large icons become blurred.
@@ -252,7 +281,16 @@ metadata({
 })
 ```
 
-Your own manifest endpoint can use the generated icons with `Favicon.icons()`.
+Your own manifest endpoint can use the generated icons with `Site.icons()`:
+
+```typescript
+// src/pages/site.webmanifest.ts
+import { Site } from "@mannisto/astro-metadata/runtime"
+
+export const GET = () => {
+  return Response.json({ name: Site.name(), icons: Site.icons() })
+}
+```
 
 ## Structured data
 
@@ -413,33 +451,25 @@ The dev toolbar app still shows the values of these pages, but no problems.
 
 ## API
 
+`Site` returns the values that you set in the integration, for example for a footer, a feed or your own manifest:
+
 ```typescript
-import { Favicon, Manifest, Schema, Site } from "@mannisto/astro-metadata/runtime"
+import { Site } from "@mannisto/astro-metadata/runtime"
+
+Site.description({ locale: "fi" })
 ```
 
-| Method | Returns | Description |
-|---|---|---|
-| `Site.config` | `MetadataConfig` | The site values of the integration |
-| `Site.name("fi")` | `string` | The site name of a locale |
-| `Site.title("About", "fi")` | `string` | The page title in the title template |
-| `Site.url("/og.jpg")` | `string` | The absolute URL of a path |
-| `Site.pageUrl("/about")` | `string` | The absolute URL of a page, with the trailing slash of Astro |
-| `Favicon.config` | `FaviconConfig` | The favicon config, or `undefined` without the `favicon` option |
-| `Favicon.files` | `ResolvedFaviconFile[]` | The generated files |
-| `Favicon.links()` | `FaviconLink[]` | The link tags of the generated files |
-| `Favicon.icons()` | `ManifestIcon[]` | The icons for a web app manifest |
-| `Favicon.url("/favicon.ico")` | `string` | The URL of a file, with the base and a hash |
-| `Favicon.generate("/favicon-32.png")` | `Promise<Response>` | Generates a file of the config |
-| `Manifest.config` | `ManifestConfig \| string` | The `manifest` option |
-| `Manifest.url("fi")` | `string` | The URL of the manifest of a locale |
-| `Manifest.build("fi")` | `object` | The manifest of a locale |
-| `Manifest.paths()` | `ManifestPath[]` | The generated manifest files |
-| `Schema.graph(page)` | `Graph` | The structured data that `<Metadata>` renders for a page |
-| `Schema.stringify(data)` | `string` | JSON that is safe inside a script tag |
-
-| Component | Props |
+| Method | Returns |
 |---|---|
-| `<Metadata>` | See [Metadata component](#metadata-component) |
+| `Site.name()` | `siteName` |
+| `Site.template()` | `titleTemplate` |
+| `Site.description()` | `description` |
+| `Site.image()` | `image`, with an absolute URL |
+| `Site.twitter()` | `twitter`, with the default card |
+| `Site.themeColor()` | `themeColor` |
+| `Site.icons()` | The generated favicons, for the `icons` of a web app manifest |
+
+A translated text returns the text of `locale`, or the first text without `locale`. An option that is not set returns `undefined`.
 
 Import the types from `@mannisto/astro-metadata/runtime`, for example `import type { MetadataImage } from "@mannisto/astro-metadata/runtime"`.
 
@@ -475,14 +505,13 @@ Version 2 is a new API. The main changes:
 + </head>
 ```
 
-### Replace the removed components
+### Use the new props of the single components
 
-`Title`, `Description`, `Canonical`, `Robots`, `OpenGraph`, `Twitter`, `Favicon`, `LanguageAlternates`, `Keywords` and `Schema` are removed. `<Metadata>` renders their tags.
+The single components take the props of `<Metadata>`, and `<Metadata>` renders all of them. `Keywords` is removed, because search engines do not use the tag.
 
 ```diff
 - <LanguageAlternates alternates={links} />
-- <Schema schema={data} />
-+ <Metadata hreflang={links} schema={data} />
++ <LanguageAlternates hreflang={links} />
 ```
 
 ### Replace the `Metadata` store

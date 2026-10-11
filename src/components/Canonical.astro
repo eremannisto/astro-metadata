@@ -1,0 +1,10 @@
+---
+import { pageCanonical } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+
+export type Props = Pick<MetadataProps, "canonical">
+
+const canonical = pageCanonical(Astro, Astro.props)
+---
+
+<link rel="canonical" href={canonical} />

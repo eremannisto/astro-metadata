@@ -8,69 +8,51 @@ afterEach(() => {
   vi.unstubAllEnvs()
 })
 
-describe("Site.config", () => {
-  it("returns only the site values", () => {
-    setConfig({ siteName: "My Site", trailingSlash: "always", buildFormat: "directory" })
-    expect(Site.config.siteName).toBe("My Site")
-    expect(Site.config).not.toHaveProperty("trailingSlash")
-  })
-})
-
-describe("Site.title", () => {
-  it("puts the title into the template of the locale", () => {
-    setConfig({ titleTemplate: { en: "%s | My Site", fi: "%s | Sivustoni" } })
-    expect(Site.title("About")).toBe("About | My Site")
-    expect(Site.title("Tietoa", "fi")).toBe("Tietoa | Sivustoni")
-  })
-
-  it("returns the site name for a page without a title", () => {
-    setConfig({ siteName: "My Site", titleTemplate: "%s | My Site" })
-    expect(Site.title()).toBe("My Site")
+describe("Site", () => {
+  it("returns the texts of the locale, or the first text", () => {
+    setConfig({
+      siteName: { en: "Acme Studio", fi: "Acme Studio Suomi" },
+      titleTemplate: { en: "%s | Acme Studio", fi: "%s | Acme Studio Suomi" },
+      description: { en: "Tools for small teams.", fi: "Työkaluja pienille tiimeille." },
+    })
+    expect(Site.name()).toBe("Acme Studio")
+    expect(Site.name({ locale: "fi" })).toBe("Acme Studio Suomi")
+    expect(Site.template({ locale: "fi" })).toBe("%s | Acme Studio Suomi")
+    expect(Site.description({ locale: "fi" })).toBe("Työkaluja pienille tiimeille.")
+    expect(Site.description({ locale: "de" })).toBe("Tools for small teams.")
   })
 
-  it("keeps the title for a template without %s, and without a template", () => {
-    setConfig({ titleTemplate: "My Site" })
-    expect(Site.title("About")).toBe("About")
-    clearConfig()
-    expect(Site.title("About")).toBe("About")
+  it("returns a text without locales for each locale", () => {
+    setConfig({ siteName: "Acme Studio" })
+    expect(Site.name({ locale: "fi" })).toBe("Acme Studio")
   })
 
-  it("keeps $ patterns in the title as text", () => {
-    setConfig({ titleTemplate: "%s | My Site" })
-    expect(Site.title("Save $& now")).toBe("Save $& now | My Site")
-  })
-})
-
-describe("Site.pageUrl", () => {
-  it("follows trailingSlash", () => {
+  it("returns the image with an absolute URL and the alt text of the locale", () => {
     vi.stubEnv("SITE", "https://example.com")
-    setConfig({ trailingSlash: "always", buildFormat: "file" })
-    expect(Site.pageUrl("/blog")).toBe("https://example.com/blog/")
-    setConfig({ trailingSlash: "never", buildFormat: "directory" })
-    expect(Site.pageUrl("/blog/")).toBe("https://example.com/blog")
+    setConfig({
+      image: { url: "/og.jpg", alt: { en: "A logo", fi: "Logo" }, width: 1200, height: 630 },
+    })
+    expect(Site.image({ locale: "fi" })).toEqual({
+      url: "https://example.com/og.jpg",
+      alt: "Logo",
+      width: 1200,
+      height: 630,
+    })
   })
 
-  it("follows build.format with trailingSlash ignore", () => {
-    vi.stubEnv("SITE", "https://example.com")
-    setConfig({ trailingSlash: "ignore", buildFormat: "directory" })
-    expect(Site.pageUrl("/blog")).toBe("https://example.com/blog/")
-    setConfig({ trailingSlash: "ignore", buildFormat: "file" })
-    expect(Site.pageUrl("/blog/")).toBe("https://example.com/blog")
-    setConfig({ trailingSlash: "ignore", buildFormat: "preserve" })
-    expect(Site.pageUrl("/blog")).toBe("https://example.com/blog")
+  it("returns the twitter values with the default card, and the theme color", () => {
+    setConfig({ twitter: { site: "@acmestudio" }, themeColor: { light: "#fff", dark: "#000" } })
+    expect(Site.twitter()).toEqual({ site: "@acmestudio", card: "summary_large_image" })
+    expect(Site.themeColor()).toEqual({ light: "#fff", dark: "#000" })
   })
 
-  it("keeps the root, files, queries and absolute URLs unchanged", () => {
-    vi.stubEnv("SITE", "https://example.com")
-    setConfig({ trailingSlash: "always", buildFormat: "directory" })
-    expect(Site.pageUrl("/")).toBe("https://example.com/")
-    expect(Site.pageUrl("/feed.xml")).toBe("https://example.com/feed.xml")
-    expect(Site.pageUrl("/blog?page=2")).toBe("https://example.com/blog?page=2")
-    expect(Site.pageUrl("https://other.com/a")).toBe("https://other.com/a")
-  })
-
-  it("keeps the path unchanged without the integration", () => {
-    vi.stubEnv("SITE", "https://example.com")
-    expect(Site.pageUrl("/blog")).toBe("https://example.com/blog")
+  it("returns undefined for the options that are not set", () => {
+    expect(Site.name()).toBeUndefined()
+    expect(Site.template()).toBeUndefined()
+    expect(Site.description()).toBeUndefined()
+    expect(Site.image()).toBeUndefined()
+    expect(Site.twitter()).toBeUndefined()
+    expect(Site.themeColor()).toBeUndefined()
+    expect(Site.icons()).toEqual([])
   })
 })

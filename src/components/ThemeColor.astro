@@ -1,0 +1,15 @@
+---
+import { getConfig } from "../lib/config.ts"
+
+const themeColor = getConfig().themeColor
+---
+
+{typeof themeColor === "string" && <meta name="theme-color" content={themeColor} />}
+{
+  typeof themeColor === "object" && (
+    <>
+      <meta name="theme-color" content={themeColor.light} media="(prefers-color-scheme: light)" />
+      <meta name="theme-color" content={themeColor.dark} media="(prefers-color-scheme: dark)" />
+    </>
+  )
+}

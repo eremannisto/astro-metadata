@@ -1,0 +1,13 @@
+---
+import { pageHreflang } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+import { pageUrl } from "../lib/url.ts"
+
+export type Props = Pick<MetadataProps, "hreflang">
+---
+
+{
+  pageHreflang(Astro, Astro.props).map((link) => {
+    return <link rel="alternate" hreflang={link.hreflang} href={pageUrl(link.href)} />
+  })
+}

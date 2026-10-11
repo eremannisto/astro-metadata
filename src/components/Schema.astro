@@ -1,0 +1,42 @@
+---
+import { getConfig, localize } from "../lib/config.ts"
+import { pageCanonical, pageDescription, pageImage, pageLocale } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+import { Schema } from "../lib/schema.ts"
+import { url } from "../lib/url.ts"
+
+export type Props = Pick<
+  MetadataProps,
+  | "title"
+  | "description"
+  | "image"
+  | "type"
+  | "published"
+  | "modified"
+  | "author"
+  | "canonical"
+  | "breadcrumbs"
+  | "schema"
+  | "locale"
+>
+
+const props = Astro.props
+const locale = pageLocale(Astro, props)
+const image = pageImage(props, locale)
+
+const schema = Schema.graph({
+  url: pageCanonical(Astro, props),
+  title: props.title ?? localize(getConfig().siteName, locale),
+  description: pageDescription(props, locale),
+  image: image ? url(image.url) : undefined,
+  locale,
+  type: props.type,
+  published: props.published,
+  modified: props.modified,
+  author: props.author,
+  breadcrumbs: props.breadcrumbs,
+  items: props.schema === undefined ? undefined : [props.schema].flat(),
+})
+---
+
+{schema && <script is:inline type="application/ld+json" set:html={Schema.stringify(schema)} />}

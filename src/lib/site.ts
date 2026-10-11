@@ -1,73 +1,95 @@
 import { getConfig, localize } from "./config.ts"
-import type { MetadataConfig } from "./config.ts"
-import { pageUrl, url } from "./url.ts"
+import type { MetadataImage, ThemeColor } from "./config.ts"
+import { Favicon } from "./favicon.ts"
+import type { ManifestIcon } from "./favicon.ts"
+import { url } from "./url.ts"
+
+/** The options of the `Site` values that can have a text for each locale. */
+export type SiteOptions = {
+  /** The locale of the text, e.g. "fi". Defaults to the first text. */
+  locale?: string
+}
 
 /**
- * The site values of the integration, and absolute URLs with the Astro `site` and `base`.
+ * The values that you set in the integration. Each method returns `undefined` for an
+ * option that is not set.
+ *
+ * @example Site.description({ locale: "fi" })
  */
 export const Site = {
   /**
-   * Returns the site values of the integration. Without the integration, all values are undefined.
+   * Returns the `siteName` of the locale.
+   *
+   * @example Site.name() // "Acme Studio"
    */
-  get config(): MetadataConfig {
-    const config = getConfig()
+  name(options: SiteOptions = {}): string | undefined {
+    return localize(getConfig().siteName, options.locale)
+  },
+
+  /**
+   * Returns the `titleTemplate` of the locale.
+   *
+   * @example Site.template() // "%s | Acme Studio"
+   */
+  template(options: SiteOptions = {}): string | undefined {
+    return localize(getConfig().titleTemplate, options.locale)
+  },
+
+  /**
+   * Returns the `description` of the locale.
+   *
+   * @example Site.description({ locale: "fi" })
+   */
+  description(options: SiteOptions = {}): string | undefined {
+    return localize(getConfig().description, options.locale)
+  },
+
+  /**
+   * Returns the `image` with an absolute URL, and the alt text of the locale.
+   *
+   * @example Site.image() // { url: "https://example.com/og.jpg", alt: "Acme Studio", … }
+   */
+  image(options: SiteOptions = {}): MetadataImage | undefined {
+    const image = getConfig().image
+    if (!image) return undefined
+
     return {
-      siteName: config.siteName,
-      titleTemplate: config.titleTemplate,
-      description: config.description,
-      image: config.image,
-      twitter: config.twitter,
-      themeColor: config.themeColor,
-      feeds: config.feeds,
-      robots: config.robots,
-      manifest: config.manifest,
-      schema: config.schema,
+      url: url(image.url),
+      alt: localize(image.alt, options.locale),
+      width: image.width,
+      height: image.height,
     }
   },
 
   /**
-   * Returns the name of the site for a locale.
+   * Returns the `twitter` values. The card defaults to "summary_large_image".
    *
-   * @param locale - e.g. "fi". A missing locale uses the first value.
+   * @example Site.twitter() // { site: "@acmestudio", card: "summary_large_image" }
    */
-  name(locale?: string): string | undefined {
-    return localize(getConfig().siteName, locale)
+  twitter(): { site?: string; card: "summary" | "summary_large_image" } | undefined {
+    const twitter = getConfig().twitter
+    if (!twitter) return undefined
+
+    return {
+      site: twitter.site,
+      card: twitter.card ?? "summary_large_image",
+    }
   },
 
   /**
-   * Returns the full title of a page: the title in the title template, or the site name
-   * for a page without a title.
-   *
-   * @example Site.title("About") // "About | My Site"
+   * Returns the `themeColor`: one color, or `{ light, dark }`.
    */
-  title(title?: string, locale?: string): string | undefined {
-    const template = localize(getConfig().titleTemplate, locale)
-    if (!title) return Site.name(locale)
-    if (!template?.includes("%s")) return title
-
-    // A replacer function keeps "$&" and other "$" patterns in the title as text
-    return template.replace("%s", () => {
-      return title
-    })
+  themeColor(): ThemeColor | undefined {
+    return getConfig().themeColor
   },
 
   /**
-   * Returns the absolute URL of a path, with the Astro `site` and `base`.
-   * Absolute URLs stay unchanged.
+   * Returns the icons of the generated favicons, for the `icons` field of your own web app
+   * manifest. Without the `favicon` option, the list is empty.
    *
-   * @example Site.url("/og.jpg") // "https://example.com/og.jpg"
+   * @example export const GET = () => Response.json({ name: "Acme Studio", icons: Site.icons() })
    */
-  url(path: string): string {
-    return url(path)
-  },
-
-  /**
-   * Returns the absolute URL of a page, with or without the slash at the end,
-   * the same as the Astro `trailingSlash` and `build.format` settings.
-   *
-   * @example Site.pageUrl("/blog") // "https://example.com/blog/"
-   */
-  pageUrl(path: string): string {
-    return pageUrl(path)
+  icons(): ManifestIcon[] {
+    return Favicon.icons()
   },
 }

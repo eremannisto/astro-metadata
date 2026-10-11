@@ -1,0 +1,9 @@
+---
+import { Favicon } from "../lib/favicon.ts"
+---
+
+{
+  Favicon.links().map((link) => {
+    return <link rel={link.rel} type={link.type} href={link.href} sizes={link.sizes} />
+  })
+}

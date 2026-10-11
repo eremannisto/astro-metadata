@@ -1,0 +1,21 @@
+---
+import { getConfig } from "../lib/config.ts"
+import { pageAuthors, pageImage } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+
+export type Props = Pick<MetadataProps, "image" | "author">
+
+// Twitter (X) uses the Open Graph title, description and image, so only the tags that
+// are specific to Twitter (X) are necessary
+const twitter = getConfig().twitter
+const card = pageImage(Astro.props) ? (twitter?.card ?? "summary_large_image") : "summary"
+const creator = pageAuthors(Astro.props)
+  .map((author) => {
+    return typeof author === "string" ? undefined : author.twitter
+  })
+  .find(Boolean)
+---
+
+<meta name="twitter:card" content={card} />
+{twitter?.site && <meta name="twitter:site" content={twitter.site} />}
+{creator && <meta name="twitter:creator" content={creator} />}
