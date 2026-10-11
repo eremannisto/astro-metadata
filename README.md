@@ -111,14 +111,25 @@ metadata({
 
 ### Locales
 
-`<Metadata>` reads the locales from your i18n setup. You do not need extra code:
+On a site with more than one language, `<Metadata>` finds the language of each page and its other language versions by itself. This works with [`@mannisto/astro-i18n`](https://github.com/eremannisto/astro-i18n) and with the `i18n` option of Astro. You do not need extra code.
 
-- **[`@mannisto/astro-i18n`](https://github.com/eremannisto/astro-i18n):** the locale, the public URL of the page (`/about` and not `/en/about`) and the hreflang links.
-- **The `i18n` option of Astro:** the locale and the hreflang links.
+Each page then tells search engines and social sites its language, and where the same page is in the other languages:
 
-The hreflang links contain the page in each locale, and `x-default` for the default locale. To give your own links, use the `hreflang` prop. `hreflang={[]}` turns the links off, for example on a 404 page.
+```html
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="fi_FI">
+<link rel="alternate" hreflang="en" href="https://example.com/about/">
+<link rel="alternate" hreflang="fi" href="https://example.com/fi/about/">
+<link rel="alternate" hreflang="x-default" href="https://example.com/about/">
+```
 
-The same locales give `og:locale` and `og:locale:alternate`, in the `language_COUNTRY` format of Open Graph: `fi` becomes `fi_FI`, and `en-GB` becomes `en_GB`.
+With `@mannisto/astro-i18n`, the URLs also follow your prefix setting, for example `/about` and not `/en/about`.
+
+A page that has no other language versions, for example a 404 page, can turn off the links:
+
+```astro
+<Metadata hreflang={[]} />
+```
 
 ## Metadata component
 
