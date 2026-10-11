@@ -111,7 +111,7 @@ metadata({
 
 ### Locales
 
-On a site with more than one language, `<Metadata>` finds the language of each page and its other language versions by itself. This works with [`@mannisto/astro-i18n`](https://github.com/eremannisto/astro-i18n) and with the `i18n` option of Astro. You do not need extra code.
+On a site with more than one language, `<Metadata>` finds the language of each page and its other language versions by itself. This works with [`@mannisto/astro-i18n`](https://github.com/eremannisto/astro-i18n) and with the [native i18n of Astro](https://docs.astro.build/en/guides/internationalization/). You do not need extra code.
 
 Each page then tells search engines and social sites its language, and where the same page is in the other languages:
 
@@ -124,6 +124,28 @@ Each page then tells search engines and social sites its language, and where the
 ```
 
 With `@mannisto/astro-i18n`, the URLs also follow your prefix setting, for example `/about` and not `/en/about`.
+
+With another i18n library, give the language of the page in `locale`, and the language versions in `hreflang`. `<Metadata>` makes the same tags from them:
+
+```astro
+<Metadata
+  locale="fi"
+  hreflang={[
+    {
+      hreflang: "en",
+      href: "/about",
+    },
+    {
+      hreflang: "fi",
+      href: "/fi/about",
+    },
+    {
+      hreflang: "x-default",
+      href: "/about",
+    },
+  ]}
+/>
+```
 
 A page that has no other language versions, for example a 404 page, can turn off the links:
 
