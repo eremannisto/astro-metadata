@@ -43,18 +43,8 @@ export default defineToolbarApp({
       setOpen(false)
     })
 
-    // Alt+M (Option+M on a Mac) opens and closes the panel. Escape closes it.
-    // `code` is the key, not the character: Option+M types "µ" on a Mac.
     document.addEventListener("keydown", (event) => {
-      const target = event.target as HTMLElement | null
-      if (target?.closest("input, textarea, select, [contenteditable]")) return
-
-      if (event.altKey && event.code === "KeyM") {
-        event.preventDefault()
-        setOpen(!open)
-      } else if (event.key === "Escape" && open) {
-        setOpen(false)
-      }
+      if (event.key === "Escape" && open) setOpen(false)
     })
 
     // View transitions change the page without a full load

@@ -64,15 +64,9 @@ test.describe("dev toolbar app", () => {
     await expect(alerts).toHaveAttribute("heading", "Checks are off for this page")
   })
 
-  test("opens the panel with Alt+M and closes it with Escape", async ({ page }) => {
-    await page.goto("/", { waitUntil: "networkidle" })
-    // The toolbar starts the app after the page loads
-    await page
-      .locator("astro-dev-toolbar [data-app-id='mannisto-astro-metadata']")
-      .first()
-      .waitFor()
+  test("closes the panel with Escape", async ({ page }) => {
+    await openApp(page, "/")
     const panel = page.locator("astro-metadata-panel .panel")
-    await page.keyboard.press("Alt+KeyM")
     await expect(panel).toBeVisible()
     await page.keyboard.press("Escape")
     await expect(panel).toBeHidden()
