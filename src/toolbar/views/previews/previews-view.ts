@@ -17,7 +17,6 @@ import { slack } from "./slack.ts"
 import { twitter } from "./twitter.ts"
 import { whatsapp } from "./whatsapp.ts"
 
-// The platforms in the order of the sections
 const PLATFORMS: Platform[] = [google, twitter, facebook, linkedin, whatsapp, discord, slack]
 
 /**

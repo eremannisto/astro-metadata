@@ -1,10 +1,8 @@
-/* The alerts of the page: one for each level */
 .alerts {
   display: grid;
   gap: var(--space-200);
 }
 
-/* The Open Graph image at the full width of the panel */
 .image {
   width: 100%;
   aspect-ratio: 1.91 / 1;

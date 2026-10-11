@@ -61,7 +61,6 @@
   font-weight: 400;
   height: 100%;
 
-  /* Inline code in the alert uses the colors of the level */
   --code-color: var(--text);
   --code-border: color-mix(in srgb, var(--border) 40%, transparent);
   --code-background: color-mix(in srgb, var(--border) 20%, transparent);
@@ -73,7 +72,6 @@
   }
 }
 
-/* The list of items, each with a dot in the color of its level */
 .items {
   display: grid;
   gap: var(--space-50);

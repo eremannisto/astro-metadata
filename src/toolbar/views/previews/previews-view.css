@@ -4,7 +4,6 @@
  * look like the platform, not like the panel.
  */
 
-/* The preview at the center of a dotted background */
 .stage {
   display: flex;
   justify-content: center;

@@ -8,7 +8,6 @@ import { defaultFaviconFiles, resolveFaviconFiles } from "./lib/favicon-files.js
 
 const NAME = "@mannisto/astro-metadata"
 
-// The site values of the options. The components read them at build time.
 const SITE_KEYS = [
   "siteName",
   "titleTemplate",
@@ -22,7 +21,6 @@ const SITE_KEYS = [
   "schema",
 ]
 
-// The Lit modules of the dev toolbar app
 const LIT_MODULES = [
   "lit",
   "lit/directives/style-map.js",
@@ -285,7 +283,6 @@ function findHtmlFiles(dir) {
     .sort()
 }
 
-// The MIME types of the image files, by their extension
 const MIME_TYPES = {
   ".avif": "image/avif",
   ".gif": "image/gif",
@@ -464,7 +461,6 @@ async function checkPages(context, logger) {
   }
 }
 
-// The path of the check endpoint of the dev server
 const CHECK_PATH = "/__astro-metadata/check"
 
 /**
@@ -546,7 +542,6 @@ export default function metadata(options = {}) {
           })
         }
 
-        // The dev toolbar app runs only in dev, and the `debug` option can turn it off
         const toolbar = command === "dev" && debug.client
         context.root = config.root
         context.site = config.site
@@ -597,7 +592,6 @@ export default function metadata(options = {}) {
           })
         }
 
-        // One route for each favicon file, all with the same endpoint
         if (favicon) {
           for (const file of favicon.files) {
             injectRoute({

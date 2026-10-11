@@ -117,7 +117,6 @@ export const Manifest = {
       ...manifest.extra,
     }
 
-    // Remove empty fields, so the file has only the values that the config gives
     for (const key of Object.keys(json)) {
       if (json[key] === undefined) delete json[key]
     }

@@ -813,7 +813,6 @@ export const SITE_RULES = [
     field: "hreflang",
     level: "warning",
     check(pages) {
-      // The pages by their canonical URL
       const byUrl = new Map()
       for (const page of pages) {
         const canonical = findLink(page.head, "canonical")

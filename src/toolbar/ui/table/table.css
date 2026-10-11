@@ -1,4 +1,3 @@
-/* A framed container, a hairline between the rows, and a hover color */
 :host {
   display: block;
 }
@@ -31,7 +30,6 @@ tr {
     background: var(--zinc-800);
   }
 
-  /* The child rows are indented under their row */
   &.child th {
     padding-left: calc(var(--space-400) + var(--space-400));
   }

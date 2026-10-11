@@ -109,7 +109,6 @@ function jsonLd(): JsonLd[] {
     const source = script.textContent ?? ""
     try {
       const data = JSON.parse(source)
-      // The items of a list, or of a graph
       const list = Array.isArray(data) ? data : [data]
       const items = list.flatMap((item) => {
         return Array.isArray(item?.["@graph"]) ? item["@graph"] : [item]
@@ -239,7 +238,6 @@ export type PageChecks = {
   checks: Check[]
 }
 
-// The check endpoint of the dev server. The integration adds it.
 const CHECK_PATH = "/__astro-metadata/check"
 
 /**

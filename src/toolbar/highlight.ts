@@ -1,6 +1,3 @@
-// A small highlighter for the two formats of the panel: JSON and HTML.
-// It wraps each token in a span with a class, and the CSS sets the colors.
-
 export type Language = "json" | "html"
 
 /**

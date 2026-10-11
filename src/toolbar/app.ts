@@ -15,7 +15,6 @@ export default defineToolbarApp({
     canvas.append(panel)
     let open = false
 
-    // The badge shows the worst problem of the page
     async function updateBadge() {
       const { checks } = await checkPage()
       const { level } = summarize(checks)

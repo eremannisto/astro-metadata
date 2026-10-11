@@ -1,6 +1,5 @@
 import { defineConfig } from "@playwright/test"
 
-// Each fixture and the tests that use it
 const fixtures = [
   { name: "basic", testMatch: ["basic/**/*.test.ts"] },
   { name: "config", testMatch: ["config/**/*.test.ts"] },
