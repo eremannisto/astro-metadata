@@ -44,12 +44,28 @@ export default defineConfig({
       siteName: "Acme Studio",
       titleTemplate: "%s | Acme Studio",
       description: "Tools for small teams.",
-      image: { url: "/og.jpg", alt: "Acme Studio", width: 1200, height: 630 },
-      twitter: { site: "@acmestudio" },
+      image: {
+        url: "/og.jpg",
+        alt: "Acme Studio",
+        width: 1200,
+        height: 630,
+      },
+      twitter: {
+        site: "@acmestudio",
+      },
       themeColor: "#111111",
-      feeds: [{ href: "/rss.xml", title: "News" }],
-      favicon: { source: "./src/assets/logo.svg" },
-      manifest: { name: "Acme Studio" },
+      feeds: [
+        {
+          href: "/rss.xml",
+          title: "News",
+        },
+      ],
+      favicon: {
+        source: "./src/assets/logo.svg",
+      },
+      manifest: {
+        name: "Acme Studio",
+      },
     }),
   ],
 })
@@ -80,8 +96,14 @@ Each text can be one string, or an object with one string for each locale:
 
 ```typescript
 metadata({
-  siteName: { en: "Acme Studio", fi: "Acme Studio Suomi" },
-  titleTemplate: { en: "%s | Acme Studio", fi: "%s | Acme Studio Suomi" },
+  siteName: {
+    en: "Acme Studio",
+    fi: "Acme Studio Suomi",
+  },
+  titleTemplate: {
+    en: "%s | Acme Studio",
+    fi: "%s | Acme Studio Suomi",
+  },
 })
 ```
 
@@ -229,11 +251,25 @@ To generate other files, give a `files` list. It replaces the default files:
 favicon: {
   source: "./src/assets/logo.svg",
   files: [
-    { path: "/favicon.ico", sizes: [16, 32, 48] },
-    { path: "/favicon.svg" },
-    { path: "/apple-touch-icon.png", size: 180 },
-    { path: "/favicon-96.png", size: 96 },
-    { path: "/favicon-512.png", size: 512 },
+    {
+      path: "/favicon.ico",
+      sizes: [16, 32, 48],
+    },
+    {
+      path: "/favicon.svg",
+    },
+    {
+      path: "/apple-touch-icon.png",
+      size: 180,
+    },
+    {
+      path: "/favicon-96.png",
+      size: 96,
+    },
+    {
+      path: "/favicon-512.png",
+      size: 512,
+    },
   ],
 }
 ```
@@ -288,7 +324,10 @@ Your own manifest endpoint can use the generated icons with `Site.icons()`:
 import { Site } from "@mannisto/astro-metadata/runtime"
 
 export const GET = () => {
-  return Response.json({ name: Site.name(), icons: Site.icons() })
+  return Response.json({
+    name: Site.name(),
+    icons: Site.icons(),
+  })
 }
 ```
 
@@ -319,7 +358,11 @@ For a personal site, use `publisher: { type: "Person" }`. Set `schema: false` to
   title="Hello"
   type="article"
   published={post.date}
-  author={{ name: "Acme Writer", url: "/about", twitter: "@acmewriter" }}
+  author={{
+    name: "Acme Writer",
+    url: "/about",
+    twitter: "@acmewriter",
+  }}
 />
 ```
 
@@ -328,8 +371,14 @@ For a personal site, use `publisher: { type: "Person" }`. Set `schema: false` to
 ```astro
 <Metadata
   breadcrumbs={[
-    { name: "Home", url: "/" },
-    { name: "Blog", url: "/blog" },
+    {
+      name: "Home",
+      url: "/",
+    },
+    {
+      name: "Blog",
+      url: "/blog",
+    },
   ]}
 />
 ```
@@ -337,7 +386,13 @@ For a personal site, use `publisher: { type: "Person" }`. Set `schema: false` to
 **Your own items.** Give other types, for example a `Product` or an `Event`, in `schema`. The types come from [`schema-dts`](https://github.com/google/schema-dts), so your editor completes the schema.org fields:
 
 ```astro
-<Metadata schema={{ "@type": "Event", name: "Opening night", startDate: "2026-11-01" }} />
+<Metadata
+  schema={{
+    "@type": "Event",
+    name: "Opening night",
+    startDate: "2026-11-01",
+  }}
+/>
 ```
 
 All items go into one graph. The items link to each other with `@id`, and all URLs are absolute.
@@ -377,10 +432,23 @@ The dev toolbar app checks the current page. The build checks all prerendered pa
 To turn off the checks, use `debug`:
 
 ```typescript
+// No dev toolbar app
 metadata({
-  debug: { client: false }, // No dev toolbar app
-  // debug: { build: false }, // No build log
-  // debug: false, // Neither
+  debug: {
+    client: false,
+  },
+})
+
+// No build log
+metadata({
+  debug: {
+    build: false,
+  },
+})
+
+// Neither
+metadata({
+  debug: false,
 })
 ```
 
@@ -488,7 +556,10 @@ Version 2 is a new API. The main changes:
 
 ```diff
 - <Head title="About" titleTemplate="%s | My Site" description="..." />
-+ metadata({ titleTemplate: "%s | My Site", description: "..." })
++ metadata({
++   titleTemplate: "%s | My Site",
++   description: "...",
++ })
 ```
 
 ### Use `<Metadata>` inside your own `<head>`
@@ -529,7 +600,11 @@ The single components take the props of `<Metadata>`, and `<Metadata>` renders a
 
 ```diff
 - <Head favicon={{ icons: [{ path: "/favicon.ico" }] }} />
-+ metadata({ favicon: { source: "./src/assets/logo.svg" } })
++ metadata({
++   favicon: {
++     source: "./src/assets/logo.svg",
++   },
++ })
 ```
 
 ## Contributing
