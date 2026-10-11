@@ -6,9 +6,7 @@
 ![npm version](https://img.shields.io/npm/v/@mannisto/astro-metadata?style=for-the-badge)
 ![license](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
 
-The page metadata for Astro: the title, the description, the canonical URL, social cards, favicons, the web app manifest and structured data. Set the site values one time, and give each page only its own values.
-
-In dev, the Metadata app in the Astro dev toolbar checks each page, and shows its tags and its link previews. See [Dev toolbar app](#dev-toolbar-app).
+The page metadata for Astro: the title, the description, the canonical URL, social cards, favicons, the web app manifest and structured data. Set the site values one time, and give each page only its own values. In dev, an app in the Astro dev toolbar checks each page.
 
 - [Install](#install)
 - [Configuration](#configuration)
@@ -72,7 +70,7 @@ Set `site` in the Astro config. The canonical URL and the social images must be 
 | `favicon` | — | Generates the favicons from one image. See [Favicons](#favicons). |
 | `manifest` | — | Generates the web app manifest, or links your own. See [Web app manifest](#web-app-manifest). |
 | `schema` | — | The structured data of the site: `publisher` is the organization or the person behind the site. `false` turns it off. See [Structured data](#structured-data). |
-| `debug` | `true` | The Metadata app in the dev toolbar (`client`) and the checks in the build log (`build`). Set `false` to turn off both, or `{ client: false }` or `{ build: false }` to turn off one. See [Checks](#checks). |
+| `debug` | `true` | The dev toolbar app (`client`) and the build log (`build`). See [Checks](#checks). |
 | `rules` | — | `ignore`: the ids of the check rules to turn off. `custom`: your own rules. See [Checks](#checks). |
 | `pages` | — | `ignore`: the pages without checks, as path patterns, for example `["/404", "/drafts/**"]`. See [Checks](#checks). |
 
@@ -98,7 +96,7 @@ metadata({
 
 The hreflang links contain the page in each locale, and `x-default` for the default locale. To give your own links, use the `hreflang` prop. `hreflang={[]}` turns the links off, for example on a 404 page.
 
-`<Metadata>` also renders the Open Graph locales: `og:locale` for the locale of the page, and `og:locale:alternate` for each other locale of the hreflang links. Open Graph uses the format `language_COUNTRY`: an ISO 639-1 language and an ISO 3166-1 alpha-2 country. A locale without a country gets the most likely country of its language, so `fi` becomes `fi_FI` and `en` becomes `en_US`. A locale with a country, for example `en-GB`, keeps its country. A locale that has no value in this format, for example `fil`, gets no tag.
+The same locales give `og:locale` and `og:locale:alternate`, in the `language_COUNTRY` format of Open Graph: `fi` becomes `fi_FI`, and `en-GB` becomes `en_GB`.
 
 ## Metadata component
 
@@ -308,11 +306,7 @@ All items go into one graph. The items link to each other with `@id`, and all UR
 
 ## Dev toolbar app
 
-Run `astro dev` and open the Metadata app in the dev toolbar. You can also add `?metadata` to the URL of a page. The app has three tabs:
-
-- **Overview:** the problems of the page, and its values in sections: General, Social, Locales, Structured data, Web app manifest and Feeds. Click a problem to open the row of its tag.
-- **Previews:** the link previews of Google, Twitter (X), Facebook, LinkedIn, WhatsApp, Discord and Slack.
-- **Raw:** all tags of the head, and the structured data as JSON.
+Run `astro dev`, and open the Metadata app in the dev toolbar, or add `?metadata` to the URL. The app checks the current page, and shows its tags and its link previews. Click a problem to open the row of its tag.
 
 <table>
   <tr>
@@ -327,37 +321,34 @@ Run `astro dev` and open the Metadata app in the dev toolbar. You can also add `
   </tr>
 </table>
 
-To remove the app, set `debug: { client: false }`. See [Checks](#checks) for the rules.
-
 ## Checks
 
-The integration checks the metadata of each page. Each problem has a level:
-
-| Level | Meaning | Examples |
-| --- | --- | --- |
-| Error | The metadata is broken. | No title, placeholder text such as `undefined`, two canonical links, invalid JSON-LD, an `og:image` that does not load |
-| Warning | Fix it for better results. | A long title, the same title on two pages, no `twitter:card`, an `og:image` over 600 KB, an hreflang page that does not link back |
-| Info | Good to know. | `noindex`, a short description, no `og:image:alt` |
-
-The checks look at three things:
-
-- **The head of each page:** the tags, the structured data and the hreflang links. A page with `noindex` gets no search and sharing checks.
-- **The files of each page:** the `og:image` and the favicons. The checks load them, and compare the real image size, format and file size with the tags. Files on other sites are not checked.
-- **All pages together:** the same title or description on two pages, and hreflang links that do not link back. Only the build can compare the pages.
-
-The results show in two places:
-
-- **In dev:** Open the Metadata app in the Astro dev toolbar. It shows the problems of the current page. Click a problem to open the row of its tag. The app also shows the link previews of Google, Twitter (X), Facebook, LinkedIn, WhatsApp, Discord and Slack, and all metadata tags.
-- **In the build:** The integration logs the errors and the warnings of the prerendered pages:
+The dev toolbar app checks the current page. The build checks all prerendered pages, also against each other (the same title on two pages, hreflang links that do not link back), and logs the errors and the warnings:
 
 ```
 [WARN] [@mannisto/astro-metadata] /about/index.html
   - The page has no description.
 ```
 
+| Level | Meaning | Examples |
+| --- | --- | --- |
+| Error | The metadata is broken. | No title, placeholder text such as `undefined`, invalid JSON-LD, an `og:image` that does not load |
+| Warning | Fix it for better results. | A long title, the same title on two pages, an `og:image` over 600 KB |
+| Info | Good to know. | `noindex`, a short description, no `og:image:alt` |
+
+To turn off the checks, use `debug`:
+
+```typescript
+metadata({
+  debug: { client: false }, // No dev toolbar app
+  // debug: { build: false }, // No build log
+  // debug: false, // Neither
+})
+```
+
 ### Turn off rules
 
-All rules and their ids are in [`src/lib/rules.js`](./src/lib/rules.js). Give the ids of the rules to turn off in `rules.ignore`. This applies to the dev toolbar app and to the build:
+Give the ids of the rules in `rules.ignore`. All rules and their ids are in [`src/lib/rules.js`](./src/lib/rules.js).
 
 ```typescript
 metadata({
@@ -404,11 +395,11 @@ The rule can also have:
 - `field`, the tag of the problem, for example `"og:title"`. A click on the problem in the dev toolbar app opens its row.
 - `indexed: true`, to skip the rule on a noindex page.
 
-The custom rules run in the build and in the dev toolbar app. In dev, the dev server runs them, because they are functions in the Astro config. Text between backticks in a message shows as code in the dev toolbar app. The `MetadataRule` type gives your editor completion.
+Text between backticks in a message shows as code in the dev toolbar app. The `MetadataRule` type gives your editor completion.
 
 ### Ignore pages
 
-Some pages do not need checks, for example a 404 page or the drafts. Give their paths in `pages.ignore`, without the base. In a pattern, `*` matches one part of the path, and `**` matches any number of parts:
+Give the paths of the pages without checks in `pages.ignore`, without the base. `*` matches one part of the path, and `**` matches any number of parts:
 
 ```typescript
 metadata({
@@ -418,9 +409,7 @@ metadata({
 })
 ```
 
-The build does not check these pages, and does not compare them with the other pages. The dev toolbar app shows all values of these pages, but no problems.
-
-Set `debug: { build: false }` to hide the build warnings, `debug: { client: false }` to remove the dev toolbar app, and `debug: false` to turn off both.
+The dev toolbar app still shows the values of these pages, but no problems.
 
 ## API
 
