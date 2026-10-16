@@ -123,7 +123,7 @@ Each page then tells search engines and social sites its language, and where the
 <link rel="alternate" hreflang="x-default" href="https://example.com/about/">
 ```
 
-With `@mannisto/astro-i18n`, the URLs also follow your prefix setting, for example `/about` and not `/en/about`.
+With `@mannisto/astro-i18n`, the URLs also follow your `prefixDefaultLocale` option, for example `/about` and not `/en/about`.
 
 With another i18n library, give the language of the page in `locale`, and the language versions in `hreflang`. `<Metadata>` makes the same tags from them:
 
@@ -222,7 +222,7 @@ The page values override the site values. For example, `title="About"` gives:
 | `schema` | — | Structured data items of your own, for example a `Product`. See [Structured data](#structured-data). |
 | `locale` | The locale of the page | The locale of the translated site values. See [Locales](#locales). |
 
-A tag is rendered only when it has a value. For example, the robots tag is necessary only with `index` or `follow` set to `false`.
+`<Metadata>` renders a tag only when the tag has a value. For example, the robots tag is necessary only with `index` or `follow` set to `false`.
 
 ### Single components
 
@@ -449,14 +449,14 @@ Run `astro dev`, and open the Metadata app in the dev toolbar. The app checks th
 
 ## Checks
 
-The dev toolbar app checks the current page. The build checks all prerendered pages, also against each other (the same title on two pages, hreflang links that do not link back), and logs the errors and the warnings:
+The dev toolbar app checks the current page. The build checks all prerendered pages, and compares them, for example for the same title on two pages. It logs the errors and the warnings:
 
 ```
 [WARN] [@mannisto/astro-metadata] /about/index.html
   - The page has no description.
 ```
 
-| Level | Meaning | Examples |
+| Level | Description | Examples |
 | --- | --- | --- |
 | Error | The metadata is broken. | No title, placeholder text such as `undefined`, invalid JSON-LD, an `og:image` that does not load |
 | Warning | Fix it for better results. | A long title, the same title on two pages, an `og:image` over 600 KB |
@@ -499,7 +499,7 @@ metadata({
 
 ### Custom rules
 
-Add your own rules in `rules.custom`. A rule has an `id`, a `level` (`"error"`, `"warning"` or `"info"`), a `message`, and a `check` function that returns `true` when the page has the problem:
+Add your own rules in `rules.custom`. A rule has an `id`, a `level` (`"error"`, `"warning"` or `"info"`), a `message` and a `check` function. The function returns `true` when the page has the problem:
 
 ```typescript
 metadata({
@@ -576,8 +576,8 @@ Import the types from `@mannisto/astro-metadata/runtime`, for example `import ty
 
 ## Good to know
 
-- **CMS data.** Give CMS values to `<Metadata>` as props. The site values of the integration are fixed at startup, and a change restarts the dev server.
-- **Trailing slash.** The canonical URL and the `hreflang` links follow the `trailingSlash` setting of Astro. With `"ignore"`, `build.format` decides.
+- **CMS data.** Give CMS values to `<Metadata>` as props. The integration reads its site values one time at startup, and a change restarts the dev server.
+- **Trailing slash.** The canonical URL and the `hreflang` links follow the `trailingSlash` option of Astro. With `"ignore"`, `build.format` decides.
 - **`sharp`.** The favicons use the `sharp` package that Astro installs. If you install Astro without its optional dependencies, install `sharp` yourself.
 - **Files in `public/`.** A file in `public/` with the same path as a generated favicon replaces the generated file. The integration shows a warning.
 
@@ -611,7 +611,7 @@ Version 2 is a new API. The main changes:
 
 ### Use the new props of the single components
 
-The single components take the props of `<Metadata>`, and `<Metadata>` renders all of them. `Keywords` is removed, because search engines do not use the tag.
+The single components take the props of `<Metadata>`, and `<Metadata>` renders all of them. There is no `Keywords` component, because search engines do not use the tag.
 
 ```diff
 - <LanguageAlternates alternates={links} />
@@ -620,7 +620,7 @@ The single components take the props of `<Metadata>`, and `<Metadata>` renders a
 
 ### Replace the `Metadata` store
 
-`Metadata.set()` and `Metadata.resolve()` are removed. Give the values as props to your layout.
+v2 has no `Metadata.set()` and `Metadata.resolve()`. Give the values as props to your layout.
 
 ### Replace the robots object and the `false` props
 
