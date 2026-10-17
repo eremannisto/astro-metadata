@@ -6,7 +6,6 @@ import type { PageMetadata } from "../data.ts"
 import { define } from "../define.ts"
 import tokens from "../styles/tokens.css?inline"
 
-import "../ui/badge/badge.ts"
 import "../ui/icon/icon.ts"
 import "../ui/tab-group/tab-group.ts"
 
@@ -105,10 +104,7 @@ export class MetadataPanel extends LitElement {
 
         <header class="header">
           <div class="heading">
-            <div class="title">
-              <h1>Metadata</h1>
-              <astro-metadata-badge level="info">Beta</astro-metadata-badge>
-            </div>
+            <h1>Metadata</h1>
             <p class="path">${location.pathname}</p>
           </div>
           <button class="close" @click=${this.close} aria-label="Close the panel">
