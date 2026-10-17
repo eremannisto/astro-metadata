@@ -76,69 +76,6 @@ Set `site` in the Astro config. The canonical URL and the social images must be 
 | `rules` | — | `ignore`: the ids of the check rules to turn off. `custom`: your own rules. See [Checks](#checks). |
 | `pages` | — | `ignore`: the pages without checks, as path patterns, for example `["/404", "/drafts/**"]`. See [Checks](#checks). |
 
-### Translations
-
-Each text can be one string, or an object with one string for each locale:
-
-```typescript
-metadata({
-  siteName: {
-    en: "Acme Studio",
-    fi: "Acme Studio Suomi",
-  },
-  titleTemplate: {
-    en: "%s | Acme Studio",
-    fi: "%s | Acme Studio Suomi",
-  },
-})
-```
-
-`<Metadata>` uses the text of the locale of the page, or of its `locale` prop. A locale without a text uses the first text.
-
-### Locales
-
-On a site with more than one language, `<Metadata>` finds the language of each page and its other language versions by itself. This works with [`@mannisto/astro-i18n`](https://github.com/eremannisto/astro-i18n) and with the [native i18n of Astro](https://docs.astro.build/en/guides/internationalization/). You do not need extra code.
-
-Each page then tells search engines and social sites its language, and where the same page is in the other languages:
-
-```html
-<meta property="og:locale" content="en_US">
-<meta property="og:locale:alternate" content="fi_FI">
-<link rel="alternate" hreflang="en" href="https://example.com/about/">
-<link rel="alternate" hreflang="fi" href="https://example.com/fi/about/">
-<link rel="alternate" hreflang="x-default" href="https://example.com/about/">
-```
-
-With `@mannisto/astro-i18n`, the URLs also follow your `prefixDefaultLocale` option, for example `/about` and not `/en/about`.
-
-With another i18n library, give the language of the page in `locale`, and the language versions in `hreflang`. `<Metadata>` makes the same tags from them:
-
-```astro
-<Metadata
-  locale="fi"
-  hreflang={[
-    {
-      hreflang: "en",
-      href: "/about",
-    },
-    {
-      hreflang: "fi",
-      href: "/fi/about",
-    },
-    {
-      hreflang: "x-default",
-      href: "/about",
-    },
-  ]}
-/>
-```
-
-A page that has no other language versions, for example a 404 page, can turn off the links:
-
-```astro
-<Metadata hreflang={[]} />
-```
-
 ## Metadata component
 
 Put `<Metadata>` into the `<head>` of your layout, and give it the values of the page:
@@ -238,6 +175,68 @@ import { Canonical, OpenGraph, Title } from "@mannisto/astro-metadata/components
 | `<Feeds>` | The feed links |
 | `<LanguageAlternates>` | The hreflang links |
 | `<Schema>` | The structured data |
+
+## Multiple languages
+
+### Translations
+
+Each text can be one string, or an object with one string for each locale:
+
+```typescript
+metadata({
+  siteName: "Acme Studio",
+  description: {
+    en: "Tools for small teams.",
+    fi: "Työkaluja pienille tiimeille.",
+  },
+})
+```
+
+`<Metadata>` uses the text of the locale of the page, or of its `locale` prop. A locale without a text uses the first text.
+
+### Locales
+
+On a site with more than one language, `<Metadata>` finds the language of each page and its other language versions by itself. This works with [`@mannisto/astro-i18n`](https://github.com/eremannisto/astro-i18n) and with the [native i18n of Astro](https://docs.astro.build/en/guides/internationalization/). You do not need extra code.
+
+Each page then tells search engines and social sites its language, and where the same page is in the other languages:
+
+```html
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="fi_FI">
+<link rel="alternate" hreflang="en" href="https://example.com/about/">
+<link rel="alternate" hreflang="fi" href="https://example.com/fi/about/">
+<link rel="alternate" hreflang="x-default" href="https://example.com/about/">
+```
+
+With `@mannisto/astro-i18n`, the URLs also follow your `prefixDefaultLocale` option, for example `/about` and not `/en/about`.
+
+With another i18n library, give the language of the page in `locale`, and the language versions in `hreflang`. `<Metadata>` makes the same tags from them:
+
+```astro
+<Metadata
+  locale="fi"
+  hreflang={[
+    {
+      hreflang: "en",
+      href: "/about",
+    },
+    {
+      hreflang: "fi",
+      href: "/fi/about",
+    },
+    {
+      hreflang: "x-default",
+      href: "/about",
+    },
+  ]}
+/>
+```
+
+A page that has no other language versions, for example a 404 page, can turn off the links:
+
+```astro
+<Metadata hreflang={[]} />
+```
 
 ## Favicons
 
