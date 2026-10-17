@@ -5,8 +5,7 @@ import type { MetadataProps } from "../lib/page.ts"
 import { Schema } from "../lib/schema.ts"
 import { url } from "../lib/url.ts"
 
-export type Props = Pick<
-  MetadataProps,
+type Keys =
   | "title"
   | "description"
   | "image"
@@ -18,7 +17,8 @@ export type Props = Pick<
   | "breadcrumbs"
   | "schema"
   | "locale"
->
+
+export type Props = Pick<MetadataProps, Keys>
 
 const props = Astro.props
 const locale = pageLocale(Astro, props)
