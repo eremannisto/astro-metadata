@@ -1,0 +1,29 @@
+---
+import { getConfig, localize } from "../lib/config.ts"
+import { pageLocale } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+import { withBase } from "../lib/url.ts"
+
+export type Props = Pick<MetadataProps, "locale">
+
+const locale = pageLocale(Astro, Astro.props)
+
+const FEED_TYPES = {
+  rss: "application/rss+xml",
+  atom: "application/atom+xml",
+  json: "application/feed+json",
+}
+---
+
+{
+  getConfig().feeds?.map((feed) => {
+    return (
+      <link
+        rel="alternate"
+        type={FEED_TYPES[feed.type ?? "rss"]}
+        title={localize(feed.title, locale)}
+        href={withBase(feed.href)}
+      />
+    )
+  })
+}

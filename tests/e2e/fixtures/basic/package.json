@@ -6,6 +6,6 @@
   },
   "dependencies": {
     "@mannisto/astro-metadata": "workspace:*",
-    "astro": "^6.4.8"
+    "astro": "^7.3.5"
   }
 }

@@ -1,9 +1,10 @@
 ---
-export type Props = {
-  value?: string
-}
+import { pageDescription, pageLocale } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
 
-const { value } = Astro.props
+export type Props = Pick<MetadataProps, "description" | "locale">
+
+const description = pageDescription(Astro.props, pageLocale(Astro, Astro.props))
 ---
 
-{value && <meta name="description" content={value} />}
+{description && <meta name="description" content={description} />}

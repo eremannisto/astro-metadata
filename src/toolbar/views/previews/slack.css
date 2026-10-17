@@ -1,0 +1,61 @@
+/* Slack: a link unfurl under a message */
+.slack {
+  width: 100%;
+  max-width: 520px;
+  padding: 16px;
+  font-family: Lato, "Helvetica Neue", Helvetica, "Segoe UI", sans-serif;
+  border-radius: 8px;
+  background: #1a1d21;
+}
+
+.slack .unfurl {
+  display: flex;
+  gap: 12px;
+  padding-left: 12px;
+  border-left: 4px solid #35373b;
+
+  .body {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    font-size: 15px;
+    line-height: 22px;
+    color: #d1d2d3;
+  }
+
+  .site {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+  }
+
+  .favicon {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    object-fit: contain;
+  }
+
+  .title {
+    font-weight: 700;
+    color: #1d9bd1;
+  }
+
+  /* A large image: under the text, at most 360 px wide */
+  .image {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 1.91 / 1;
+    margin-top: 8px;
+    border-radius: 8px;
+  }
+
+  /* A small image: on the right */
+  .thumbnail {
+    flex: none;
+    width: 72px;
+    height: 72px;
+    border-radius: 4px;
+  }
+}

@@ -1,13 +1,10 @@
 ---
-export type Props = {
-  value: string
-  template?: `${string}%s${string}`
-}
+import { fullTitle, pageLocale } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
 
-const { value, template = "%s" } = Astro.props
+export type Props = Pick<MetadataProps, "title" | "locale">
 
-// A replacer function keeps "$&" and other "$" patterns in the title as text
-const title = template.replace("%s", () => value)
+const title = fullTitle(Astro.props.title, pageLocale(Astro, Astro.props))
 ---
 
-<title>{title}</title>
+{title && <title>{title}</title>}

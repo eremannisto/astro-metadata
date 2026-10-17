@@ -1,11 +1,10 @@
 ---
-export type Props = {
-  value?: string
-}
+import { pageCanonical } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
 
-const { value } = Astro.props
+export type Props = Pick<MetadataProps, "canonical">
 
-const canonical = value ?? Astro.url.href
+const canonical = pageCanonical(Astro, Astro.props)
 ---
 
 <link rel="canonical" href={canonical} />

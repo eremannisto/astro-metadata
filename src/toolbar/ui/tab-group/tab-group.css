@@ -1,0 +1,42 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+nav {
+  display: flex;
+  gap: var(--space-100);
+  padding: var(--space-200) var(--space-400) 0;
+  border-bottom: 1px solid var(--zinc-800);
+}
+
+button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-150);
+  padding: var(--space-200);
+  font: inherit;
+  color: var(--zinc-400);
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  transition: color 120ms;
+
+  &:hover {
+    color: var(--zinc-100);
+  }
+
+  &[aria-selected="true"] {
+    color: var(--zinc-100);
+    border-bottom-color: var(--zinc-100);
+  }
+}
+
+/* The content of the selected tab scrolls, the tab bar stays */
+.panels {
+  flex: 1;
+  padding: var(--space-400);
+  overflow: auto;
+}

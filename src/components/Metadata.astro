@@ -1,0 +1,34 @@
+---
+import type { MetadataProps } from "../lib/page.ts"
+import Canonical from "./Canonical.astro"
+import Description from "./Description.astro"
+import Favicon from "./Favicon.astro"
+import Feeds from "./Feeds.astro"
+import LanguageAlternates from "./LanguageAlternates.astro"
+import Manifest from "./Manifest.astro"
+import OpenGraph from "./OpenGraph.astro"
+import Robots from "./Robots.astro"
+import Schema from "./Schema.astro"
+import ThemeColor from "./ThemeColor.astro"
+import Title from "./Title.astro"
+import Twitter from "./Twitter.astro"
+
+export type Props = MetadataProps
+
+const props = Astro.props
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<Title {...props} />
+<Description {...props} />
+<Canonical {...props} />
+<Robots {...props} />
+<ThemeColor />
+<OpenGraph {...props} />
+<Twitter {...props} />
+<Favicon />
+<Manifest {...props} />
+<Feeds {...props} />
+<LanguageAlternates {...props} />
+<Schema {...props} />

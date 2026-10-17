@@ -1,0 +1,88 @@
+/* WhatsApp: a sent message with the link preview, at most 330 px wide */
+.whatsapp {
+  width: 100%;
+  max-width: 330px;
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.whatsapp .bubble {
+  width: 100%;
+  padding: 4px;
+  border-radius: 8px;
+  background: #005c4b;
+}
+
+.whatsapp .preview {
+  overflow: hidden;
+  border-radius: 6px;
+  background: #025144;
+
+  &.large .image {
+    width: 100%;
+    aspect-ratio: 1.91 / 1;
+  }
+
+  .row {
+    display: flex;
+  }
+
+  /* A small image: a square on the left of the text */
+  &.small .image {
+    flex: none;
+    width: 82px;
+    height: 82px;
+  }
+
+  .body {
+    min-width: 0;
+    padding: 6px 10px 8px;
+  }
+
+  .title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 19px;
+    color: #e9edef;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .text {
+    display: -webkit-box;
+    overflow: hidden;
+    margin-top: 2px;
+    font-size: 13px;
+    line-height: 17px;
+    color: rgba(233, 237, 239, 0.7);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .host {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 16px;
+    color: rgba(233, 237, 239, 0.6);
+  }
+}
+
+/* The message text: the link, and the time */
+.whatsapp .message {
+  padding: 6px 6px 2px;
+  font-size: 14px;
+  line-height: 19px;
+
+  .link {
+    overflow-wrap: anywhere;
+    color: #53bdeb;
+  }
+
+  .time {
+    float: right;
+    margin: 6px 0 0 8px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}

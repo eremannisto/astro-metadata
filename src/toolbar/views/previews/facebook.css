@@ -1,0 +1,65 @@
+/* Facebook: a link preview in a post, 500 px wide */
+.facebook {
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  border-radius: 8px;
+  background: #242526;
+
+  &.large .image {
+    width: 100%;
+    aspect-ratio: 1.91 / 1;
+  }
+
+  /* A small image: a square on the left of the text */
+  &.small {
+    display: flex;
+
+    .image {
+      flex: none;
+      width: 140px;
+      height: 140px;
+    }
+
+    .body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+  }
+
+  .body {
+    padding: 10px 12px;
+    background: #3a3b3c;
+  }
+
+  .host {
+    font-size: 13px;
+    line-height: 16px;
+    color: #b0b3b8;
+    text-transform: uppercase;
+  }
+
+  .title {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 3px 0 2px;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 20px;
+    color: #e4e6eb;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .text {
+    overflow: hidden;
+    font-size: 15px;
+    line-height: 20px;
+    color: #b0b3b8;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

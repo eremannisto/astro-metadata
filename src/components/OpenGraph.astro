@@ -1,75 +1,70 @@
 ---
-export type OpenGraphImage = {
-  url: string
-  secureUrl?: string
-  type?: string
-  alt?: string
-  width?: number
-  height?: number
-}
+import { getConfig, localize } from "../lib/config.ts"
+import {
+  isoDate,
+  pageCanonical,
+  pageDescription,
+  pageHreflang,
+  pageImage,
+  pageLocale,
+  pageOpenGraphLocales,
+} from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+import { url } from "../lib/url.ts"
 
-export type OpenGraphVideo = {
-  url: string
-  secureUrl?: string
-  type?: string
-  width?: number
-  height?: number
-}
+type Keys =
+  | "title"
+  | "description"
+  | "image"
+  | "type"
+  | "published"
+  | "modified"
+  | "canonical"
+  | "hreflang"
+  | "locale"
 
-export type OpenGraphAudio = {
-  url: string
-  secureUrl?: string
-  type?: string
-}
+export type Props = Pick<MetadataProps, Keys>
 
-export type Props = {
-  title?: string
-  description?: string
-  url?: string
-  type?: string
-  siteName?: string
-  locale?: string
-  localeAlternate?: string[]
-  image?: OpenGraphImage
-  video?: OpenGraphVideo
-  audio?: OpenGraphAudio
-}
+const props = Astro.props
+const locale = pageLocale(Astro, props)
+const siteName = localize(getConfig().siteName, locale)
+const description = pageDescription(props, locale)
+const image = pageImage(props, locale)
+const locales = pageOpenGraphLocales(locale, pageHreflang(Astro, props))
+const article = props.type === "article"
 
-const {
-  title,
-  description,
-  url,
-  type = "website",
-  siteName,
-  locale,
-  localeAlternate,
-  image,
-  video,
-  audio,
-} = Astro.props
+// Social cards show the page title without the template: og:site_name has the site name
+const title = props.title ?? siteName
 ---
 
 {title && <meta property="og:title" content={title} />}
 {description && <meta property="og:description" content={description} />}
-{url && <meta property="og:url" content={url} />}
-{type && <meta property="og:type" content={type} />}
+<meta property="og:url" content={pageCanonical(Astro, props)} />
+<meta property="og:type" content={props.type ?? "website"} />
 {siteName && <meta property="og:site_name" content={siteName} />}
-{locale && <meta property="og:locale" content={locale} />}
-{localeAlternate?.map((loc: string) => <meta property="og:locale:alternate" content={loc} />)}
-
-{image?.url && <meta property="og:image" content={image.url} />}
-{image?.secureUrl && <meta property="og:image:secure_url" content={image.secureUrl} />}
-{image?.type && <meta property="og:image:type" content={image.type} />}
-{image?.alt && <meta property="og:image:alt" content={image.alt} />}
-{image?.width && <meta property="og:image:width" content={String(image.width)} />}
-{image?.height && <meta property="og:image:height" content={String(image.height)} />}
-
-{video?.url && <meta property="og:video" content={video.url} />}
-{video?.secureUrl && <meta property="og:video:secure_url" content={video.secureUrl} />}
-{video?.type && <meta property="og:video:type" content={video.type} />}
-{video?.width && <meta property="og:video:width" content={String(video.width)} />}
-{video?.height && <meta property="og:video:height" content={String(video.height)} />}
-
-{audio?.url && <meta property="og:audio" content={audio.url} />}
-{audio?.secureUrl && <meta property="og:audio:secure_url" content={audio.secureUrl} />}
-{audio?.type && <meta property="og:audio:type" content={audio.type} />}
+{locales.locale && <meta property="og:locale" content={locales.locale} />}
+{
+  locales.alternates.map((alternate) => {
+    return <meta property="og:locale:alternate" content={alternate} />
+  })
+}
+{
+  image && (
+    <>
+      <meta property="og:image" content={url(image.url)} />
+      {image.alt && <meta property="og:image:alt" content={image.alt} />}
+      {image.width && <meta property="og:image:width" content={String(image.width)} />}
+      {image.height && <meta property="og:image:height" content={String(image.height)} />}
+    </>
+  )
+}
+{
+  article && props.published && (
+    <meta property="article:published_time" content={isoDate(props.published)} />
+  )
+}
+{
+  article && props.modified && (
+    <meta property="article:modified_time" content={isoDate(props.modified)} />
+  )
+}

@@ -1,0 +1,8 @@
+{
+  "name": "astro-metadata-fixtures-native",
+  "type": "module",
+  "dependencies": {
+    "@mannisto/astro-metadata": "workspace:*",
+    "astro": "^7.3.5"
+  }
+}

@@ -1,0 +1,58 @@
+/* LinkedIn: a link preview in a post, 552 px wide */
+.linkedin {
+  width: 100%;
+  max-width: 552px;
+  overflow: hidden;
+  font-family: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  border-radius: 8px;
+  background: #1b1f23;
+
+  &.large .image {
+    width: 100%;
+    aspect-ratio: 1.91 / 1;
+  }
+
+  /* A small image: on the left of the text */
+  &.small {
+    display: flex;
+    align-items: center;
+
+    .image {
+      flex: none;
+      width: 128px;
+      height: 72px;
+    }
+
+    .body {
+      flex: 1;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  .body {
+    min-width: 0;
+    padding: 8px 12px;
+    background: #38434f;
+  }
+
+  .title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .host {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 16px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}

@@ -1,0 +1,70 @@
+/* Discord: an embed in a message, 432 px wide with a large image, else 520 px */
+.discord {
+  width: 100%;
+  max-width: 552px;
+  padding: 16px;
+  font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  border-radius: 8px;
+  background: #313338;
+}
+
+.discord .embed {
+  display: flex;
+  gap: 16px;
+  width: fit-content;
+  max-width: 520px;
+  padding: 8px 16px 16px 12px;
+  border-left: 4px solid;
+  border-radius: 4px;
+  background: #2b2d31;
+
+  &.large {
+    max-width: 432px;
+  }
+
+  .body {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    padding-top: 8px;
+  }
+
+  .site {
+    font-size: 12px;
+    line-height: 16px;
+    color: #dbdee1;
+  }
+
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    color: #00a8fc;
+  }
+
+  .text {
+    font-size: 14px;
+    line-height: 18px;
+    color: #dbdee1;
+    white-space: pre-line;
+  }
+
+  /* A large image: under the text, at most 400 × 300 px */
+  .image {
+    width: 100%;
+    max-width: 400px;
+    max-height: 300px;
+    aspect-ratio: 1.91 / 1;
+    margin-top: 8px;
+    border-radius: 4px;
+  }
+
+  /* A small image: on the right */
+  .thumbnail {
+    flex: none;
+    width: 80px;
+    height: 80px;
+    margin-top: 8px;
+    border-radius: 3px;
+  }
+}

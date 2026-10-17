@@ -1,0 +1,18 @@
+/* The styles that all views share. The ui components bring their own styles. */
+:host {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-300);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+p {
+  margin: 0;
+}
+
+.empty {
+  color: var(--zinc-400);
+}

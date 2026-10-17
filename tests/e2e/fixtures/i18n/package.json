@@ -1,0 +1,9 @@
+{
+  "name": "astro-metadata-fixtures-i18n",
+  "type": "module",
+  "dependencies": {
+    "@mannisto/astro-i18n": "3.0.0-alpha.2",
+    "@mannisto/astro-metadata": "workspace:*",
+    "astro": "^7.3.5"
+  }
+}

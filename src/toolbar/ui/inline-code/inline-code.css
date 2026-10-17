@@ -1,0 +1,16 @@
+/*
+ * The look of backticks in Markdown: a small monospace label on a zinc background.
+ * A parent can change the colors with --code-color, --code-border and --code-background,
+ * e.g. the alert uses the colors of its level.
+ */
+:host {
+  display: inline;
+  padding: 0 var(--space-100);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--code-color, var(--zinc-200));
+  white-space: nowrap;
+  border: 1px solid var(--code-border, var(--zinc-700));
+  border-radius: var(--radius-small);
+  background: var(--code-background, var(--zinc-800));
+}

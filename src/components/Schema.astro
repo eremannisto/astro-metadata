@@ -1,18 +1,42 @@
 ---
-export type Props = {
-  schema: Record<string, unknown>
-}
+import { getConfig, localize } from "../lib/config.ts"
+import { pageCanonical, pageDescription, pageImage, pageLocale } from "../lib/page.ts"
+import type { MetadataProps } from "../lib/page.ts"
+import { Schema } from "../lib/schema.ts"
+import { url } from "../lib/url.ts"
 
-const { schema } = Astro.props
+type Keys =
+  | "title"
+  | "description"
+  | "image"
+  | "type"
+  | "published"
+  | "modified"
+  | "author"
+  | "canonical"
+  | "breadcrumbs"
+  | "schema"
+  | "locale"
 
-// Escape the characters that can end the script tag or break the JavaScript parser.
-// A value such as "</script>" in the schema then stays inside the JSON.
-const json = JSON.stringify(schema)
-  .replace(/</g, "\\u003c")
-  .replace(/>/g, "\\u003e")
-  .replace(/&/g, "\\u0026")
-  .replace(/\u2028/g, "\\u2028")
-  .replace(/\u2029/g, "\\u2029")
+export type Props = Pick<MetadataProps, Keys>
+
+const props = Astro.props
+const locale = pageLocale(Astro, props)
+const image = pageImage(props, locale)
+
+const schema = Schema.graph({
+  url: pageCanonical(Astro, props),
+  title: props.title ?? localize(getConfig().siteName, locale),
+  description: pageDescription(props, locale),
+  image: image ? url(image.url) : undefined,
+  locale,
+  type: props.type,
+  published: props.published,
+  modified: props.modified,
+  author: props.author,
+  breadcrumbs: props.breadcrumbs,
+  items: props.schema === undefined ? undefined : [props.schema].flat(),
+})
 ---
 
-<script is:inline type="application/ld+json" set:html={json} />
+{schema && <script is:inline type="application/ld+json" set:html={Schema.stringify(schema)} />}
