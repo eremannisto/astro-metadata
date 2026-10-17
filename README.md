@@ -8,20 +8,6 @@
 
 The page metadata for Astro: the title, the description, the canonical URL, social cards, favicons, the web app manifest and structured data. Set the site values one time, and give each page only its own values. In dev, an app in the Astro dev toolbar checks each page.
 
-- [Install](#install)
-- [Configuration](#configuration)
-- [Metadata component](#metadata-component)
-- [Favicons](#favicons)
-- [Web app manifest](#web-app-manifest)
-- [Structured data](#structured-data)
-- [Dev toolbar app](#dev-toolbar-app)
-- [Checks](#checks)
-- [API](#api)
-- [Good to know](#good-to-know)
-- [Migrate from v1](#migrate-from-v1)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Install
 
 ```bash
@@ -441,9 +427,9 @@ Run `astro dev`, and open the Metadata app in the dev toolbar. The app checks th
     <td><img src="./docs/screenshots/03.png" alt="The Social section with the Open Graph tags" width="260"></td>
   </tr>
   <tr>
-    <td><img src="./docs/screenshots/04.png" alt="The Previews tab with the Google and Twitter (X) previews" width="260"></td>
-    <td><img src="./docs/screenshots/05.png" alt="The Raw tab with the tags of the head" width="260"></td>
-    <td></td>
+    <td><img src="./docs/screenshots/04.png" alt="The Structured data section with the JSON-LD of the page" width="260"></td>
+    <td><img src="./docs/screenshots/05.png" alt="The Previews tab with the Google and Twitter (X) previews" width="260"></td>
+    <td><img src="./docs/screenshots/06.png" alt="The Raw tab with the tags of the head" width="260"></td>
   </tr>
 </table>
 
