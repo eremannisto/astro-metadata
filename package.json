@@ -1,6 +1,6 @@
 {
   "name": "@mannisto/astro-metadata",
-  "version": "2.0.0-alpha.6",
+  "version": "2.0.0",
   "description": "Metadata for Astro: page tags, social cards, favicons, the web app manifest, structured data and a dev toolbar app that checks your pages.",
   "license": "MIT",
   "type": "module",
