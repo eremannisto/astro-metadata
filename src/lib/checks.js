@@ -102,7 +102,12 @@ export function isNoindex(head) {
  * @returns {string}
  */
 function trimSlash(path) {
-  return path.length > 1 ? path.replace(/\/+$/, "") : path
+  if (path.length <= 1) return path
+
+  // A loop and not a regular expression: /\/+$/ is slow for a path with many slashes
+  let end = path.length
+  while (end > 0 && path[end - 1] === "/") end--
+  return path.slice(0, end)
 }
 
 /**

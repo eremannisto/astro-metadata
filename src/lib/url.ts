@@ -62,7 +62,10 @@ export function pagePath(path: string): string {
     if (buildFormat === "preserve") return path
     slash = buildFormat !== "file"
   }
-  const clean = path.replace(/\/+$/, "")
+  // A loop and not a regular expression: /\/+$/ is slow for a path with many slashes
+  let end = path.length
+  while (end > 0 && path[end - 1] === "/") end--
+  const clean = path.slice(0, end)
   return slash ? `${clean}/` : clean || "/"
 }
 

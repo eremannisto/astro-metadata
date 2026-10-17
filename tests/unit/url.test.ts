@@ -93,3 +93,13 @@ describe("pageUrl", () => {
     expect(pageUrl("/blog")).toBe("https://example.com/blog")
   })
 })
+
+describe("pageUrl with many slashes", () => {
+  it("removes all slashes at the end before it adds one", () => {
+    vi.stubEnv("SITE", "https://example.com")
+    setConfig({ trailingSlash: "always", buildFormat: "directory" })
+    expect(pageUrl("/blog///")).toBe("https://example.com/blog/")
+    setConfig({ trailingSlash: "never", buildFormat: "directory" })
+    expect(pageUrl("/blog///")).toBe("https://example.com/blog")
+  })
+})
