@@ -46,7 +46,7 @@
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@playwright/test": "^1.63.0",
     "@types/node": "^22.20.5",
-    "astro": "^7.3.5",
+    "astro": "^7.4.2",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.9",
@@ -54,7 +54,7 @@
     "sharp": "^0.35.5",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.71.0",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.12"
   },
   "packageManager": "pnpm@10.32.1",
   "dependencies": {
