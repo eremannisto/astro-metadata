@@ -4,6 +4,7 @@
 
 ![Astro](https://img.shields.io/badge/astro-%232C2052.svg?style=for-the-badge&logo=astro&logoColor=white)
 ![npm version](https://img.shields.io/npm/v/@mannisto/astro-metadata?style=for-the-badge)
+![Astro version](https://img.shields.io/npm/dependency-version/@mannisto/astro-metadata/peer/astro?style=for-the-badge&label=astro)
 ![license](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
 
 The page metadata for Astro: the title, the description, the canonical URL, social cards, favicons, the web app manifest and structured data. Set the site values one time, and give each page only its own values. In dev, an app in the Astro dev toolbar checks each page.
@@ -13,8 +14,6 @@ The page metadata for Astro: the title, the description, the canonical URL, soci
 ```bash
 npm install @mannisto/astro-metadata
 ```
-
-The integration requires Astro 6.4.6 or later, or Astro 7.
 
 ## Configuration
 
@@ -194,6 +193,25 @@ metadata({
 
 `<Metadata>` uses the text of the locale of the page, or of its `locale` prop. A locale without a text uses the first text.
 
+The social image can also have one image for each locale, for example when the image has text on it:
+
+```typescript
+metadata({
+  image: {
+    url: {
+      en: "/og-en.jpg",
+      fi: "/og-fi.jpg",
+    },
+    alt: {
+      en: "Acme Studio",
+      fi: "Acme Studio",
+    },
+    width: 1200,
+    height: 630,
+  },
+})
+```
+
 ### Locales
 
 On a site with more than one language, `<Metadata>` finds the language of each page and its other language versions by itself. This works with [`@mannisto/astro-i18n`](https://github.com/eremannisto/astro-i18n) and with the [native i18n of Astro](https://docs.astro.build/en/guides/internationalization/). You do not need extra code.
@@ -292,7 +310,7 @@ favicon: {
 }
 ```
 
-The extension sets the format: `.ico`, `.png` or `.svg`. The name and the size set the use:
+The file extension decides the format: `.ico`, `.png` or `.svg`. The name and the size decide where the file goes:
 
 - `.ico` and `.svg` files, and `.png` files smaller than 192 px, get an icon link tag.
 - `apple-touch-icon.png` gets the Apple link tag.
@@ -412,8 +430,6 @@ For a personal site, use `publisher: { type: "Person" }`. Set `schema: false` to
   }}
 />
 ```
-
-All items go into one graph. The items link to each other with `@id`, and all URLs are absolute.
 
 ## Dev toolbar app
 

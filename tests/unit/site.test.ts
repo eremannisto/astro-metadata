@@ -40,6 +40,13 @@ describe("Site", () => {
     })
   })
 
+  it("returns the image of the locale, or the first image", () => {
+    vi.stubEnv("SITE", "https://example.com")
+    setConfig({ image: { url: { en: "/og.jpg", fi: "/og-fi.jpg" } } })
+    expect(Site.image({ locale: "fi" })?.url).toBe("https://example.com/og-fi.jpg")
+    expect(Site.image({ locale: "de" })?.url).toBe("https://example.com/og.jpg")
+  })
+
   it("returns the twitter values with the default card, and the theme color", () => {
     setConfig({ twitter: { site: "@acmestudio" }, themeColor: { light: "#fff", dark: "#000" } })
     expect(Site.twitter()).toEqual({ site: "@acmestudio", card: "summary_large_image" })

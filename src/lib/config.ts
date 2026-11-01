@@ -48,8 +48,8 @@ export type MetadataConfig = {
   titleTemplate?: Localized
   /** The description of a page without a description. */
   description?: Localized
-  /** The social image of a page without an image. */
-  image?: Omit<MetadataImage, "alt"> & { alt?: Localized }
+  /** The social image of a page without an image. The URL and the alt text can have a value for each locale. */
+  image?: Omit<MetadataImage, "url" | "alt"> & { url: Localized; alt?: Localized }
   twitter?: {
     /** The card type for pages with an image. Defaults to "summary_large_image". */
     card?: "summary" | "summary_large_image"

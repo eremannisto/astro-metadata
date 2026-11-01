@@ -45,16 +45,17 @@ export const Site = {
   },
 
   /**
-   * Returns the `image` with an absolute URL, and the alt text of the locale.
+   * Returns the `image` of the locale, with an absolute URL and the alt text of the locale.
    *
    * @example Site.image() // { url: "https://example.com/og.jpg", alt: "Acme Studio", … }
    */
   image(options: SiteOptions = {}): MetadataImage | undefined {
     const image = getConfig().image
-    if (!image) return undefined
+    const path = localize(image?.url, options.locale)
+    if (!image || !path) return undefined
 
     return {
-      url: url(image.url),
+      url: url(path),
       alt: localize(image.alt, options.locale),
       width: image.width,
       height: image.height,

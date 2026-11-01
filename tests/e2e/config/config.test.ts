@@ -76,6 +76,7 @@ test.describe("locales", () => {
       return page.locator(selector).getAttribute("content")
     }
     expect(await content("meta[name='description']")).toBe("Oletuskuvaus")
+    expect(await content("meta[property='og:image']")).toBe("https://example.com/og-fi.jpg")
     expect(await content("meta[property='og:site_name']")).toBe("Config-sivusto")
     expect(await content("meta[property='og:image:alt']")).toBe("Config-sivusto")
     await expect(page.locator("link[type='application/rss+xml']")).toHaveAttribute("title", "Blogi")
