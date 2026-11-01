@@ -193,6 +193,25 @@ metadata({
 
 `<Metadata>` uses the text of the locale of the page, or of its `locale` prop. A locale without a text uses the first text.
 
+The social image can also have one image for each locale, for example when the image has text on it:
+
+```typescript
+metadata({
+  image: {
+    url: {
+      en: "/og-en.jpg",
+      fi: "/og-fi.jpg",
+    },
+    alt: {
+      en: "Acme Studio",
+      fi: "Acme Studio",
+    },
+    width: 1200,
+    height: 630,
+  },
+})
+```
+
 ### Locales
 
 On a site with more than one language, `<Metadata>` finds the language of each page and its other language versions by itself. This works with [`@mannisto/astro-i18n`](https://github.com/eremannisto/astro-i18n) and with the [native i18n of Astro](https://docs.astro.build/en/guides/internationalization/). You do not need extra code.

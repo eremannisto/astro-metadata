@@ -9,7 +9,7 @@ export default defineConfig({
       titleTemplate: { en: "%s | Config Site", fi: "%s | Config-sivusto" },
       description: { en: "The default description", fi: "Oletuskuvaus" },
       image: {
-        url: "/og.jpg",
+        url: { en: "/og.jpg", fi: "/og-fi.jpg" },
         alt: { en: "Config Site", fi: "Config-sivusto" },
         width: 1200,
         height: 630,

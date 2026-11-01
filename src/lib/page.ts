@@ -106,15 +106,16 @@ export function pageHreflang(page: I18nPage, props: MetadataProps): HreflangLink
 }
 
 /**
- * Returns the social image of the page: the prop, or the image of the config with the alt
- * text of the locale.
+ * Returns the social image of the page: the prop, or the image of the config with the URL
+ * and the alt text of the locale.
  */
 export function pageImage(props: MetadataProps, locale?: string): MetadataImage | undefined {
   if (props.image) return props.image
 
   const image = getConfig().image
-  if (!image) return undefined
-  return { ...image, alt: localize(image.alt, locale) }
+  const url = localize(image?.url, locale)
+  if (!image || !url) return undefined
+  return { ...image, url, alt: localize(image.alt, locale) }
 }
 
 /**
