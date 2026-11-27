@@ -43,28 +43,20 @@ const title = props.title ?? siteName
 <meta property="og:type" content={props.type ?? "website"} />
 {siteName && <meta property="og:site_name" content={siteName} />}
 {locales.locale && <meta property="og:locale" content={locales.locale} />}
-{
-  locales.alternates.map((alternate) => {
-    return <meta property="og:locale:alternate" content={alternate} />
-  })
-}
-{
-  image && (
-    <>
-      <meta property="og:image" content={url(image.url)} />
-      {image.alt && <meta property="og:image:alt" content={image.alt} />}
-      {image.width && <meta property="og:image:width" content={String(image.width)} />}
-      {image.height && <meta property="og:image:height" content={String(image.height)} />}
-    </>
-  )
-}
-{
-  article && props.published && (
-    <meta property="article:published_time" content={isoDate(props.published)} />
-  )
-}
-{
-  article && props.modified && (
-    <meta property="article:modified_time" content={isoDate(props.modified)} />
-  )
-}
+{locales.alternates.map((alternate) => {
+  return <meta property="og:locale:alternate" content={alternate} />
+})}
+{image && (
+  <>
+    <meta property="og:image" content={url(image.url)} />
+    {image.alt && <meta property="og:image:alt" content={image.alt} />}
+    {image.width && <meta property="og:image:width" content={String(image.width)} />}
+    {image.height && <meta property="og:image:height" content={String(image.height)} />}
+  </>
+)}
+{article && props.published && (
+  <meta property="article:published_time" content={isoDate(props.published)} />
+)}
+{article && props.modified && (
+  <meta property="article:modified_time" content={isoDate(props.modified)} />
+)}
