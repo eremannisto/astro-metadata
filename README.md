@@ -67,7 +67,7 @@ Set `site` in the Astro config. The canonical URL and the social images must be 
 | `twitter` | — | `site`: the Twitter (X) handle of the site. `card`: `"summary"` or `"summary_large_image"` (default) for pages with an image. |
 | `themeColor` | — | The color of the browser interface. Give one color, or `{ light, dark }`. |
 | `feeds` | — | The RSS, Atom or JSON feeds: `href`, `title` and `type` (`"rss"` by default). |
-| `robots` | — | `index: false` or `follow: false` for all pages, for example on a staging site. `extra`: other directives, for example `"max-image-preview:large"`. |
+| `robots` | — | `index: false` or `follow: false` for all pages, for example on a staging site. `extra`: other directives of the robots meta tag, for example `"max-image-preview:large"`. They do not go into `robots.txt`. |
 | `favicon` | — | Generates the favicons from one image. See [Favicons](#favicons). |
 | `manifest` | — | Generates the web app manifest, or links your own. See [Web app manifest](#web-app-manifest). |
 | `schema` | — | The structured data of the site: `publisher` is the organization or the person behind the site. `false` turns it off. See [Structured data](#structured-data). |

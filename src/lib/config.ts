@@ -65,7 +65,10 @@ export type MetadataConfig = {
     index?: boolean
     /** Set to false to tell search engines not to follow the links. */
     follow?: boolean
-    /** Other directives for all pages, e.g. "max-image-preview:large". */
+    /**
+     * Other directives of the robots meta tag for all pages, e.g. "max-image-preview:large".
+     * They do not go into `robots.txt`.
+     */
     extra?: string
   }
   /** The web app manifest: an object to generate it, or the path of your own manifest. */
