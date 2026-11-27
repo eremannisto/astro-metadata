@@ -345,6 +345,28 @@ describe("checkSite", () => {
     expect(problems.size).toBe(0)
   })
 
+  it("finds a canonical URL that is not the URL of the page", () => {
+    const options = { ignore: ["description-not-unique"] }
+    const about = { ...page("/about", "About"), url: "https://example.com/about/" }
+    const blog = { ...page("/about", "Blog"), path: "/blog", url: "https://example.com/blog" }
+    const problems = checkSite([about, blog], options)
+    expect(problems.has("/about")).toBe(false)
+    expect(
+      problems.get("/blog")?.map((check) => {
+        return check.message
+      })
+    ).toEqual([
+      "The canonical URL `https://example.com/about` is not the URL of the page `https://example.com/blog`. Search engines can index the other URL.",
+    ])
+  })
+
+  it("skips the canonical check without the page URL", () => {
+    const problems = checkSite([{ ...page("/about", "About"), path: "/blog" }], {
+      ignore: ["description-not-unique"],
+    })
+    expect(problems.size).toBe(0)
+  })
+
   it("finds hreflang links that do not link back", () => {
     const problems = checkSite(
       [

@@ -460,7 +460,7 @@ The dev toolbar app checks the current page. The build checks all prerendered pa
 | Level | Description | Examples |
 | --- | --- | --- |
 | Error | The metadata is broken. | No title, placeholder text such as `undefined`, invalid JSON-LD, an `og:image` that does not load |
-| Warning | Fix it for better results. | A long title, the same title on two pages, an `og:image` over 600 KB |
+| Warning | Fix it for better results. | A long title, the same title on two pages, a canonical URL to another page, an `og:image` over 600 KB |
 | Info | Good to know. | `noindex`, a short description, no `og:image:alt` |
 
 To turn off the checks, use `debug`:

@@ -14,6 +14,12 @@ export default [
     },
   },
   {
+    files: ["src/**/*.js"],
+    languageOptions: {
+      globals: { URL: "readonly" },
+    },
+  },
+  {
     files: ["tests/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",

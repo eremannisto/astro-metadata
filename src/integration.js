@@ -407,6 +407,20 @@ function pagePath(file) {
 }
 
 /**
+ * Returns the URL of a built HTML file, with the site and the base, e.g.
+ * "https://example.com/docs/blog/" for "/blog/index.html". Undefined without `site`.
+ *
+ * @param {string} file - The path of the file in the output directory.
+ * @param {import("./integration").BuildContext} context
+ * @returns {string | undefined}
+ */
+function pageUrl(file, context) {
+  if (!context.site) return undefined
+  const base = context.base.replace(/\/$/, "")
+  return new URL(`${base}${pagePath(file)}`, context.site).href
+}
+
+/**
  * Checks the metadata of the built pages and logs the errors and the warnings:
  * the head of each page, its files, and the pages of the site together.
  *
@@ -427,7 +441,7 @@ async function checkPages(context, logger) {
     const page = `/${path.relative(context.dir, file).split(path.sep).join("/")}`
     if (isIgnored(pagePath(page), context.pages)) continue
 
-    pages.push({ path: page, head: parseHead(html) })
+    pages.push({ path: page, head: parseHead(html), url: pageUrl(page, context) })
   }
 
   const siteChecks = checkSite(pages, options)
