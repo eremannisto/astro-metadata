@@ -295,24 +295,50 @@ const MIME_TYPES = {
 }
 
 /**
- * Warns about a generated `robots.txt` that crawlers can not find: a file in `public/`
- * replaces it, and with a `base`, it is not at the root of the domain.
+ * Returns the path of your own `robots.txt` in the project: a file in `public/`, or an
+ * endpoint in `src/pages/`. Returns undefined without one.
+ *
+ * @param {import("astro").AstroConfig} config
+ * @returns {string | undefined} The path relative to the project root, e.g. "src/pages/robots.txt.ts".
+ */
+function findOwnRobotsTxt(config) {
+  const root = fileURLToPath(config.root)
+  const publicFile = fileURLToPath(new URL("./robots.txt", config.publicDir))
+  if (fs.existsSync(publicFile)) return path.relative(root, publicFile)
+
+  const pagesDir = fileURLToPath(new URL("./pages/", config.srcDir))
+  if (!fs.existsSync(pagesDir)) return undefined
+  const endpoint = fs.readdirSync(pagesDir).find((file) => {
+    return /^robots\.txt\.(js|mjs|ts|mts)$/.test(file)
+  })
+  return endpoint ? path.relative(root, path.join(pagesDir, endpoint)) : undefined
+}
+
+/**
+ * Returns true when the integration can generate `robots.txt`, and warns when crawlers
+ * can not find the file: your own `robots.txt` replaces it, and with a `base`, it is not
+ * at the root of the domain.
  *
  * @param {import("astro").AstroConfig} config
  * @param {import("astro").AstroIntegrationLogger} logger
+ * @returns {boolean} False with your own `robots.txt`.
  */
-function warnRobotsTxt(config, logger) {
-  if (fs.existsSync(fileURLToPath(new URL("./robots.txt", config.publicDir)))) {
+function canGenerateRobotsTxt(config, logger) {
+  const own = findOwnRobotsTxt(config)
+  if (own) {
     logger.warn(
-      "public/robots.txt replaces the generated robots.txt. Remove it from public/ to use the `robots.ai` option."
+      `${own} replaces the generated robots.txt. Remove it to use the \`robots.ai\` option.`
     )
+    return false
   }
+
   const base = config.base.replace(/\/$/, "")
   if (base) {
     logger.warn(
       `The generated robots.txt is at ${base}/robots.txt. Crawlers read robots.txt only at the root of the domain.`
     )
   }
+  return true
 }
 
 /**
@@ -630,8 +656,7 @@ export default function metadata(options = {}) {
           })
         }
 
-        if (options.robots?.ai) {
-          warnRobotsTxt(config, logger)
+        if (options.robots?.ai && canGenerateRobotsTxt(config, logger)) {
           injectRoute({
             pattern: "/robots.txt",
             entrypoint: new URL("./routes/robots-txt.ts", import.meta.url),

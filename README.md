@@ -409,6 +409,7 @@ Good to know:
 - **Google.** Google AI Overviews and Google Search use the same crawler, `Googlebot`. You can not block AI Overviews and keep Google Search. `Google-Extended` controls only Gemini and Vertex AI.
 - **A request, not a block.** Some crawlers do not obey `robots.txt`.
 - **`index: false`.** It changes only the robots meta tag, and not `robots.txt`. A crawler that `robots.txt` blocks can not see the `noindex` tag, so the page can still show in search results.
+- **Your own `robots.txt`.** A `public/robots.txt` or a `src/pages/robots.txt.ts` endpoint replaces the generated file. The integration shows a warning.
 - **A `base`.** Crawlers read `robots.txt` only at the root of the domain. With a `base`, the integration shows a warning.
 
 ## Structured data
@@ -624,7 +625,7 @@ Import the types from `@mannisto/astro-metadata/runtime`, for example `import ty
 - **CMS data.** Give CMS values to `<Metadata>` as props. The integration reads its site values one time at startup, and a change restarts the dev server.
 - **Trailing slash.** The canonical URL and the `hreflang` links follow the `trailingSlash` option of Astro. With `"ignore"`, `build.format` decides.
 - **`sharp`.** The favicons use the `sharp` package that Astro installs. If you install Astro without its optional dependencies, install `sharp` yourself.
-- **Files in `public/`.** A file in `public/` with the same path as a generated favicon or `robots.txt` replaces the generated file. The integration shows a warning.
+- **Files in `public/`.** A file in `public/` with the same path as a generated favicon replaces the generated file. The integration shows a warning.
 
 ## Migrate from v1
 
