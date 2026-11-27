@@ -295,6 +295,27 @@ const MIME_TYPES = {
 }
 
 /**
+ * Warns about a generated `robots.txt` that crawlers can not find: a file in `public/`
+ * replaces it, and with a `base`, it is not at the root of the domain.
+ *
+ * @param {import("astro").AstroConfig} config
+ * @param {import("astro").AstroIntegrationLogger} logger
+ */
+function warnRobotsTxt(config, logger) {
+  if (fs.existsSync(fileURLToPath(new URL("./robots.txt", config.publicDir)))) {
+    logger.warn(
+      "public/robots.txt replaces the generated robots.txt. Remove it from public/ to use the `robots.ai` option."
+    )
+  }
+  const base = config.base.replace(/\/$/, "")
+  if (base) {
+    logger.warn(
+      `The generated robots.txt is at ${base}/robots.txt. Crawlers read robots.txt only at the root of the domain.`
+    )
+  }
+}
+
+/**
  * Returns the debug features: the dev toolbar app (`client`) and the build checks (`build`).
  *
  * @param {import("./integration").MetadataOptions["debug"]} debug
@@ -572,6 +593,9 @@ export default function metadata(options = {}) {
           base: config.base,
           trailingSlash: config.trailingSlash,
           buildFormat: config.build.format,
+          sitemap: config.integrations.some((integration) => {
+            return integration.name === "@astrojs/sitemap"
+          }),
         }
         for (const key of SITE_KEYS) {
           if (options[key] !== undefined) runtime[key] = options[key]
@@ -602,6 +626,15 @@ export default function metadata(options = {}) {
           injectRoute({
             pattern: "/[...lang]/manifest.webmanifest",
             entrypoint: new URL("./routes/manifest.ts", import.meta.url),
+            prerender: true,
+          })
+        }
+
+        if (options.robots?.ai) {
+          warnRobotsTxt(config, logger)
+          injectRoute({
+            pattern: "/robots.txt",
+            entrypoint: new URL("./routes/robots-txt.ts", import.meta.url),
             prerender: true,
           })
         }

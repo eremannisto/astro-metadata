@@ -36,7 +36,8 @@
     "test": "pnpm run test:unit && pnpm run test:e2e",
     "test:unit": "vitest run",
     "test:e2e": "pnpm test:fixtures && playwright test",
-    "test:fixtures": "pnpm --filter \"./tests/e2e/fixtures/**\" exec astro build"
+    "test:fixtures": "pnpm --filter \"./tests/e2e/fixtures/**\" exec astro build",
+    "bots:update": "node scripts/update-ai-bots.mjs"
   },
   "peerDependencies": {
     "astro": "^6.4.6 || ^7.0.0"
