@@ -15,15 +15,13 @@ const FEED_TYPES = {
 }
 ---
 
-{
-  getConfig().feeds?.map((feed) => {
-    return (
-      <link
-        rel="alternate"
-        type={FEED_TYPES[feed.type ?? "rss"]}
-        title={localize(feed.title, locale)}
-        href={withBase(feed.href)}
-      />
-    )
-  })
-}
+{getConfig().feeds?.map((feed) => {
+  return (
+    <link
+      rel="alternate"
+      type={FEED_TYPES[feed.type ?? "rss"]}
+      title={localize(feed.title, locale)}
+      href={withBase(feed.href)}
+    />
+  )
+})}

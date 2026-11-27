@@ -17,7 +17,7 @@ export default defineConfig({
       twitter: { site: "@configsite" },
       themeColor: "#123456",
       feeds: [{ href: "/rss.xml", title: { en: "Blog", fi: "Blogi" } }],
-      robots: { extra: "max-image-preview:large" },
+      robots: { extra: "max-image-preview:large", ai: { training: false } },
       manifest: {
         name: { en: "Config Site", fi: "Config-sivusto" },
         shortName: "Config",

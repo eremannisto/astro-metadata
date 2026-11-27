@@ -295,6 +295,53 @@ const MIME_TYPES = {
 }
 
 /**
+ * Returns the path of your own `robots.txt` in the project: a file in `public/`, or an
+ * endpoint in `src/pages/`. Returns undefined without one.
+ *
+ * @param {import("astro").AstroConfig} config
+ * @returns {string | undefined} The path relative to the project root, e.g. "src/pages/robots.txt.ts".
+ */
+function findOwnRobotsTxt(config) {
+  const root = fileURLToPath(config.root)
+  const publicFile = fileURLToPath(new URL("./robots.txt", config.publicDir))
+  if (fs.existsSync(publicFile)) return path.relative(root, publicFile)
+
+  const pagesDir = fileURLToPath(new URL("./pages/", config.srcDir))
+  if (!fs.existsSync(pagesDir)) return undefined
+  const endpoint = fs.readdirSync(pagesDir).find((file) => {
+    return /^robots\.txt\.(js|mjs|ts|mts)$/.test(file)
+  })
+  return endpoint ? path.relative(root, path.join(pagesDir, endpoint)) : undefined
+}
+
+/**
+ * Returns true when the integration can generate `robots.txt`, and warns when crawlers
+ * can not find the file: your own `robots.txt` replaces it, and with a `base`, it is not
+ * at the root of the domain.
+ *
+ * @param {import("astro").AstroConfig} config
+ * @param {import("astro").AstroIntegrationLogger} logger
+ * @returns {boolean} False with your own `robots.txt`.
+ */
+function canGenerateRobotsTxt(config, logger) {
+  const own = findOwnRobotsTxt(config)
+  if (own) {
+    logger.warn(
+      `${own} replaces the generated robots.txt. Remove it to use the \`robots.ai\` option.`
+    )
+    return false
+  }
+
+  const base = config.base.replace(/\/$/, "")
+  if (base) {
+    logger.warn(
+      `The generated robots.txt is at ${base}/robots.txt. Crawlers read robots.txt only at the root of the domain.`
+    )
+  }
+  return true
+}
+
+/**
  * Returns the debug features: the dev toolbar app (`client`) and the build checks (`build`).
  *
  * @param {import("./integration").MetadataOptions["debug"]} debug
@@ -407,6 +454,20 @@ function pagePath(file) {
 }
 
 /**
+ * Returns the URL of a built HTML file, with the site and the base, e.g.
+ * "https://example.com/docs/blog/" for "/blog/index.html". Undefined without `site`.
+ *
+ * @param {string} file - The path of the file in the output directory.
+ * @param {import("./integration").BuildContext} context
+ * @returns {string | undefined}
+ */
+function pageUrl(file, context) {
+  if (!context.site) return undefined
+  const base = context.base.replace(/\/$/, "")
+  return new URL(`${base}${pagePath(file)}`, context.site).href
+}
+
+/**
  * Checks the metadata of the built pages and logs the errors and the warnings:
  * the head of each page, its files, and the pages of the site together.
  *
@@ -427,7 +488,7 @@ async function checkPages(context, logger) {
     const page = `/${path.relative(context.dir, file).split(path.sep).join("/")}`
     if (isIgnored(pagePath(page), context.pages)) continue
 
-    pages.push({ path: page, head: parseHead(html) })
+    pages.push({ path: page, head: parseHead(html), url: pageUrl(page, context) })
   }
 
   const siteChecks = checkSite(pages, options)
@@ -558,6 +619,9 @@ export default function metadata(options = {}) {
           base: config.base,
           trailingSlash: config.trailingSlash,
           buildFormat: config.build.format,
+          sitemap: config.integrations.some((integration) => {
+            return integration.name === "@astrojs/sitemap"
+          }),
         }
         for (const key of SITE_KEYS) {
           if (options[key] !== undefined) runtime[key] = options[key]
@@ -588,6 +652,14 @@ export default function metadata(options = {}) {
           injectRoute({
             pattern: "/[...lang]/manifest.webmanifest",
             entrypoint: new URL("./routes/manifest.ts", import.meta.url),
+            prerender: true,
+          })
+        }
+
+        if (options.robots?.ai && canGenerateRobotsTxt(config, logger)) {
+          injectRoute({
+            pattern: "/robots.txt",
+            entrypoint: new URL("./routes/robots-txt.ts", import.meta.url),
             prerender: true,
           })
         }

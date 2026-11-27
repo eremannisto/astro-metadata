@@ -15,7 +15,7 @@
 //
 // Text between backticks shows as code in the dev toolbar app.
 
-import { findLink, findLinks, isAbsolute } from "./head.js"
+import { findLink, findLinks, isAbsolute, trimSlash } from "./head.js"
 
 /** The approximate lengths that search results show. */
 export const LIMITS = {
@@ -774,8 +774,26 @@ function duplicates(pages, valueOf, name) {
 }
 
 /**
- * The rules that compare the pages of the site. Only the build runs them, because the
- * dev toolbar app sees one page at a time. A check returns the problems of the pages.
+ * Returns true for two URLs of the same page. The slash at the end does not count,
+ * because the server can add or remove it.
+ *
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
+function isSamePage(a, b) {
+  const first = new URL(a)
+  const second = new URL(b)
+  return (
+    first.origin === second.origin &&
+    trimSlash(first.pathname) === trimSlash(second.pathname) &&
+    first.search === second.search
+  )
+}
+
+/**
+ * The rules that need the built pages: they compare the pages of the site, or check the
+ * URL of a page. Only the build runs them. A check returns the problems of the pages.
  *
  * @type {import("./rules").SiteRule[]}
  */
@@ -806,6 +824,26 @@ export const SITE_RULES = [
         },
         "description"
       )
+    },
+  },
+  {
+    id: "canonical-not-page",
+    field: "canonical",
+    level: "warning",
+    check(pages) {
+      return indexedPages(pages).flatMap((page) => {
+        const canonical = findLink(page.head, "canonical")
+        if (!page.url || !canonical || !isAbsolute(canonical) || !URL.canParse(canonical)) {
+          return []
+        }
+        if (isSamePage(canonical, page.url)) return []
+        return [
+          {
+            path: page.path,
+            message: `The canonical URL \`${canonical}\` is not the URL of the page \`${page.url}\`. Search engines can index the other URL.`,
+          },
+        ]
+      })
     },
   },
   {

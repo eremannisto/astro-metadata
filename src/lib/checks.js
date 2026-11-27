@@ -1,6 +1,7 @@
 // Plain JavaScript: the integration runs in Node, which does not strip types in node_modules.
 // The dev toolbar app uses the same functions, so the build and the toolbar give the same results.
 
+import { trimSlash } from "./head.js"
 import { ASSET_RULES, RULES, SITE_RULES } from "./rules.js"
 
 export { findLink, parseHead } from "./head.js"
@@ -93,21 +94,6 @@ export function sortChecks(checks) {
  */
 export function isNoindex(head) {
   return /noindex/i.test(head.meta.robots ?? "")
-}
-
-/**
- * Returns a path without the slash at the end, e.g. "/blog" for "/blog/". The root stays "/".
- *
- * @param {string} path
- * @returns {string}
- */
-function trimSlash(path) {
-  if (path.length <= 1) return path
-
-  // A loop and not a regular expression: /\/+$/ is slow for a path with many slashes
-  let end = path.length
-  while (end > 0 && path[end - 1] === "/") end--
-  return path.slice(0, end)
 }
 
 /**

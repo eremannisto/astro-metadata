@@ -67,7 +67,7 @@ Set `site` in the Astro config. The canonical URL and the social images must be 
 | `twitter` | — | `site`: the Twitter (X) handle of the site. `card`: `"summary"` or `"summary_large_image"` (default) for pages with an image. |
 | `themeColor` | — | The color of the browser interface. Give one color, or `{ light, dark }`. |
 | `feeds` | — | The RSS, Atom or JSON feeds: `href`, `title` and `type` (`"rss"` by default). |
-| `robots` | — | `index: false` or `follow: false` for all pages, for example on a staging site. `extra`: other directives, for example `"max-image-preview:large"`. |
+| `robots` | — | `index: false` or `follow: false` for all pages, for example on a staging site. `extra`: other directives of the robots meta tag, for example `"max-image-preview:large"`. They do not go into `robots.txt`. `ai`: generates `robots.txt` for the AI crawlers. See [AI crawlers](#ai-crawlers). |
 | `favicon` | — | Generates the favicons from one image. See [Favicons](#favicons). |
 | `manifest` | — | Generates the web app manifest, or links your own. See [Web app manifest](#web-app-manifest). |
 | `schema` | — | The structured data of the site: `publisher` is the organization or the person behind the site. `false` turns it off. See [Structured data](#structured-data). |
@@ -367,6 +367,51 @@ export const GET = () => {
 }
 ```
 
+## AI crawlers
+
+The `robots.ai` option generates `robots.txt`. It tells the AI crawlers what they can do on the site:
+
+```typescript
+metadata({
+  robots: {
+    ai: {
+      search: true,
+      training: false,
+    },
+  },
+})
+```
+
+| Option | Default | Description |
+|---|---|---|
+| `search` | `true` | `false` blocks the crawlers of AI search, for example `OAI-SearchBot` and `Claude-SearchBot`, and the crawlers that load a page for a user, for example `ChatGPT-User`. The site then does not show in their answers. |
+| `training` | `true` | `false` blocks the crawlers of AI training, for example `GPTBot`, `ClaudeBot` and `Google-Extended`. |
+
+With `training: false`, the file also blocks all other AI crawlers of the [ai.robots.txt](https://github.com/ai-robots-txt/ai.robots.txt) list. The list has more than 200 crawlers, and the package gets the new names each month. The file never blocks `Applebot` and `facebookexternalhit`, because Apple search and the Facebook link previews use them.
+
+With [`@astrojs/sitemap`](https://docs.astro.build/en/guides/integrations-guide/sitemap/), the file also links the sitemap:
+
+```
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Google-Extended
+...
+Disallow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://example.com/sitemap-index.xml
+```
+
+Good to know:
+
+- **Google.** Google AI Overviews and Google Search use the same crawler, `Googlebot`. You can not block AI Overviews and keep Google Search. `Google-Extended` controls only Gemini and Vertex AI.
+- **A request, not a block.** Some crawlers do not obey `robots.txt`.
+- **`index: false`.** It changes only the robots meta tag, and not `robots.txt`. A crawler that `robots.txt` blocks can not see the `noindex` tag, so the page can still show in search results.
+- **Your own `robots.txt`.** A `public/robots.txt` or a `src/pages/robots.txt.ts` endpoint replaces the generated file. The integration shows a warning.
+- **A `base`.** Crawlers read `robots.txt` only at the root of the domain. With a `base`, the integration shows a warning.
+
 ## Structured data
 
 `<Metadata>` renders the structured data (JSON-LD) of each page by itself. You only give the values of the page.
@@ -460,7 +505,7 @@ The dev toolbar app checks the current page. The build checks all prerendered pa
 | Level | Description | Examples |
 | --- | --- | --- |
 | Error | The metadata is broken. | No title, placeholder text such as `undefined`, invalid JSON-LD, an `og:image` that does not load |
-| Warning | Fix it for better results. | A long title, the same title on two pages, an `og:image` over 600 KB |
+| Warning | Fix it for better results. | A long title, the same title on two pages, a canonical URL to another page, an `og:image` over 600 KB |
 | Info | Good to know. | `noindex`, a short description, no `og:image:alt` |
 
 To turn off the checks, use `debug`:

@@ -19,10 +19,12 @@ export type Rule = RuleBase & {
   check(head: HeadData): string | undefined
 }
 
-/** A built page: its path in the output folder, and its head. */
+/** A built page: its path in the output folder, its head, and its URL. */
 export type SitePage = {
   path: string
   head: HeadData
+  /** The URL of the page, e.g. "https://example.com/about/". Undefined without `site`. */
+  url?: string
 }
 
 /** A problem of one page, found by a site rule. */

@@ -65,8 +65,22 @@ export type MetadataConfig = {
     index?: boolean
     /** Set to false to tell search engines not to follow the links. */
     follow?: boolean
-    /** Other directives for all pages, e.g. "max-image-preview:large". */
+    /**
+     * Other directives of the robots meta tag for all pages, e.g. "max-image-preview:large".
+     * They do not go into `robots.txt`.
+     */
     extra?: string
+    /**
+     * The AI crawlers. This option generates `robots.txt`. Set `search: false` to keep the
+     * site out of AI answers, and `training: false` to keep its content out of AI training.
+     * Both default to true.
+     *
+     * @example { search: true, training: false }
+     */
+    ai?: {
+      search?: boolean
+      training?: boolean
+    }
   }
   /** The web app manifest: an object to generate it, or the path of your own manifest. */
   manifest?: ManifestConfig | string
@@ -91,6 +105,8 @@ export type RuntimeConfig = MetadataConfig & {
   base?: string
   /** The `site` of the Astro config. The dev toolbar app loads its files from the dev server. */
   site?: string
+  /** True with `@astrojs/sitemap`: `robots.txt` links its sitemap. */
+  sitemap?: boolean
 }
 
 // The integration replaces this name with the config, with Vite's `define`

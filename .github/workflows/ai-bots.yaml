@@ -1,0 +1,27 @@
+name: Update AI bots
+
+on:
+  schedule:
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: Update the AI crawler list
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/update-ai-bots.mjs
+      - uses: peter-evans/create-pull-request@v8
+        with:
+          branch: update-ai-bots
+          commit-message: "Chore: Update the AI crawler list"
+          title: "Chore: Update the AI crawler list"
+          body: "The new AI crawler names from ai.robots.txt."
