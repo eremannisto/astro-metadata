@@ -139,3 +139,18 @@ export function findLink(head, rel) {
 export function isAbsolute(value) {
   return /^https?:\/\//i.test(value)
 }
+
+/**
+ * Returns a path without the slash at the end, e.g. "/blog" for "/blog/". The root stays "/".
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+export function trimSlash(path) {
+  if (path.length <= 1) return path
+
+  // A loop and not a regular expression: /\/+$/ is slow for a path with many slashes
+  let end = path.length
+  while (end > 0 && path[end - 1] === "/") end--
+  return path.slice(0, end)
+}

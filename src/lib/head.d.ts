@@ -23,3 +23,5 @@ export declare function findLinks(head: HeadData, rel: string): Record<string, s
 export declare function findLink(head: HeadData, rel: string): string | undefined
 
 export declare function isAbsolute(value: string): boolean
+
+export declare function trimSlash(path: string): string
